@@ -6,7 +6,7 @@ import datetime
 from homemanager import JConfig
 
 config = JConfig()
-config.load_config_from_file('homedb.json')
+config.load_config_from_file('tmp/homedb.json')
 sslopts = {'certfile': config['rabbitmq']['certfile'],
             'keyfile': config['rabbitmq']['keyfile'],
             'cafile': config['rabbitmq']['cafile'],

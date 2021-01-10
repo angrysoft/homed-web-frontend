@@ -1,8 +1,16 @@
 #!/usr/bin/python
+from __future__ import annotations
+
 import json
 import amqp
 from typing import Dict, Any
 from time import sleep
+import logging
+from systemd.journal import JournalHandler
+
+logger = logging.getLogger('homemanager')
+logger.addHandler(JournalHandler())
+logger.setLevel(logging.DEBUG)
 
 class JConfig:
     def __init__(self) -> None:
@@ -35,6 +43,7 @@ class MainWatcher:
                         'cafile': self.config['rabbitmq']['cafile'],
                         'password': self.config['rabbitmq']['password'],
                         "server_hostname": self.config['rabbitmq']['host']}
+        self.homes:Dict[str, HomeManager] = {}
     
     def connect(self):
         while not self.connected:
@@ -52,7 +61,14 @@ class MainWatcher:
             print('Retray after 5s')
     
     def on_message(self, msg:Any):
-        print(f"{msg.delivery_tag}:{msg.body}")
+        try:
+            event = json.loads(msg.body)
+            cmd:str = event.get('cmd', '')
+            if cmd == 'connect':
+                self.homes[event.get('homeid')] = HomeManager(self.connection, event.get('homeid'))
+                
+        except json.JSONDecodeError as err:
+                logger.error(f'json {err} : {msg}')
     
     def run(self):
         self.connect()
@@ -65,11 +81,21 @@ class MainWatcher:
             except OSError:
                 self.connected = False
                 self.connect()
-             
+
+class HomeManager:
+    def __init__(self, connection:amqp.Connection, homeid:str) -> None:
+        self.connection = connection
+        self.homeid = homeid
+    
+    def add_queues(self):
+        pass
+    
+    def on_event(self, msg:Any):
+        pass
 
 
 if __name__ == '__main__':
     config = JConfig()
-    config.load_config_from_file('homedb.json')
+    config.load_config_from_file('tmp/homedb.json')
     watcher = MainWatcher(config)
     watcher.run()
