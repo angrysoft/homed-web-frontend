@@ -1,0 +1,19 @@
+{
+    "rabbitmq": {
+        "host":"vps624310.ovh.net",
+        "port": 5671,
+        "ssl": true,
+        "user": "homed",
+        "user_password": "uu9saTh3wok7",
+        "cafile": "tmp/certs/ca_certificate.pem",
+        "certfile": "tmp/certs/client_certificate.pem",
+        "keyfile": "tmp/certs/client_key.pem",
+        "password": "Ai0Zeen0Laep"
+    },
+    "couchdb": {
+        "host": "",
+        "port": 0,
+        "user": "",
+        "password": ""
+    }
+}
