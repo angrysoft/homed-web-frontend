@@ -52,13 +52,18 @@ class MainWatcher:
                                                   userid=self.config['rabbitmq']['user'], password=self.config['rabbitmq']['user_password'],
                                                   ssl=self.config['rabbitmq']['ssl'], ssl_options=self.sslopts, login_method='AMQPLAIN')
                 channel = self.connection.channel()
-                channel.queue_declare('homedaemon')
-                channel.basic_consume(queue='homedaemon', callback=self.on_message, no_ack=True)
+                channel.exchange_delete('homedaemon')
+                # channel.queue_delete('main_q')
+                # channel.exchange_declare('homedaemon', 'topic', auto_delete=False)
+                channel.queue_declare('main_q')
+                # channel.queue_bind('main_q', 'homedaemon', routing_key='homedaemon.main')
+                channel.basic_consume(queue='main_q', callback=self.on_message, no_ack=True)
                 self.connected = True
-            except ConnectionRefusedError:
+            except ConnectionRefusedError as err:
                 self.connected = False
-            sleep(10)
-            print('Retray after 5s')
+                print(err)
+                sleep(10)
+                print('Retray after 5s')
     
     def on_message(self, msg:Any):
         try:
@@ -66,6 +71,8 @@ class MainWatcher:
             cmd:str = event.get('cmd', '')
             if cmd == 'connect':
                 self.homes[event.get('homeid')] = HomeManager(self.connection, event.get('homeid'))
+            else:
+                print(event)
                 
         except json.JSONDecodeError as err:
                 logger.error(f'json {err} : {msg}')
@@ -85,10 +92,12 @@ class MainWatcher:
 class HomeManager:
     def __init__(self, connection:amqp.Connection, homeid:str) -> None:
         self.connection = connection
+        self.channel = self.connection.channel()
         self.homeid = homeid
     
     def add_queues(self):
-        pass
+        self.channel.queue_declare(f'{self.homeid}_in') #, auto_delete=False)
+        self.channel.queue_declare(f'{self.homeid}_out') #, auto_delete=False)
     
     def on_event(self, msg:Any):
         pass
