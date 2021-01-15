@@ -33,6 +33,9 @@ class JConfig:
     def __str__(self):
         return str(self._config)
     
+    def __contains__(self, item: str):
+        return item in self._config
+    
 
 class MainWatcher:
     def __init__(self, config: JConfig) -> None:
@@ -53,7 +56,7 @@ class MainWatcher:
                                                                    password=self.config['couchdb']['password'])
         else:
             self.db_connection:pycouchdb.Server = pycouchdb.Server()
-    
+
     def connect(self):
         while not self.connected:
             try:
@@ -77,6 +80,7 @@ class MainWatcher:
             event = json.loads(msg.body)
             cmd:str = event.get('cmd', '')
             if cmd == 'connect':
+                print('connect: ', event)
                 homeid:str = event.get('homeid', '')
                 if homeid not in self.db_connection:
                     self.db_connection.create(homeid)
@@ -101,7 +105,7 @@ class MainWatcher:
                 self.connect()
 
 class HomeManager:
-    def __init__(self, connection:amqp.Connection, homeid:str, db:pychoudb.db.Databse) -> None:
+    def __init__(self, connection:amqp.Connection, homeid:str, db:pychoudb.db.Databaase) -> None:
         self.connection = connection
         self.channel = self.connection.channel()
         self.homeid = homeid
@@ -115,14 +119,14 @@ class HomeManager:
     def on_event(self, msg:Any):
         actions:Dict[str, Any] = {
             'report': self.update_device,
-            'add_device': self.add_device,
+            'init_device': self.init_device,
             'del_device': self.del_device
             }
-        
         try:
             event = json.loads(msg.body)
             cmd:str = event.get('cmd', '')
-            actions.get(cmd, self._command_not_found)(event)
+            if event.get('sid'):
+                actions.get(cmd, self._command_not_found)(event)
         except json.JSONDecodeError as err:
                 logger.error(f'json {err} : {msg}')
     
@@ -131,10 +135,12 @@ class HomeManager:
         if sid in self.db:
             self.db.update(sid, event.get('data', {}))
     
-    def add_device(self, event:Dict[str, Any]) -> None:
+    def init_device(self, event:Dict[str, Any]) -> None:
          sid:str = event.get('sid', '')
-         if sid:
-             self.db[sid] = event.get('data', {})
+         if event['sid'] in self.db:
+             self.db.update(sid, event.get('data', {}))
+         else: 
+             self.db[event['sid']] = event.get('data', {})
     
     def del_device(self, event:Dict[str, Any]) -> None:
         sid:str = event.get('sid', '')
