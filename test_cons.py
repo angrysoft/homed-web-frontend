@@ -24,6 +24,5 @@ with amqp.Connection(f"{config['rabbitmq']['host']}:{config['rabbitmq']['port']}
         msg = {"cmd":"test", "msg_id": msg_no, "time": str(datetime.datetime.now())}
         print(f'sending msg {msg}')
         ch.basic_publish(amqp.Message(json.dumps(msg)),exchange='homedaemon', routing_key='homedaemon.main')
-        # ch.basic_publish(amqp.Message(json.dumps(msg)), routing_key='main_q')
         msg_no += 1
         sleep(5)

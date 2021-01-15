@@ -33,6 +33,9 @@ class JConfig:
     def __str__(self):
         return str(self._config)
     
+    def __contains__(self, item: str):
+        return item in self._config
+    
 
 class MainWatcher:
     def __init__(self, config: JConfig) -> None:
@@ -50,7 +53,7 @@ class MainWatcher:
             self.db_connection:pycouchdb.Server = pycouchdb.Server(user=self.config['couchdb']['user'], password=self.config['couchdb']['password'])
         else:
             self.db_connection:pycouchdb.Server = pycouchdb.Server()
-    
+
     def connect(self):
         while not self.connected:
             try:
@@ -98,7 +101,7 @@ class MainWatcher:
                 self.connect()
 
 class HomeManager:
-    def __init__(self, connection:amqp.Connection, homeid:str, db:pychoudb.db.Databse) -> None:
+    def __init__(self, connection:amqp.Connection, homeid:str, db:pychoudb.db.Databaase) -> None:
         self.connection = connection
         self.channel = self.connection.channel()
         self.homeid = homeid
@@ -115,7 +118,6 @@ class HomeManager:
             'add_device': self.add_device,
             'del_device': self.del_device
             }
-        
         try:
             event = json.loads(msg.body)
             cmd:str = event.get('cmd', '')
