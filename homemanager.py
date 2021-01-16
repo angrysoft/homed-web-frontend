@@ -55,7 +55,7 @@ class MainWatcher:
                                                                    user=self.config['couchdb']['user'],
                                                                    password=self.config['couchdb']['password'])
         else:
-            self.db_connection:pycouchdb.Server = pycouchdb.Server()
+            self.db_connection = pycouchdb.Server()
 
     def connect(self):
         while not self.connected:
@@ -110,6 +110,7 @@ class HomeManager:
         self.channel = self.connection.channel()
         self.homeid = homeid
         self.db:pychoudb.db.Databse = db
+        self.add_queues()
     
     def add_queues(self):
         self.channel.queue_declare(self.homeid)
@@ -119,39 +120,26 @@ class HomeManager:
     def on_event(self, msg:Any):
         actions:Dict[str, Any] = {
             'report': self.update_device,
-            'init_device': self.init_device,
+            'init_device': self.update_device,
             'del_device': self.del_device
             }
         try:
             event = json.loads(msg.body)
             cmd:str = event.get('cmd', '')
+            print('cmd', cmd)
             if event.get('sid'):
                 actions.get(cmd, self._command_not_found)(event)
         except json.JSONDecodeError as err:
                 logger.error(f'json {err} : {msg}')
     
     def update_device(self, event:Dict[str, Any]) -> None:
-        sid:str = event.get('sid', '')
-        if sid in self.db:
-            self.db.update(sid, event.get('data', {}))
-    
-    def init_device(self, event:Dict[str, Any]) -> None:
-         sid:str = event.get('sid', '')
-         if event['sid'] in self.db:
-             self.db.update(sid, event.get('data', {}))
-         else: 
-             self.db[event['sid']] = event.get('data', {})
+        self.db[event['sid']] = event.get('data', {})
     
     def del_device(self, event:Dict[str, Any]) -> None:
-        sid:str = event.get('sid', '')
-        if sid in self.db:
-            self.db.delete(sid)
+        self.db.delete(event['sid'])
     
     def _command_not_found(self, data:Dict[str, Any]) -> None:
         pass
-    
-    def run(self):
-        self.add_queues()
     
     def __del__(self):
         self.channel.queue_unbind(self.homeid, 'homedaemon', routing_key=f'homedaemon.{self.homeid}.reports')
