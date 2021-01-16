@@ -103,6 +103,8 @@ class MainWatcher:
             except OSError:
                 self.connected = False
                 self.connect()
+            except KeyboardInterrupt:
+                pass
 
 class HomeManager:
     def __init__(self, connection:amqp.Connection, homeid:str, db:pychoudb.db.Databaase) -> None:
@@ -120,13 +122,13 @@ class HomeManager:
     def on_event(self, msg:Any):
         actions:Dict[str, Any] = {
             'report': self.update_device,
-            'init_device': self.update_device,
+            'init_device': self.init_device,
             'del_device': self.del_device
             }
         try:
             event = json.loads(msg.body)
-            cmd:str = event.get('cmd', '')
-            print('cmd', cmd)
+            cmd:str = event.pop('cmd', '')
+            print('cmd', event)
             if event.get('sid'):
                 actions.get(cmd, self._command_not_found)(event)
         except json.JSONDecodeError as err:
@@ -134,6 +136,11 @@ class HomeManager:
     
     def update_device(self, event:Dict[str, Any]) -> None:
         self.db[event['sid']] = event.get('data', {})
+    
+    def init_device(self, event:Dict[str, Any]) -> None:
+        if event['sid'] in self.db:
+            self.db.delete(event['sid'])
+        self.db[event['sid']] = event
     
     def del_device(self, event:Dict[str, Any]) -> None:
         self.db.delete(event['sid'])
