@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+{% block head %}
+  <title>AngryHome</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="/static/angry.min.css">
+  <link rel="stylesheet" href="/static/styles.css">
+{% endblock %}
+  
+  {% block dart %}
+  {% endblock %}
+</head>
+<body>
+{% block menu %}
+<div class="container">
+  <div class="row center-xs">
+    <nav class="navbar col-xs-12">
+      <header>
+        <div class="menu hamburger"></div>
+        <div class="header"><a href="/">SmartHome</a></div>
+      </header>
+      <div><a href="/devices">Devs</a></div>
+      <div><a href="/tv">TV Pilot</a></div>
+      <div><a href="/leds">Leds</a> </div>
+    </nav>
+  </div>
+</div>
+{% endblock %}
+
+{% block content %}
+{% endblock%}
+
+<div class="container">
+  {% block footer %}
+  <footer class="txt-center">
+		<p>Copyright © 2015-2019 Angrysoft . All Rights Reserved.</p>
+		<p>Design by <a target="_blank" href="http://www.angrysoft.ovh">Angrysoft</p>
+	</footer>
+  {% endblock %}
+</div>
+</body>
+</html>

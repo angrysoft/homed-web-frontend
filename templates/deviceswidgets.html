@@ -1,0 +1,458 @@
+{% macro loader() -%}
+<div id="loader">
+  <div class="ring"></div>
+</div>
+{%- endmacro %}
+
+{% macro ctrl_neutral(data) -%}
+<div class="col-xs-5 col-md-2  round-8 padding-05 device"  id="{{ data.get('sid') }}">
+  <div class="row center-xs">
+    <div class="col-xs-12">
+      <p class="txt-center">{{ data.get('name') }}</p>
+    </div>
+  </div>
+  
+  <div class="row center-xs">
+    <div class="col-xs-6" >
+      <button class="btn-small channel_0" data-sid="{{ data.get('sid') }}" data-status="channel_0" data-model="{{ data.get('model') }}" value="on">On</button>
+    </div>
+
+    {% if data.get('model') == 'ctrl_neutral2' %}
+    <div class="col-xs-6" >
+      <button class="btn-small channel_1" data-sid="{{ data.get('sid') }}" data-status="channel_1" data-model="{{ data.get('model') }}" value="on">On</button>
+    </div>
+    {% endif %}
+    
+  </div>
+</div>
+{%- endmacro %}
+
+
+{% macro plug(data) -%}
+<div class="col-xs-5 col-md-2 round-8 padding-05 device"  id="{{ data.get('sid') }}">
+  <div class="row center-xs">
+    <div class="col-xs-12">
+      <p class="txt-center">{{ data.get('name') }}</p>
+    </div>
+  </div>
+  
+  <div class="row center-xs">
+    <div class="col-xs-6" >
+      <button class="btn-small  status"  data-sid="{{ data.get('sid') }}" data-model="{{ data.get('model') }}" data-status="status" value="on">On</button>
+    </div>
+  </div>
+</div>
+{%- endmacro %}
+
+
+{% macro color_light(data) -%}
+<div class="col-xs-5 col-md-2  round-8 padding-05 device"  id="{{ data.get('sid') }}">
+  <div class="row center-xs">
+    <div class="col-xs-12">
+      <p class="txt-center">{{ data.get('name') }}</p>
+    </div>
+  </div>
+  
+  <div class="row center-xs">
+    <div class="col-xs-6" >
+      <button class="btn-small  power" data-sid="{{ data.get('sid') }}" data-model="{{ data.get('model') }}" data-status="power" data-cmd="set_power" value="on">On</button>
+    </div>
+
+    <div class="col-xs-6" >
+      <button class="btn-small color-set-button" data-sid="{{ data.get('sid') }}">Set</button>
+    </div>
+  </div>
+</div>
+{%- endmacro %}
+
+
+{% macro white_light(data) -%}
+<div class="col-xs-5 col-md-2  round-8 padding-05 device"  id="{{ data.get('sid') }}">
+  <div class="row center-xs">
+    <div class="col-xs-12">
+      <p class="txt-center">{{ data.get('name') }}</p>
+    </div>
+  </div>
+  
+  <div class="row center-xs">
+    <div class="col-xs-6" >
+      <button class="btn-small  power" data-sid="{{ data.get('sid') }}" data-model="{{ data.get('model') }}" data-status="power" data-cmd="set_power" value="on">On</button>
+    </div>
+
+    <div class="col-xs-6" >
+      <button class="btn-small white-set-button" data-sid="{{ data.get('sid') }}">Set</button>
+    </div>
+  </div>
+</div>
+{%- endmacro %}
+
+
+{% macro temp(data) -%}
+<div class="col-xs-5 col-md-2  round-8 padding-05 device"  id="{{ data.get('sid') }}">
+  <div class="row center-xs">
+    <div class="col-xs-12">
+      <p class="txt-center">{{ data.get('name') }}</p>
+    </div>
+  </div>
+
+  <div class="row center-xs">
+    <div class="col-xs-12" >
+      <label class="label">Temp: </label><span class="temperature" data-sid="{{ data.get('sid') }}" data-status="temperature">?</span><span> C</span>
+    </div>
+  </div>
+
+  <div class="row center-xs">
+    <div class="col-xs-12" >
+      <label class="label">Humidity: </label><span class="humidity" data-sid="{{ data.get('sid') }}" data-status="humidity">?</span><span> %</span>
+    </div>
+  </div>
+
+  {% if data.get('model') == 'weather.v1' %}
+  <div class="row center-xs">
+    <div class="col-xs-12" >
+      <label class="label">Pressure: </label><span class="pressure" data-sid="{{ data.get('sid') }}" data-status="pressure">?</span><span> KPa</span>
+    </div>
+  </div>
+  {% endif %}
+
+  <div class="row center-xs">
+    <div class="col-xs-12" >
+      <label class="label">Vol: </label><span class=" voltage" data-sid="{{ data.get('sid') }}" data-status="voltage">?</span>
+    </div>
+  </div>
+</div>
+{%- endmacro %}
+
+
+{% macro sensor_motion_aq2(data) -%}
+<div class="col-xs-5 col-md-2  round-8 padding-05 device"  id="{{ data.get('sid') }}">
+  <div class="row center-xs">
+    <div class="col-xs-12">
+      <p class="txt-center">{{ data.get('name') }}</p>
+    </div>
+  </div>
+
+  <div class="row center-xs">
+    <div class="col-xs-12" >
+      <label class="label">Lux: </label><span class="lux" data-sid="{{ data.get('sid') }}" data-status="lux">?</span>
+    </div>
+  </div>
+
+  <div class="row center-xs">
+    <div class="col-xs-12" >
+      <label class="label">Motion: </label><span class="motion" data-sid="{{ data.get('sid') }}" data-status="when">?</span>
+    </div>
+  </div>
+
+  <div class="row center-xs">
+    <div class="col-xs-12" >
+      <label class="label">Vol: </label><span class="voltage" data-sid="{{ data.get('sid') }}" data-status="voltage">?</span>
+    </div>
+  </div>
+
+</div>
+{%- endmacro %}
+
+
+{% macro magnet(data) -%}
+<div class="col-xs-5 col-md-2  round-8 padding-05 device"  id="{{ data.get('sid') }}">
+  <div class="row center-xs">
+    <div class="col-xs-12">
+      <p class="txt-center">{{ data.get('name') }}</p>
+    </div>
+  </div>
+
+  <div class="row center-xs">
+    <div class="col-xs-12" >
+      <label class="label">Status: </label><span class=" status" data-sid="{{ data.get('sid') }}" data-status="status">?</span>
+    </div>
+  </div>
+
+  <div class="row center-xs">
+    <div class="col-xs-12" >
+      <label class="label">Vol: </label><span class=" voltage" data-sid="{{ data.get('sid') }}" data-status="voltage">?</span>
+    </div>
+  </div>
+</div>
+{%- endmacro %}
+
+{% macro tv(data) -%}
+<div class="col-xs-5 col-md-2  round-8 padding-05 device"  id="{{ data.get('sid') }}">
+  <div class="row center-xs">
+    <div class="col-xs-12">
+      <p class="txt-center">{{ data.get('name') }}</p>
+    </div>
+  </div>
+  
+  <div class="row center-xs">
+    <div class="col-xs-6" >
+      <button class="btn-small  power" data-sid="{{ data.get('sid') }}" data-model="{{ data.get('model') }}" data-status="power" data-cmd="set_power" value="on">On</button>
+    </div>
+
+    <div class="col-xs-6" >
+      <button class="btn-small tv-set-button" data-sid="{{ data.get('sid') }}">Set</button>
+    </div>
+  </div>
+</div>
+{%- endmacro %}
+
+
+{% macro scene(data) -%}
+<div class="col-xs-5 col-md-2  round-8 padding-05 device"  id="{{ data.get('name') }}">
+  <div class="row center-xs">
+    <div class="col-xs-12">
+      <p class="txt-center">{{ data.get('name') }}</p>
+    </div>
+  </div>
+  
+  <div class="row center-xs">
+    <div class="col-xs-6" >
+      <button class="btn-small  sceneon" data-sid="{{ data.get('name') }}" data-status="status" value="on">On</button>
+    </div>
+    
+    <div class="col-xs-6" >
+      <button class="btn-small  sceneoff" data-sid="{{ data.get('name') }}" data-status="status" value="off">Off</button>
+    </div>
+    
+  </div>
+</div>
+{%- endmacro %}
+
+{% macro brightness(_id) -%}
+<div class="row center-xs padding-10">
+  <div class="col-xs-12 txt-center">
+      <label class="label">Bright: </label>
+  </div>
+</div>
+
+<div class="row center-xs">
+  <div class="col-xs-12 txt-center">
+    <input class="color-range" id="{{ _id }}" type="range" step="1" min="1" max="100" value="100">
+  </div>
+</div>
+{%- endmacro %}
+
+
+{% macro ct(_id) -%}
+<div class="row center-xs">
+  <div class="col-xs-12 txt-center">
+    <label class="label">Color temperature: </label>
+  </div>
+</div>
+
+<div class="row center-xs">
+  <div class="col-xs-12 txt-center">
+    <input class="color-range" id="{{ _id }}" type="range" step="1" min="0" max="100" value="50">
+  </div>
+</div>
+{%- endmacro %}
+
+{% macro whiteset() -%}
+<div class="modal-dialog dark" id="white-set">
+  <div class="modal-content">
+    <div class="modal-header">
+      <div class="row between-xs">
+          <div class="col-xs-1"><i class="material-icons" id="back-white">arrow_back</i></div>
+          <div class="col-xs-3">White</div>   
+      </div>
+    </div>
+
+    <div class="modal-body">
+      {{ brightness("white-bright") }}
+      <div class="row center-xs">
+        <div class="col-xs-12">
+          {{ ct("white-ct") }}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{%- endmacro %}
+
+{% macro colorset() -%}
+<div class="modal-dialog dark" id="color-set">
+  <div class="modal-content">
+    <div class="modal-header">
+      <div class="row between-xs">
+          <div class="col-xs-1"><i class="material-icons" id="back">arrow_back</i></div>
+          <div class="col-xs-3">Color</div>   
+      </div>
+    </div>
+
+    <div class="modal-body">
+
+      <div class="row center-xs middle-xs">
+        <div class="col-xs-6">
+          <button class="btn" id="rgb-btn">Color</button>
+        </div>
+
+        <div class="col-xs-6">
+          <button class="btn" id="ct-btn">White</button>
+        </div>
+      </div>
+
+      {{ brightness("color-bright") }}
+
+      <div class="row center-xs padding-10" id="rgb-tab">
+        <div class="col-xs-12">
+          <div class="row center-xs">
+            <div class="col-xs-12 col-md-4 txt-center">
+              <label class="label">Pick Color: </label>
+            </div>
+          </div>
+        
+          <div class="row center-xs">
+            <div class="col-xs-12 col-md-4">
+              <input id="color-picker" type="color">
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="row center-xs padding-10" id="ct-tab">
+        <div class="col-xs-12">
+          {{ ct("color-ct") }}
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+{%- endmacro %}
+
+{% macro tvset() -%}
+<div class="modal-dialog dark" id="tv-set">
+  <div class="modal-content">
+    <div class="modal-header">
+      <div class="row between-xs">
+        <div class="col-xs-1"><i class="material-icons" id="back-tv">arrow_back</i></div>
+        <div class="col-xs-3">Tv</div>   
+      </div>
+    </div>
+
+    <div class="modal-body">
+      <div class="row center-xs btn-group">
+        <div class="col-xs-3">
+          <button class="btn white" data-btn="Input">Src</button>
+        </div>
+      </div>
+
+      <div class="row center-xs btn-group">
+        <div class="col-xs-6">
+          <select class="select" name="SRC">
+            <option value="tv:dvbt?trip=8808.61441.101&srvName=Polsat%20News">TV</option>
+            <option value="extInput:hdmi?port=1">hdmi1</option>
+            <option value="extInput:hdmi?port=2">hdmi2</option>
+          </select>
+        </div>
+      </div>
+      
+      <div class="row center-xs btn-group">
+        <div class="col-xs-3">
+          <button class="btn lime" data-btn="Up">Up</button>
+        </div>
+      </div>
+      
+      <div class="row center-xs btn-group">
+        <div class="col-xs-3">
+          <button class="btn lime" data-btn="Left">Left</button>
+        </div>
+        <div class="col-xs-3">
+          <button class="btn white" data-btn="Confirm">Ok</button>
+        </div>
+        <div class="col-xs-3">
+          <button class="btn lime" data-btn="Right">Right</button>
+        </div>
+      </div>
+      
+      <div class="row center-xs btn-group">
+        <div class="col-xs-3">
+          <button class="btn white" data-btn="Return">Ret</button>
+        </div>
+        <div class="col-xs-3">
+          <button class="btn lime" data-btn="Down">Down</button>
+        </div>
+        <div class="col-xs-3">
+          <button class="btn white" data-btn="Exit">Exit</button>
+        </div>
+      </div>
+      
+      <div class="row center-xs btn-group">
+        <div class="col-xs-3">
+          <button class="btn white" data-btn="Num1">1</button>
+        </div>
+        <div class="col-xs-3">
+          <button class="btn white" data-btn="Num2">2</button>
+        </div>
+        <div class="col-xs-3">
+          <button class="btn white" data-btn="Num3">3</button>
+        </div>
+        <div class="col-xs-3">
+          <button class="btn white" data-btn="Num4">4</button>
+        </div>
+      </div>
+  
+      <div class="row center-xs btn-group">
+       
+        <div class="col-xs-3">
+          <button class="btn white" data-btn="Num5">5</button>
+        </div>
+        <div class="col-xs-3">
+          <button class="btn white" data-btn="Num6">6</button>
+        </div>
+        <div class="col-xs-3">
+          <button class="btn white" data-btn="Num7">7</button>
+        </div>
+        <div class="col-xs-3">
+          <button class="btn white" data-btn="Num8">8</button>
+        </div>
+      </div>
+  
+      <div class="row center-xs btn-group">
+        <div class="col-xs-3">
+          <button class="btn white" data-btn="Num9">9</button>
+        </div>
+        <div class="col-xs-3">
+          <button class="btn white" data-btn="Num0">0</button>
+        </div>
+      </div>
+  
+      <div class="row center-xs btn-group">
+        <div class="col-xs-3">
+          <button class="btn light-blue" data-btn="Play">Play</button>
+        </div>
+        <div class="col-xs-3">
+          <button class="btn light-blue" data-btn="Pause">| |</button>
+        </div>
+        <div class="col-xs-3">
+          <button class="btn light-blue" data-btn="Stop">Stop</button>
+        </div>
+      </div>
+        
+      <div class="row between-xs btn-group">
+        <div class="col-xs-4">
+          <button class="btn white" data-btn="VolumeUp">Vol+</button>
+        </div>
+        <div class="col-xs-3">
+          <button class="btn white" data-btn="GGuide">I+</button>
+        </div>
+        <div class="col-xs-4">
+          <button class="btn white" data-btn="ChannelUp">Ch+</button>
+        </div>
+      </div>
+      <div class="row between-xs btn-group">
+        <div class="col-xs-4">
+          <button class="btn white" data-btn="VolumeDown">Vol-</button>
+        </div>
+        <div class="col-xs-3">
+          <button class="btn white" data-btn="Mute">Mute</button>
+        </div>
+        <div class="col-xs-4">
+          <button class="btn white" data-btn="ChannelDown">Ch-</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{%- endmacro %}

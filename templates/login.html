@@ -1,0 +1,52 @@
+{% extends 'layout.html' %}
+{% block head %}
+{{ super() }}
+<meta name="google-signin-client_id" content="185939031950-ofl3lt8mhuvl1tho2p0i308vqcum5reg.apps.googleusercontent.com">
+{% endblock %}
+{% block dart %}
+<script src="https://apis.google.com/js/platform.js" async defer></script>
+<!-- <script defer src="/static/login.dart.js" type="text/javascript"></script> -->
+{% endblock %}
+
+{% block menu %}
+{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="row center-xs">
+        <div class="padding-30 g-signin2" data-onsuccess="onSignIn"></div>
+        <script>
+          function signOut() {
+            var auth2 = gapi.auth2.getAuthInstance();
+            auth2.signOut();
+          }
+
+          function onSignIn(googleUser) {
+            var id_token = googleUser.getAuthResponse().id_token;
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', '/login');
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhr.onload = function() {
+                console.log(xhr.responseText);
+              if (xhr.responseText == 'ok') {
+                var url = new URL(window.location.href);
+                var target = url.searchParams.get("next");
+                if (! target) {
+                  target = '/';
+                }
+                console.log(target);
+                window.location.replace(target); 
+              } else {
+                console.log('logout');
+                signOut();
+              }
+            };
+            xhr.send('idtoken=' + id_token);
+          }
+        </script>
+  </div>
+  <div class="row center-xs">
+      <a href="/logout" onclick="signOut();">Sign out</a>
+  </div>
+</div>
+{% endblock %}

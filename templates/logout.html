@@ -1,0 +1,34 @@
+{% extends 'layout.html' %}
+{% block head %}
+{{ super() }}
+<meta name="google-signin-client_id" content="185939031950-ofl3lt8mhuvl1tho2p0i308vqcum5reg.apps.googleusercontent.com">
+{% endblock %}
+{% block dart %}
+<script src="https://apis.google.com/js/platform.js?onload=init" async defer></script>
+{% endblock %}
+
+{% block menu %}
+{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="row center-xs">
+      <span>Logout...</span>
+        <script>
+            function init() {
+            /* Ready. Make a call to gapi.auth2.init or some other API */
+                gapi.load('auth2', function() {
+                    // var auth2 = gapi.auth2.getAuthInstance();
+                    var auth2 = gapi.auth2.init({client_id: "185939031950-ofl3lt8mhuvl1tho2p0i308vqcum5reg.apps.googleusercontent.com"});
+                    auth2.then(function () {
+                        auth2.signOut().then(function() {
+                            console.log('User signed out.');
+                            window.location.replace('/login');
+                        });
+                    });
+                });
+            }
+        </script>
+  </div>
+</div>
+{% endblock %}
