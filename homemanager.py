@@ -42,6 +42,8 @@ class MainWatcher:
         self.config = config
         self.connection:amqp.Connection
         self.connected = False
+        self.retry = True
+        
         self.sslopts = {'certfile': self.config['rabbitmq']['certfile'],
                         'keyfile': self.config['rabbitmq']['keyfile'],
                         'cafile': self.config['rabbitmq']['cafile'],
@@ -58,11 +60,12 @@ class MainWatcher:
             self.db_connection = pycouchdb.Server()
 
     def connect(self):
-        while not self.connected:
+        while not self.connected and self.retry:
             try:
                 self.connection = amqp.Connection(f"{self.config['rabbitmq']['host']}:{self.config['rabbitmq']['port']}",
                                                   userid=self.config['rabbitmq']['user'], password=self.config['rabbitmq']['user_password'],
                                                   ssl=self.config['rabbitmq']['ssl'], ssl_options=self.sslopts, login_method='AMQPLAIN')
+                self.connection.connect()
                 channel = self.connection.channel()
                 channel.exchange_declare('homedaemon', 'topic', auto_delete=False)
                 channel.queue_declare('main_queue')
@@ -104,7 +107,11 @@ class MainWatcher:
                 self.connected = False
                 self.connect()
             except KeyboardInterrupt:
-                pass
+                self.retry = False
+                if self.connection.connected:
+                    self.connection.close()
+                break
+                
 
 class HomeManager:
     def __init__(self, connection:amqp.Connection, homeid:str, db:pychoudb.db.Databaase) -> None:

@@ -21,19 +21,22 @@ __version__ = '0.1'
 
 from starlette.applications import Starlette
 from starlette.staticfiles import StaticFiles
-from starlette.responses import HTMLResponse
+from starlette.responses import JSONResponse, PlainTextResponse
 from starlette.templating import Jinja2Templates
 import logging
 from pycouchdb import Server
 import operator
+import uvicorn
+import json
+import os
 
-password = ''
-if not os.path.exists('/etc/homerelay.json'):
+conf_file = 'homedweb.json'
+if not os.path.exists(conf_file):
     raise FileNotFoundError('can`find config file /etc/homerelay.json')
 
 config ={}
-with open('/etc/homerelay.json') as conf_file:
-    config = json.load(conf_file)
+with open(conf_file) as jfile:
+    config = json.load(jfile)
 
 db = Server(user=config['db']['user'], password=config['db']['password'])
 
@@ -41,7 +44,7 @@ db = Server(user=config['db']['user'], password=config['db']['password'])
 templates = Jinja2Templates(directory='templates')
 
 app = Starlette(debug=True)
-app.mount('/static', StaticFiles(directory='statics'), name='static')
+app.mount('/static', StaticFiles(directory='static'), name='static')
 
 logging.basicConfig(filename='gast.log', filemode='w', format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S')
 logging.warning('app starts')
@@ -56,17 +59,26 @@ def login_required(func):
     return decorated_function
 
 
-@app.route('/')
+@app.route('/{homeid:str}')
 # @login_required
-async def devices():
+async def devices(request) -> PlainTextResponse:
+    homeid: str = request.path_params['homeid']
+    if homeid == 'favicon.ico':
+        return PlainTextResponse(homeid)
     places = dict()
-    items_list = sorted([d for d in db['devices']], key=operator.itemgetter('name'))
+    # items_list = sorted([d for d in db[homeid]], key=operator.itemgetter('name'))
     
-    for item in items_list:
-        place = item.get('place')
+    for item in db[homeid].get_all_docs():
+        place: str = item.get('place', '')
+        print(place)
         if not place:
             continue
         if place not in places:
             places[place] = list()
         places[place].append(item)
-    return templates.TemplateResponse('devices.html', {"places": places})
+    print(places)
+    return templates.TemplateResponse('devices.html', {"request": request, "places": places})
+
+
+if __name__ == "__main__":
+    uvicorn.run(app, host='127.0.0.1',debug=True, port=8000)
