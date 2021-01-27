@@ -1,4 +1,4 @@
-path = www/static
+path = static
 dart = dart2js -m -o
 sasss = sassc -t compressed
 INSTALL=install -C
@@ -13,8 +13,8 @@ all: alldart allcss
 stylescss: $(path)/styles.scss
 	sassc -t compressed $(path)/styles.scss $(path)/styles.css
 
-devicesscss: $(path)/devices/devices.scss
-	sassc -t compressed $(path)/devices/devices.scss $(path)/devices/devices.min.css
+devicesscss: $(path)/devices.scss
+	sassc -t compressed $(path)/devices.scss $(path)/devices.min.css
 
 
 install:

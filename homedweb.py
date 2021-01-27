@@ -13,19 +13,19 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
-
+from __future__ import annotations
 __author__ = 'Sebastian Zwierzchowski'
 __copyright__ = 'Copyright 2019 Sebastian Zwierzchowski'
 __license__ = 'GPL2'
 __version__ = '0.1'
 
 from starlette.applications import Starlette
+from starlette.requests import Request
 from starlette.staticfiles import StaticFiles
 from starlette.responses import JSONResponse, PlainTextResponse
 from starlette.templating import Jinja2Templates
 import logging
 from pycouchdb import Server
-import operator
 import uvicorn
 import json
 import os
@@ -61,13 +61,18 @@ def login_required(func):
 
 @app.route('/{homeid:str}')
 # @login_required
-async def devices(request) -> PlainTextResponse:
+async def home(request: Request) -> _TemplateResponse:
     homeid: str = request.path_params['homeid']
     if homeid == 'favicon.ico':
         return PlainTextResponse(homeid)
+    return templates.TemplateResponse('devices.html', {"request": request})
+
+
+@app.route('/{homeid:str}/devices')
+def get_devices(request: Request):
     places = dict()
     # items_list = sorted([d for d in db[homeid]], key=operator.itemgetter('name'))
-    
+    homeid:str = request.path_params['homeid']
     for item in db[homeid].get_all_docs():
         place: str = item.get('place', '')
         print(place)
@@ -77,7 +82,7 @@ async def devices(request) -> PlainTextResponse:
             places[place] = list()
         places[place].append(item)
     print(places)
-    return templates.TemplateResponse('devices.html', {"request": request, "places": places})
+    return JSONResponse(places)
 
 
 if __name__ == "__main__":
