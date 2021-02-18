@@ -8,7 +8,10 @@ USRPAN=http
 GRPPAN=http
 PREFIX = /usr
 
-all: alldart allcss
+all: buildjs
+
+buildjs:
+	tsc -b src
 
 stylescss: $(path)/styles.scss
 	sassc -t compressed $(path)/styles.scss $(path)/styles.css

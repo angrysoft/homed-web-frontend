@@ -14,6 +14,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 from __future__ import annotations
+from typing import Dict
 __author__ = 'Sebastian Zwierzchowski'
 __copyright__ = 'Copyright 2019 Sebastian Zwierzchowski'
 __license__ = 'GPL2'
@@ -29,6 +30,7 @@ from pycouchdb import Server
 import uvicorn
 import json
 import os
+from typing import Dict, Any
 
 conf_file = 'homedweb.json'
 if not os.path.exists(conf_file):
@@ -65,22 +67,21 @@ async def home(request: Request) -> _TemplateResponse:
     homeid: str = request.path_params['homeid']
     if homeid == 'favicon.ico':
         return PlainTextResponse(homeid)
-    return templates.TemplateResponse('devices.html', {"request": request})
+    return templates.TemplateResponse('home.html', {"request": request})
 
 
 @app.route('/{homeid:str}/devices')
 def get_devices(request: Request):
-    places = dict()
+    places: Dict[str, Any] = {}
     # items_list = sorted([d for d in db[homeid]], key=operator.itemgetter('name'))
     homeid:str = request.path_params['homeid']
     for item in db[homeid].get_all_docs():
         place: str = item.get('place', '')
-        print(place)
         if not place:
             continue
         if place not in places:
             places[place] = list()
-        places[place].append(item)
+        places[place].append(item.get_dict())
     print(places)
     return JSONResponse(places)
 
