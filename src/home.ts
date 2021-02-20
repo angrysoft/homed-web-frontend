@@ -28,8 +28,6 @@ class BaseComponent extends HTMLElement {
     }
 }
 
-/* http://api.openweathermap.org/data/2.5/weather?id=762788&appid=3de497a1289fa176cc80801719c832b8&units=metric */
-
 class HomeApp extends BaseComponent {
     private places: PlaceTab[] = [];
     private model:HomeModel;
