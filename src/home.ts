@@ -1,42 +1,53 @@
-class BaseComponent extends HTMLElement {
-    protected sheet:CSSStyleSheet;
-    protected html:string = '';
-    protected root;
+import { PlaceTab } from "./placetab.js";
+import { BaseComponent } from "./base.js";
+
+
+class HomeApp {
+    private places: PlaceTab[] = [];
+    private model:HomeModel;
+    private view:HomeView;
 
     constructor() {
-        super();
-        this.sheet = new CSSStyleSheet();
-        this.root = this.attachShadow({ mode: 'open'});
+        this.model = new HomeModel();
+        this.view = new HomeView();
     }
 
-    
+    public async run() {
+        await this.model.getData();
+        this.model.getPlaces().forEach(placeName => {
+            let tab = new PlaceTab(placeName);
+            this.view.addPlaceTab(tab);
+            this.model.getDevicesFromPlace(placeName).forEach(devInfo => {
+                tab.addDeviceFromInfo(devInfo);
+            });
 
-    public adoptedCallback() {
-        console.log('I am adopted!');
-    }
-
-    public connectedCallback() {
-        if (this.root.adoptedStyleSheets.length === 0) {
-            this.root.adoptedStyleSheets = [ this.sheet ];
-        }
-
-        this.render();
-    }
-
-    public render() {
-        this.root.innerHTML = this.html;
+            this.places.push(tab);
+        });
+        this.view.render();
+        this.places[0].show();
+        console.log(this.model.getPlaces());
     }
 }
 
-class HomeApp extends BaseComponent {
-    private places: PlaceTab[] = [];
-    private model:HomeModel;
+class HomeView extends BaseComponent {
+    private main:HTMLElement;
+    private header:HTMLElement;
+    private places:HTMLElement;
+    private footer:HTMLElement;
 
     constructor() {
         super();
-        this.model = new HomeModel();
+        this.main = document.createElement("main");
+        this.header = document.createElement("header");
+        this.places = document.createElement("section");
+        this.footer = document.createElement("footer");
+        this.header.innerText = "Header";
+        this.footer.innerText = "Footer";
+        this.main.appendChild(this.header);
+        this.main.appendChild(this.places);
+        this.main.appendChild(this.footer);
 
-        this.sheet.insertRule(`div.home {
+        this.sheet.insertRule(`main {
             display: grid;
             grid-row-gap: 0.2rem;
             grid-template-columns: auto;
@@ -46,44 +57,30 @@ class HomeApp extends BaseComponent {
             background: red;
         }`);
 
-        this.sheet.insertRule(`header#header {
+        this.sheet.insertRule(`header {
             padding: 0.5rem;
             background: green;
         }`);
 
-        this.sheet.insertRule(`footer#footer {
+        this.sheet.insertRule(`footer {
             padding: 0.5rem;
             background: blue;
         }`);
 
-        this.html = `
-        <div class="home">
-            <header id="header">Header</header>
-            <div id="places"></div>
-            <footer id="footer">Footer</footer>
-        </div>`
-    }
-    
-    public async render() {
-        await this.model.getData();
-        super.render();
-        this.model.getPlaces().forEach(placeName => {
-            let places = this.root.querySelector('#places') as HTMLDivElement;
-            let tab = new PlaceTab(placeName);
-            this.model.getDevicesFromPlace(placeName).forEach(devInfo => {
-                tab.addDevice(new DeviceInstance(devInfo));
-            });
-
-            this.places.push(tab);
-            places.appendChild(tab);
-        });
-        this.places[0].show();
-        console.log(this.model.getPlaces());
     }
 
-}
+    public addPlaceTab(tab:PlaceTab) {
+        this.places.appendChild(tab);
+    }
 
-class HomeView {
+    public delPlaceTab(tab:PlaceTab) {
+        this.places.removeChild(tab);
+    }
+
+    public render() {
+        this.root.appendChild(this.main);
+        document.body.appendChild(this);
+    }
 
 }
 
@@ -118,63 +115,9 @@ class HomeModel {
     }
 }
 
-class PlaceTab extends BaseComponent {
-    constructor(id:string) {
-        super();
-        this.id = id;
-        this.sheet.insertRule(`:host {
-            display: none;
-            grid-row-gap: 0.5rem;
-            grid-template-columns: auto;
-            grid-template-rows: auto;
-            min-height:100%;
-            align-content: center;
-            background: orange;
-        }`);
+window.onload = async () => {
+    window.customElements.define('home-view', HomeView);
+    let app = new HomeApp();
+    app.run()
 
-    }
-
-    public addDevice(dev: DeviceInstance) {
-        this.appendChild(dev);
-    }
-
-    public show() {
-        console.log(this.root.adoptedStyleSheets);
-        this.root.adoptedStyleSheets[0].rules[0].style.display = 'grid';
-        // this.root.classList.add('Active');
-    }
-
-    public hide() {
-        this.root.adoptedStyleSheets[0].rules[0].display = 'none';
-        this.root.classList.remove('Active');
-    }
-
-}
-
-class DeviceInstance extends BaseComponent {
-    constructor(deviceInfo:Object) {
-        super();
-        this.sheet.insertRule(`div.tabs {
-            display: grid;
-            grid-row-gap: 0.5rem;
-            grid-template-columns: auto;
-            grid-template-rows: auto 1fr auto;
-            min-height:100%;
-            align-content: center;
-            background: orange;
-        }`);
-        if (deviceInfo['sid']) {
-            this.id = deviceInfo['sid'];
-        }
-        console.log(deviceInfo['sid']);
-    }
-
-}
-
-class DeviceModel {
-
-}
-
-window.customElements.define('home-app', HomeApp);
-window.customElements.define('place-tab', PlaceTab);
-window.customElements.define('device-instance', DeviceInstance);
+};

@@ -1,6 +1,5 @@
 {% extends 'layout.html' %}
-
-{% block content %}
-<home-app></home-app>
-<script type="module" src="/static/scripts/home.js"></script>
+{% block head %}
+{{ super() }}
+    <script type="module" src="/static/scripts/home.js"></script>
 {% endblock %}
