@@ -31,7 +31,7 @@ from pycouchdb import Server
 import uvicorn
 import json
 import os
-from typing import Dict, Any
+from typing import Dict, Any, List
 
 conf_file = 'homedweb.json'
 if not os.path.exists(conf_file):
@@ -86,6 +86,13 @@ def get_devices(request: Request):
     print(places)
     return JSONResponse(places)
 
+@app.route('/{homeid:str}/devices/all')
+def get_all_devices(request: Request):
+    ret: List[Dict[str,Any]] = []
+    for item in db[request.path_params['homeid']].get_all_docs():
+        ret.append(item.get_dict())
+    
+    return JSONResponse(ret)
 
 if __name__ == "__main__":
     uvicorn.run(app, host='127.0.0.1',debug=True, port=8000)

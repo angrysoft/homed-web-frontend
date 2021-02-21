@@ -1,119 +1,135 @@
-import { PlaceTab } from "./placetab.js";
+import { Device } from "./devices.js";
 import { BaseComponent } from "./base.js";
 
 
 class HomeApp {
-    private places: PlaceTab[] = [];
     private model:HomeModel;
     private view:HomeView;
-
+    
     constructor() {
         this.model = new HomeModel();
         this.view = new HomeView();
     }
-
+    
     public async run() {
         await this.model.getData();
-        this.model.getPlaces().forEach(placeName => {
-            let tab = new PlaceTab(placeName);
-            this.view.addPlaceTab(tab);
-            this.model.getDevicesFromPlace(placeName).forEach(devInfo => {
-                tab.addDeviceFromInfo(devInfo);
-            });
-
-            this.places.push(tab);
+        this.model.getDevicesInfo().forEach(deviceInfo => {
+                let dev = new Device(deviceInfo);
+                this.view.addDevice(dev.getView());
+                this.model.addDevice(dev);
         });
         this.view.render();
-        this.places[0].show();
-        console.log(this.model.getPlaces());
     }
 }
-
+    
 class HomeView extends BaseComponent {
     private main:HTMLElement;
     private header:HTMLElement;
-    private places:HTMLElement;
+    private devices:HTMLElement;
     private footer:HTMLElement;
-
+    
     constructor() {
         super();
         this.main = document.createElement("main");
         this.header = document.createElement("header");
-        this.places = document.createElement("section");
+        this.devices = document.createElement("section");
         this.footer = document.createElement("footer");
         this.header.innerText = "Header";
-        this.footer.innerText = "Footer";
+        this.footer.innerHTML = `
+        <span class=".material-icons">home</span>
+        <span class=".material-icons">favorite</span>
+        <span class=".material-icons">settings</span>
+        `;
         this.main.appendChild(this.header);
-        this.main.appendChild(this.places);
+        this.main.appendChild(this.devices);
         this.main.appendChild(this.footer);
-
+        
         this.sheet.insertRule(`main {
             display: grid;
             grid-row-gap: 0.2rem;
             grid-template-columns: auto;
             grid-template-rows: auto 1fr auto;
             min-height:100%;
+            max-height:100%;
             align-content: center;
-            background: red;
         }`);
 
+        this.sheet.insertRule(`section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            overflow-y: auto;
+            padding: 1rem;
+        }`);
+        
         this.sheet.insertRule(`header {
-            padding: 0.5rem;
-            background: green;
+            padding: 1rem;
         }`);
-
+        
         this.sheet.insertRule(`footer {
-            padding: 0.5rem;
-            background: blue;
+            display: flex;
+            justify-content: space-between; 
+            padding: 1rem;
+            background: black;
         }`);
-
+        
     }
-
-    public addPlaceTab(tab:PlaceTab) {
-        this.places.appendChild(tab);
+    
+    public addDevice(devView:HTMLElement) {
+        this.devices.appendChild(devView);
     }
-
-    public delPlaceTab(tab:PlaceTab) {
-        this.places.removeChild(tab);
+    
+    public delDevice(devView:HTMLElement) {
+        this.devices.removeChild(devView);
     }
-
+    
     public render() {
         this.root.appendChild(this.main);
         document.body.appendChild(this);
     }
-
 }
 
 class HomeModel {
+    private places:Set<string> = new Set();
     private homeid:string;
     private url:string;
-    private data:Object = {};
-
+    private data:Object[] = [];
+    private deviceList: Device[] = [];
+    
     constructor() {
         this.homeid = document.location.pathname;
         this.homeid = this.homeid.substr(1);
-        this.url = `${document.location.href}/devices`;
+        this.url = `${document.location.href}/devices/all`;
+        console.log(this.homeid);
     }
-
+    
     public async getData() {
         const response = await fetch(this.url);
         if (response.ok) {
             this.data = await response.json();
         }
+        this.data.forEach( (devInfo) => {
+            this.places.add(devInfo["place"]);
+        });
     }
-
-    public getPlaces(): string[] {
-        return Object.keys(this.data);
+    
+    public getDevicesInfo() {
+        return this.data;
     }
-
-    public getDevicesFromPlace(place:string) {
-        let ret: Object[] = [];
-        if (this.data[place] != undefined) {
-            ret = this.data[place];
-        }
+    
+    public getPlacesList(): string[] {
+        let ret:string[] = []
+        this.places.forEach((place) => {
+            ret.push(place);
+        });
         return ret;
     }
+
+    public addDevice(dev: Device) {
+        this.deviceList.push(dev);
+    }
 }
+
 
 window.onload = async () => {
     window.customElements.define('home-view', HomeView);
