@@ -1,5 +1,5 @@
 import { Device } from "./devices.js";
-import { BaseComponent } from "./base.js";
+import { BaseComponent } from "./components.js";
 
 
 class HomeApp {
@@ -36,9 +36,9 @@ class HomeView extends BaseComponent {
         this.footer = document.createElement("footer");
         this.header.innerText = "Header";
         this.footer.innerHTML = `
-        <span class=".material-icons">home</span>
-        <span class=".material-icons">favorite</span>
-        <span class=".material-icons">settings</span>
+        <span class=".material-icons"><a href="#">home</a></span>
+        <span class=".material-icons"><a href="#">favorite</a></span>
+        <span class=".material-icons"><a href="#">settings</a></span>
         `;
         this.main.appendChild(this.header);
         this.main.appendChild(this.devices);
@@ -99,14 +99,18 @@ class HomeModel {
     constructor() {
         this.homeid = document.location.pathname;
         this.homeid = this.homeid.substr(1);
-        this.url = `${document.location.href}/devices/all`;
+        this.url = `${document.location.pathname}/devices/all`;
         console.log(this.homeid);
     }
     
     public async getData() {
         const response = await fetch(this.url);
         if (response.ok) {
-            this.data = await response.json();
+            try {
+                this.data = await response.json();
+            } catch(e) {
+                console.log(e);
+            }
         }
         this.data.forEach( (devInfo) => {
             this.places.add(devInfo["place"]);

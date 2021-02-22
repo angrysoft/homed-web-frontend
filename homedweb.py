@@ -68,6 +68,7 @@ async def home(request: Request) -> _TemplateResponse:
     homeid: str = request.path_params['homeid']
     if homeid == 'favicon.ico':
         return PlainTextResponse(homeid)
+    print(request.headers.get("accept-language"))
     return templates.TemplateResponse('home.html', {"request": request})
 
 

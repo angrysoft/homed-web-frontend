@@ -1,5 +1,5 @@
 export { Device };
-import { BaseComponent } from "./base.js";
+import { BaseComponent, ButtonSmall } from "./components.js";
 
 
 class Device {
@@ -15,8 +15,11 @@ class Device {
 
     private loadTraits() {
         this.model.traitsNames.forEach(trait => {
-            this.view.addTraitView(TraitsFactory.getTrait(trait));
-            console.log(trait);
+            let traitView = TraitsFactory.getTrait(trait);
+            if (traitView != undefined) {
+                this.view.addTraitView(traitView);
+                console.log(trait);
+            }
         });
     }
     
@@ -64,6 +67,12 @@ class DeviceView extends BaseComponent {
             grid-template-columns: 3fr 0.5fr 0.5fr;
         }`);
 
+        this.sheet.insertRule(`section {
+            display:grid;
+            gap: 1rem;
+            padding: 1rem;
+        }`);
+
     }
 
     public render() {
@@ -71,7 +80,7 @@ class DeviceView extends BaseComponent {
         this.root.appendChild(this.traits);
     }
 
-    public addTraitView(trait:HTMLElement) {
+    public addTraitView(trait:BaseComponent) {
         this.traits.appendChild(trait);
     }
     
@@ -119,12 +128,47 @@ class DeviceModel {
 }
 
 class TraitsFactory {
-    static getTrait(traitName:string) {
-        let tr = document.createElement("div");
-        tr.innerText = traitName;
-        return tr;
+    static getTrait(traitName:string): BaseComponent | undefined {
+        let ret: BaseComponent | undefined = undefined;
+
+        switch(traitName) {
+            case "OnOff": {
+                ret = new OnOffView();
+                break;
+            }
+
+            case "Rgb": {
+                ret = new OnOffView();
+                break;
+            }
+            default: {
+                console.log(traitName);
+                break;
+            }
+        }
+        return ret;
     }
     
 }
 
+class OnOffView extends BaseComponent {
+    private _status:string = "on";
+    private wrapper: HTMLElement;
+    private button: HTMLElement;
+
+    constructor() {
+        super()
+        this.sheet.insertRule(`div {
+            display: grid;
+            justify-content: center;
+        }`);
+        this.wrapper = document.createElement("div");
+        this.button = new ButtonSmall("on");
+        this.wrapper.appendChild(this.button);
+        this.root.appendChild(this.wrapper);
+    }
+
+}
+
 window.customElements.define('device-view', DeviceView);
+window.customElements.define('onoff-view', OnOffView);
