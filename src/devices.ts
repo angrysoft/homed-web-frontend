@@ -1,13 +1,12 @@
 export { Device };
 import { BaseComponent } from "./components.js";
-import { TraitsFactory } from "./traits.js";
+import { TraitsFactory, Trait } from "./traits.js";
 
 
 class Device {
     private model: DeviceModel;
     private view: DeviceView;
-    private updateableAttrs: string[] = []
-    
+
     constructor(deviceInfo:Object) {
         this.model = new DeviceModel(deviceInfo);
         this.view =  new DeviceView(this.model.sid, this.model.name, this.model.place);
@@ -20,17 +19,17 @@ class Device {
             let traitView = TraitsFactory.getTrait(trait);
             if (traitView != undefined) {
                 this.view.addTraitView(traitView);
-                console.log(trait);
+                this.model.registerTrait(traitView)
             }
         });
     }
 
-    private registerAttr(attrNameList: string[]) {
-        
-    }
 
     public updateStatus(status:Object) {
-
+        // {power: on}
+        for (let key in status) {
+            
+        }
     }
     
     public getView() {
@@ -56,8 +55,6 @@ class DeviceView extends BaseComponent {
         this.header.innerHTML = `
         <header>
             <div>${this.name}</div>
-            <div></div>
-            <div></div>
         </header>`
 
         this.sheet.insertRule(`:host {
@@ -74,7 +71,7 @@ class DeviceView extends BaseComponent {
         this.sheet.insertRule(`header {
             display:grid;
             gap: 0.1rem;
-            grid-template-columns: 3fr 0.5fr 0.5fr;
+            justify-content: center;
         }`);
 
         this.sheet.insertRule(`section {
@@ -115,6 +112,8 @@ class DeviceView extends BaseComponent {
 
 class DeviceModel {
     private info: Object;
+    private statuses: Object = {};
+
     constructor(deviceInfo:Object) {
         this.info = deviceInfo;
     }
@@ -134,6 +133,14 @@ class DeviceModel {
     get traitsNames(): string[] {
         return this.info["traits"] || [];
     }
+
+    public registerTrait(trait: Trait) {
+        for (let statusName of trait.constructor.observedAttributes) {
+            this.statuses[statusName] = trait;
+        }
+    }
+
+    
     
 }
 

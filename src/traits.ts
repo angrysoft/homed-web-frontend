@@ -1,5 +1,5 @@
 import { BaseComponent, ButtonSmall } from "./components.js";
-export { TraitsFactory };
+export { TraitsFactory, Trait };
 
 class TraitsFactory {
     static getTrait(traitName:string): BaseComponent | undefined {
@@ -11,10 +11,10 @@ class TraitsFactory {
                 break;
             }
 
-            case "Rgb": {
-                ret = new OnOffView();
-                break;
-            }
+            // case "Rgb": {
+            //     ret = new OnOffView();
+            //     break;
+            // }
             default: {
                 console.log(traitName);
                 break;
@@ -25,7 +25,24 @@ class TraitsFactory {
     
 }
 
-class OnOffView extends BaseComponent {
+class Trait extends BaseComponent {
+    // private statusList: Array<string> = [];
+
+    constructor() {
+        super();
+    }
+
+    // public getStatusList(): Array<string> {
+    //     return this.cons;
+    // }
+
+    static get observedAttributes() {
+        return [];
+    }
+ 
+}
+
+class OnOffView extends Trait {
     private wrapper: HTMLElement;
     private button: HTMLElement;
 
@@ -41,7 +58,7 @@ class OnOffView extends BaseComponent {
         this.root.appendChild(this.wrapper);
     }
     
-    // return attributes to update
+    
 }
 
 window.customElements.define('onoff-view', OnOffView);
