@@ -1,5 +1,5 @@
 import { BaseComponent, ButtonSmall } from "./components.js";
-export { TraitsFactory};
+export { TraitsFactory };
 
 class TraitsFactory {
     static getTrait(traitName:string): BaseComponent | undefined {

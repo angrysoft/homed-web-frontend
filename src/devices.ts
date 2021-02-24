@@ -1,5 +1,6 @@
 export { Device };
 import { BaseComponent } from "./components.js";
+import { TraitsFactory } from "./traits.js";
 
 
 class Device {
@@ -24,7 +25,11 @@ class Device {
         });
     }
 
-    private registerAttr() {
+    private registerAttr(attrNameList: string[]) {
+        
+    }
+
+    public updateStatus(status:Object) {
 
     }
     
