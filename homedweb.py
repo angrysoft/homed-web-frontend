@@ -61,7 +61,7 @@ def login_required(func):
 
 @app.route('/{homeid:str}')
 # @login_required
-async def devices(request) -> PlainTextResponse:
+async def devices(request) -> TemplateResponse:
     homeid: str = request.path_params['homeid']
     if homeid == 'favicon.ico':
         return PlainTextResponse(homeid)
