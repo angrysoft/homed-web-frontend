@@ -28,7 +28,7 @@ class Device {
     public updateStatus(status:Object) {
         // {power: on}
         for (let key in status) {
-            
+
         }
     }
     
@@ -135,7 +135,7 @@ class DeviceModel {
     }
 
     public registerTrait(trait: Trait) {
-        for (let statusName of trait.constructor.observedAttributes) {
+        for (let statusName of trait.getStatusList()) {
             this.statuses[statusName] = trait;
         }
     }
