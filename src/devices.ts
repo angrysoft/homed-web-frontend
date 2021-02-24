@@ -1,10 +1,11 @@
 export { Device };
-import { BaseComponent, ButtonSmall } from "./components.js";
+import { BaseComponent } from "./components.js";
 
 
 class Device {
     private model: DeviceModel;
     private view: DeviceView;
+    private updateableAttrs: string[] = []
     
     constructor(deviceInfo:Object) {
         this.model = new DeviceModel(deviceInfo);
@@ -21,6 +22,10 @@ class Device {
                 console.log(trait);
             }
         });
+    }
+
+    private registerAttr() {
+
     }
     
     public getView() {
@@ -127,48 +132,6 @@ class DeviceModel {
     
 }
 
-class TraitsFactory {
-    static getTrait(traitName:string): BaseComponent | undefined {
-        let ret: BaseComponent | undefined = undefined;
 
-        switch(traitName) {
-            case "OnOff": {
-                ret = new OnOffView();
-                break;
-            }
-
-            case "Rgb": {
-                ret = new OnOffView();
-                break;
-            }
-            default: {
-                console.log(traitName);
-                break;
-            }
-        }
-        return ret;
-    }
-    
-}
-
-class OnOffView extends BaseComponent {
-    private _status:string = "on";
-    private wrapper: HTMLElement;
-    private button: HTMLElement;
-
-    constructor() {
-        super()
-        this.sheet.insertRule(`div {
-            display: grid;
-            justify-content: center;
-        }`);
-        this.wrapper = document.createElement("div");
-        this.button = new ButtonSmall("on");
-        this.wrapper.appendChild(this.button);
-        this.root.appendChild(this.wrapper);
-    }
-
-}
 
 window.customElements.define('device-view', DeviceView);
-window.customElements.define('onoff-view', OnOffView);
