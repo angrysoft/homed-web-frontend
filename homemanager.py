@@ -140,6 +140,8 @@ class HomeManager:
                 actions.get(cmd, self._command_not_found)(event)
         except json.JSONDecodeError as err:
                 logger.error(f'json {err} : {msg}')
+        except AttributeError as err:
+                logger.error(f'AtrributeError {err} : {msg}')
     
     def update_device(self, event:Dict[str, Any]) -> None:
         self.db[event['sid']] = event.get('data', {})
