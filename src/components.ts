@@ -63,6 +63,8 @@ class Button extends BaseComponent {
 
         this.buttonElement = document.createElement("button");
         this.buttonName = document.createTextNode(name);
+        // this.buttonElement.innerText = name;
+        this.buttonName
         this.buttonElement.appendChild(this.buttonName);
         this.root.appendChild(this.buttonElement);
     }
@@ -84,6 +86,14 @@ class Button extends BaseComponent {
     private setColor(value:string) {
         let rule:CSSStyleRule = this.sheet.rules[0] as CSSStyleRule;
         rule.style.background = `var(--button-${value})`;
+    }
+
+    set name(value:string) {
+        this.buttonName.data = value;
+    }
+
+    get name() {
+        return this.buttonName.data;
     }
     
 }

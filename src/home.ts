@@ -5,6 +5,7 @@ import { BaseComponent } from "./components.js";
 class HomeApp {
     private model:HomeModel;
     private view:HomeView;
+    private ready:boolean = false;
     
     constructor() {
         this.model = new HomeModel();
@@ -14,11 +15,21 @@ class HomeApp {
     public async run() {
         await this.model.getData();
         this.model.getDevicesInfo().forEach(deviceInfo => {
-                let dev = new Device(deviceInfo);
-                this.view.addDevice(dev.getView());
-                this.model.addDevice(dev);
+            let dev = new Device(deviceInfo);
+            this.view.addDevice(dev.getView());
+            this.model.addDevice(dev);
+            
         });
+        // this.updateDeviceStatus({"sid": "0x000000000545b741", "data": {"power": "on"}});
         this.view.render();
+    }
+
+    public updateDeviceStatus(status:object) {
+        console.log(`updateDeviceStatus ${status}`);
+        if (status["sid"] in this.model.devices && "data" in status) {
+            this.model.devices[status["sid"]].updateStatus(status["data"]);
+        }
+
     }
 }
     
@@ -94,7 +105,7 @@ class HomeModel {
     private homeid:string;
     private url:string;
     private data:Object[] = [];
-    private deviceList: Device[] = [];
+    public devices: Object = {};
     
     constructor() {
         this.homeid = document.location.pathname;
@@ -130,7 +141,7 @@ class HomeModel {
     }
 
     public addDevice(dev: Device) {
-        this.deviceList.push(dev);
+        this.devices[dev.sid] = dev;
     }
 }
 
@@ -138,6 +149,6 @@ class HomeModel {
 window.onload = async () => {
     window.customElements.define('home-view', HomeView);
     let app = new HomeApp();
-    app.run()
+    app.run();
 
 };

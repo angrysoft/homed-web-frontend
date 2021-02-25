@@ -16,7 +16,7 @@ class TraitsFactory {
             //     break;
             // }
             default: {
-                console.log(traitName);
+                console.log(`unsupported trait: ${traitName}`);
                 break;
             }
         }
@@ -44,7 +44,7 @@ class Trait extends BaseComponent {
 
 class OnOffView extends Trait {
     private wrapper: HTMLElement;
-    private button: HTMLElement;
+    private button: ButtonSmall;
 
     constructor() {
         super();
@@ -67,6 +67,11 @@ class OnOffView extends Trait {
     public attributeChangedCallback(name:string, oldValue, newValue) {
         if (oldValue != newValue && name === "power") {
             this.button.setAttribute('color', newValue);
+            if (newValue === "on") {
+                this.button.name = "off";
+            } else {
+                this.button.name = "on";
+            }
         }
     }
 }

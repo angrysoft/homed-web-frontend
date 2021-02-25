@@ -11,6 +11,7 @@ class Device {
         this.model = new DeviceModel(deviceInfo);
         this.view =  new DeviceView(this.model.sid, this.model.name, this.model.place);
         this.loadTraits();
+        this.updateStatus(deviceInfo);
         this.view.render();
     }
 
@@ -19,7 +20,7 @@ class Device {
             let traitView = TraitsFactory.getTrait(trait);
             if (traitView != undefined) {
                 this.view.addTraitView(traitView);
-                this.model.registerTrait(traitView)
+                this.model.registerTraitStatus(traitView)
             }
         });
     }
@@ -28,12 +29,17 @@ class Device {
     public updateStatus(status:Object) {
         // {power: on}
         for (let key in status) {
-
+            console.log(`updateStatus ${key} ,${status[key]}`);
+            this.model.update(key, status[key]);
         }
     }
     
     public getView() {
         return this.view;
+    }
+
+    get sid() {
+        return this.model.sid;
     }
     
 }
@@ -134,13 +140,18 @@ class DeviceModel {
         return this.info["traits"] || [];
     }
 
-    public registerTrait(trait: Trait) {
+    public registerTraitStatus(trait: Trait) {
         for (let statusName of trait.getStatusList()) {
             this.statuses[statusName] = trait;
         }
     }
 
-    
+    public update(key:string, value:any) {
+        console.log(`update ${key}, ${value}`);
+        if (this.statuses[key] != undefined) {
+            this.statuses[key].setAttribute(key, value);
+        }
+    }
     
 }
 
