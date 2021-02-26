@@ -20,14 +20,18 @@ class Device {
             let traitView = TraitsFactory.getTrait(trait);
             if (traitView != undefined) {
                 this.view.addTraitView(traitView);
-                this.model.registerTraitStatus(traitView)
+                this.model.registerTraitStatus(traitView);
+                if (traitView.sendCommands) {
+                    traitView.addEventListener("send-command", (cmd:any) => {
+                        console.log(cmd.detail);
+                    });
+                }
             }
         });
     }
 
 
     public updateStatus(status:Object) {
-        // {power: on}
         for (let key in status) {
             console.log(`updateStatus ${key} ,${status[key]}`);
             this.model.update(key, status[key]);
@@ -73,16 +77,17 @@ class DeviceView extends BaseComponent {
             border-radius: 0.2rem;
             background: black;
         }`);
-
+        
         this.sheet.insertRule(`header {
             display:grid;
             gap: 0.1rem;
             justify-content: center;
         }`);
-
+        
         this.sheet.insertRule(`section {
             display:grid;
-            gap: 1rem;
+            justify-content: center;
+            gap: 0.5rem;
             padding: 1rem;
         }`);
 

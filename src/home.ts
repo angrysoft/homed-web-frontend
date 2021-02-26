@@ -20,7 +20,7 @@ class HomeApp {
             this.model.addDevice(dev);
             
         });
-        // this.updateDeviceStatus({"sid": "0x000000000545b741", "data": {"power": "on"}});
+        
         this.view.render();
     }
 
