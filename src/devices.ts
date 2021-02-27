@@ -21,13 +21,19 @@ class Device {
             if (traitView != undefined) {
                 this.view.addTraitView(traitView);
                 this.model.registerTraitStatus(traitView);
-                if (traitView.sendCommands) {
-                    traitView.addEventListener("send-command", (cmd:any) => {
-                        console.log(cmd.detail);
-                    });
-                }
+                this.commandHandler(traitView);
             }
         });
+    }
+    
+    public commandHandler(trait) {
+        if (trait.sendCommands) {
+            trait.addEventListener("send-command", (cmd:any) => {
+                let command:string = `execute.${this.model.sid}.${cmd.detail}`;
+                console.log(command);
+                fetch(`${document.location.pathname}/devices/send`, { method: 'POST', body: command});
+            });
+        }
     }
 
 

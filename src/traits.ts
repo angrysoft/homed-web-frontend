@@ -22,8 +22,8 @@ class TraitsFactory {
         }
         return ret;
     }
-    
 }
+
 
 class Trait extends BaseComponent {
     protected  _sendCommands:boolean = false;
@@ -37,7 +37,7 @@ class Trait extends BaseComponent {
         return this.statusList;
     }
 
-    public attributeChangedCallback(name:string, oldValue, newValue) {
+    public attributeChangedCallback(name:string, oldValue:string, newValue:string) {
          
     }
 
@@ -64,13 +64,14 @@ class OnOffView extends Trait {
             display: grid;
             justify-content: center;
         }`);
+
         this.wrapper = document.createElement("div");
         this.button = new ButtonSmall("on");
         this.wrapper.appendChild(this.button);
         this.root.appendChild(this.wrapper);
 
         this.button.addEventListener("click", (el) => {
-            this.dispatchEvent(new CustomEvent('send-command', { detail: `power.${this.getAttribute("power")}`}));
+            this.dispatchEvent(new CustomEvent('send-command', { detail: `power.${this.getAttribute("cmd")}`}));
         });
     }
     
@@ -78,13 +79,16 @@ class OnOffView extends Trait {
         return ['power'];
     }
     
-    public attributeChangedCallback(name:string, oldValue, newValue) {
+    public attributeChangedCallback(name:string, oldValue:string, newValue:string) {
         if (oldValue != newValue && name === "power") {
             this.button.setAttribute('color', newValue);
+            
             if (newValue === "on") {
                 this.button.name = "off";
+                this.setAttribute("cmd", "off");
             } else {
                 this.button.name = "on";
+                this.setAttribute("cmd", "on");
             }
         }
     }
