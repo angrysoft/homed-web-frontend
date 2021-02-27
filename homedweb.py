@@ -21,16 +21,17 @@ __copyright__ = 'Copyright 2019 Sebastian Zwierzchowski'
 __license__ = 'GPL2'
 __version__ = '0.1'
 
+import json
+import os
+import logging
 from starlette.applications import Starlette
+from starlette.routing import Route, Mount
 from starlette.requests import Request
 from starlette.staticfiles import StaticFiles
 from starlette.responses import JSONResponse, PlainTextResponse
 from starlette.templating import Jinja2Templates
-import logging
 from pycouchdb import Server
 import uvicorn
-import json
-import os
 from typing import Dict, Any, List
 
 conf_file = 'homedweb.json'
@@ -41,28 +42,23 @@ config ={}
 with open(conf_file) as jfile:
     config = json.load(jfile)
 
-db = Server(user=config['db']['user'], password=config['db']['password'])
-
-
+db: Server = Server(user=config['db']['user'], password=config['db']['password'])
 templates = Jinja2Templates(directory='templates')
 
-app = Starlette(debug=True)
-app.mount('/static', StaticFiles(directory='static'), name='static')
 
 logging.basicConfig(filename='gast.log', filemode='w', format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S')
 logging.warning('app starts')
 
 
-def login_required(func):
-    @wraps(func)
-    def decorated_function(*args, **kwargs):
-        if 'userid' not in session:
-            return redirect(url_for('login', next=request.url))
-        return func(*args, **kwargs)
-    return decorated_function
+# def login_required(func):
+#     @wraps(func)
+#     def decorated_function(*args, **kwargs):
+#         if 'userid' not in session:
+#             return redirect(url_for('login', next=request.url))
+#         return func(*args, **kwargs)
+#     return decorated_function
 
 
-@app.route('/{homeid:str}')
 # @login_required
 async def home(request: Request) -> _TemplateResponse:
     homeid: str = request.path_params['homeid']
@@ -72,28 +68,28 @@ async def home(request: Request) -> _TemplateResponse:
     return templates.TemplateResponse('home.html', {"request": request})
 
 
-@app.route('/{homeid:str}/devices')
-def get_devices(request: Request):
-    places: Dict[str, Any] = {}
-    # items_list = sorted([d for d in db[homeid]], key=operator.itemgetter('name'))
-    homeid:str = request.path_params['homeid']
-    for item in db[homeid].get_all_docs():
-        place: str = item.get('place', '')
-        if not place:
-            continue
-        if place not in places:
-            places[place] = list()
-        places[place].append(item.get_dict())
-    print(places)
-    return JSONResponse(places)
-
-@app.route('/{homeid:str}/devices/all')
-def get_all_devices(request: Request):
+async def get_all_devices(request: Request):
     ret: List[Dict[str,Any]] = []
     for item in db[request.path_params['homeid']].get_all_docs():
         ret.append(item.get_dict())
     
     return JSONResponse(ret)
+
+
+async def send_command(request: Request):
+    print(request)
+    return PlainTextResponse("ok")
+
+
+routes: List[Any] = [
+    Route('/{homeid:str}', home),
+    Route('/{homeid:str}/devices/all', get_all_devices),
+    Route('/{homeid:str}/devices/send', send_command, methods=['POST']),
+    Mount('/static', StaticFiles(directory='static'), name='static')
+]
+
+app = Starlette(routes=routes, debug=True)
+# app.mount('/static', StaticFiles(directory='static'), name='static')
 
 if __name__ == "__main__":
     uvicorn.run(app, host='127.0.0.1',debug=True, port=8000)
