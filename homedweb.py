@@ -15,9 +15,8 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 from __future__ import annotations
-from typing import Dict
 __author__ = 'Sebastian Zwierzchowski'
-__copyright__ = 'Copyright 2019 Sebastian Zwierzchowski'
+__copyright__ = 'Copyright 2019 - 2021 Sebastian Zwierzchowski'
 __license__ = 'GPL2'
 __version__ = '0.1'
 
@@ -28,9 +27,10 @@ from starlette.applications import Starlette
 from starlette.routing import Route, Mount
 from starlette.requests import Request
 from starlette.staticfiles import StaticFiles
-from starlette.responses import JSONResponse, PlainTextResponse
+from starlette.responses import JSONResponse, PlainTextResponse, Response
 from starlette.templating import Jinja2Templates
-from pycouchdb import Server
+from starlette.responses import Response
+from pycouchdb import Client
 import uvicorn
 from typing import Dict, Any, List
 
@@ -38,11 +38,11 @@ conf_file = 'homedweb.json'
 if not os.path.exists(conf_file):
     raise FileNotFoundError('can`find config file /etc/homerelay.json')
 
-config ={}
+config: Dict[str, Any] ={}
 with open(conf_file) as jfile:
     config = json.load(jfile)
 
-db: Server = Server(user=config['db']['user'], password=config['db']['password'])
+db:Client  = Client(f"http://{config['db']['user']}:{config['db']['password']}@localhost")
 templates = Jinja2Templates(directory='templates')
 
 
@@ -60,7 +60,7 @@ logging.warning('app starts')
 
 
 # @login_required
-async def home(request: Request) -> _TemplateResponse:
+async def home(request: Request) -> Response:
     homeid: str = request.path_params['homeid']
     if homeid == 'favicon.ico':
         return PlainTextResponse(homeid)
@@ -68,16 +68,16 @@ async def home(request: Request) -> _TemplateResponse:
     return templates.TemplateResponse('home.html', {"request": request})
 
 
-async def get_all_devices(request: Request):
+async def get_all_devices(request: Request) -> Response:
     ret: List[Dict[str,Any]] = []
     for item in db[request.path_params['homeid']].get_all_docs():
-        ret.append(item.get_dict())
+        ret.append(item)
     
     return JSONResponse(ret)
 
 
 async def send_command(request: Request):
-    print(request)
+    print(await request.body())
     return PlainTextResponse("ok")
 
 

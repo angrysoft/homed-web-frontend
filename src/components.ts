@@ -1,4 +1,4 @@
-export { BaseComponent, Button, ButtonSmall };
+export { BaseComponent, Button, ButtonSmall, ModalBox };
 
 class BaseComponent extends HTMLElement {
     protected sheet:CSSStyleSheet;
@@ -125,6 +125,8 @@ class ModalBox extends BaseComponent {
         this.sheet.insertRule(`:host {
             display:none;
             justify-content: center;
+            align-items: center;
+            grid-auto-columns: 1fr;
             position: fixed;
             z-index: 100;
             left: 0;
@@ -132,20 +134,20 @@ class ModalBox extends BaseComponent {
             width:100%;
             height: 100%;
             overflow: auto;
-            background-color: rgba(0,0,0,0.4);
+            background-color: rgba(35,35,35,0.9);
         }`);
 
-        this.sheet.insertRule(`@keyframes zoomIn {
-            from {
-              opacity: 0;
-              transform: scale3d(.3, .3, .3);
-            }
+        // this.sheet.insertRule(`@keyframes zoomIn {
+        //     from {
+        //       opacity: 0;
+        //       transform: scale3d(.3, .3, .3);
+        //     }
           
-            50% {
-              opacity: 1;
-            }
-          }
-        }`);
+        //     50% {
+        //       opacity: 1;
+        //     }
+        //   }
+        // }`);
 
         this.sheet.insertRule(`section {
             display: grid;
@@ -153,7 +155,7 @@ class ModalBox extends BaseComponent {
             grid-template-columns: auto;
             grid-template-rows: auto 1fr;
             align-content: center;
-            justify-content: center;
+            
             position : relative;
             z-index: 1;
             padding: 0.5rem;
@@ -172,7 +174,7 @@ class ModalBox extends BaseComponent {
 
         this.sheet.insertRule(`article {
             display: gird;
-            gap: 0.5rem;
+            gap: 0.6rem;
             padding 0.5rem;
 
         }`);
@@ -181,6 +183,7 @@ class ModalBox extends BaseComponent {
         this.content = document.createElement("section");
         this.header = document.createElement("header");
         this.close = document.createElement("span");
+        this.close.innerText = "<-";
         this.headerTitle = document.createTextNode("title");
         this.header.appendChild(this.close);
         this.header.appendChild(this.headerTitle);
@@ -188,12 +191,13 @@ class ModalBox extends BaseComponent {
         this.content.appendChild(this.header);
         this.content.appendChild(this.body);
         this.modal.appendChild(this.content);
-        
+        this.root.appendChild(this.modal);
     }
     
     public show() {
-        let rule:CSSStyleRule = this.sheet.rules[0] as CSSStyleRule;
-        rule.style.display = "block";
+        let rule:CSSStyleRule = this.sheet.rules[3] as CSSStyleRule;
+        console.log(this.sheet);
+        rule.style.display = "grid";
     }
   
     public hide() {
@@ -207,6 +211,10 @@ class ModalBox extends BaseComponent {
 
     get title() {
         return this.headerTitle.data;
+    }
+
+    public addBodyElement(el: BaseComponent) {
+        this.body.appendChild(el);
     }
   }
 

@@ -149,6 +149,6 @@ class HomeModel {
 window.onload = async () => {
     window.customElements.define('home-view', HomeView);
     let app = new HomeApp();
-    app.run();
+    await app.run();
 
 };

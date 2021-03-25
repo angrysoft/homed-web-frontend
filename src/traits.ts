@@ -28,6 +28,7 @@ class TraitsFactory {
 class Trait extends BaseComponent {
     protected  _sendCommands:boolean = false;
     protected statusList: Array<string> = [];
+    protected _showInMainView: boolean = false;
 
     constructor() {
         super();
@@ -44,6 +45,10 @@ class Trait extends BaseComponent {
     get sendCommands() {
         return this._sendCommands;
     }
+
+    get showInMainView():boolean {
+        return this._showInMainView;
+    }
  
 }
 
@@ -53,6 +58,7 @@ class OnOffView extends Trait {
 
     constructor() {
         super();
+        this._showInMainView = true;
         this.statusList = ['power'];
         this._sendCommands = true;
 

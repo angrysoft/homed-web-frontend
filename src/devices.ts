@@ -1,5 +1,5 @@
 export { Device };
-import { BaseComponent } from "./components.js";
+import { BaseComponent, ModalBox } from "./components.js";
 import { TraitsFactory, Trait } from "./traits.js";
 
 
@@ -37,10 +37,13 @@ class Device {
     }
 
 
-    public updateStatus(status:Object) {
+    public async updateStatus(status:Object) {
         for (let key in status) {
-            console.log(`updateStatus ${key} ,${status[key]}`);
-            this.model.update(key, status[key]);
+            if (key === '_id' || key === '_rev') {
+                continue;
+            }
+            // console.log(`updateStatus ${key} ,${status[key]}`);
+            await this.model.update(key, status[key]);
         }
     }
     
@@ -58,6 +61,7 @@ class Device {
 class DeviceView extends BaseComponent {
     private header:HTMLElement;
     private traits:HTMLElement;
+    private traitsView: ModalBox;
     
     constructor(id:string, name:string, place:string) {
         super();
@@ -66,12 +70,9 @@ class DeviceView extends BaseComponent {
         this.place = place;
 
         this.header = document.createElement("header");
+        this.header.innerText = this.name;
         this.traits = document.createElement("section");
-
-        this.header.innerHTML = `
-        <header>
-            <div>${this.name}</div>
-        </header>`
+        this.traitsView = new ModalBox();
 
         this.sheet.insertRule(`:host {
             display: grid;
@@ -97,15 +98,36 @@ class DeviceView extends BaseComponent {
             padding: 1rem;
         }`);
 
+        this.traits.addEventListener("click", (el) => {
+            let target = el.target as HTMLElement;
+            if (target.tagName === "SECTION") {
+                console.log('click', target.tagName);
+                this.traitsView.show();
+            }
+        });
+
+    }
+
+    public showTraitsView() {
+        this.traitsView.show();
+    }
+
+    public hideTraitsView() {
+        this.traitsView.hide();
     }
 
     public render() {
         this.root.appendChild(this.header);
         this.root.appendChild(this.traits);
+        this.root.appendChild(this.traitsView);
     }
 
-    public addTraitView(trait:BaseComponent) {
-        this.traits.appendChild(trait);
+    public addTraitView(trait:Trait) {
+        if (trait.showInMainView) {
+            this.traits.appendChild(trait);
+        } else {
+            this.traitsView.addBodyElement(trait)
+        }
     }
     
     get name():string {
@@ -157,10 +179,10 @@ class DeviceModel {
         }
     }
 
-    public update(key:string, value:any) {
-        console.log(`update ${key}, ${value}`);
+    public async update(key:string, value:any) {
+        console.log(`update from devices: ${key}, ${value}`);
         if (this.statuses[key] != undefined) {
-            this.statuses[key].setAttribute(key, value);
+            await this.statuses[key].setAttribute(key, value);
         }
     }
     
