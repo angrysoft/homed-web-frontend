@@ -112,12 +112,12 @@ class ButtonSmall extends Button {
 
 
 class ModalBox extends BaseComponent {
-    private modal:HTMLElement;
+    // private modal:HTMLElement;
     private content:HTMLElement;
     private header:HTMLElement;
     private close:HTMLElement;
     private body:HTMLElement;
-    private headerTitle: Text;
+    private headerTitle: HTMLElement;
     
     constructor() {
         super();
@@ -166,8 +166,8 @@ class ModalBox extends BaseComponent {
         }`);
 
         this.sheet.insertRule(`header {
-            display: gird;
-            gap: 0.5rem;
+            display: grid;
+            gap: 1rem;
             grid-template-columns: auto 1fr;
             padding 0.5rem;
         }`);
@@ -179,38 +179,39 @@ class ModalBox extends BaseComponent {
 
         }`);
 
-        this.modal = document.createElement("div");
         this.content = document.createElement("section");
         this.header = document.createElement("header");
-        this.close = document.createElement("span");
+
+        this.close = document.createElement("div");
         this.close.innerText = "<-";
-        this.headerTitle = document.createTextNode("title");
+        this.close.addEventListener('click', () => this.hide())
+        
+        this.headerTitle = document.createElement("div");
+        this.headerTitle.innerText = "Device Options"
         this.header.appendChild(this.close);
         this.header.appendChild(this.headerTitle);
         this.body = document.createElement("article");
         this.content.appendChild(this.header);
         this.content.appendChild(this.body);
-        this.modal.appendChild(this.content);
-        this.root.appendChild(this.modal);
+        this.root.appendChild(this.content);
     }
     
     public show() {
         let rule:CSSStyleRule = this.sheet.rules[3] as CSSStyleRule;
-        console.log(this.sheet);
         rule.style.display = "grid";
     }
   
     public hide() {
-        let rule:CSSStyleRule = this.sheet.rules[0] as CSSStyleRule;
+        let rule:CSSStyleRule = this.sheet.rules[3] as CSSStyleRule;
         rule.style.display = "none";
     }
 
     set title(value:string) {
-        this.headerTitle.data = value;
+        this.headerTitle.innerText = value;
     }
 
     get title() {
-        return this.headerTitle.data;
+        return this.headerTitle.innerText;
     }
 
     public addBodyElement(el: BaseComponent) {
