@@ -1,4 +1,10 @@
-export { BaseComponent, Button, ButtonSmall, ModalBox };
+export {
+    BaseComponent,
+    Button,
+    ButtonSmall,
+    ModalBox,
+    RangeSet
+};
 
 class BaseComponent extends HTMLElement {
     protected sheet:CSSStyleSheet;
@@ -173,8 +179,8 @@ class ModalBox extends BaseComponent {
         }`);
 
         this.sheet.insertRule(`article {
-            display: gird;
-            gap: 0.6rem;
+            display: grid;
+            gap: 1rem;
             padding 0.5rem;
 
         }`);
@@ -184,6 +190,7 @@ class ModalBox extends BaseComponent {
 
         this.close = document.createElement("div");
         this.close.innerText = "<-";
+        this.close.style.cursor = 'pointer';
         this.close.addEventListener('click', () => this.hide())
         
         this.headerTitle = document.createElement("div");
@@ -223,12 +230,106 @@ class ModalBox extends BaseComponent {
 
   }
 
-  class ColorPicker extends BaseComponent{ }
-
   class RangeSet extends BaseComponent {
-      constructor() {
+      private input: HTMLInputElement;
+      private label: HTMLLabelElement;
+
+      constructor(name:string = "Range") {
           super();
+          this.sheet.insertRule(`input[type=range] {
+            -webkit-appearance: none;
+            margin: 18px 0;
+            width: 100%;
+          }`);
+
+          this.sheet.insertRule(`input[type=range]:focus {
+            outline: none;
+          }`);
+
+          try {
+            this.sheet.insertRule(`input[type=range]::-webkit-slider-runnable-track {
+                width: 100%;
+                height: 8.4px;
+                cursor: pointer;
+                box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+                background: var(--widget-color);
+                border-radius: 1.3px;
+                border: 0.2px solid #010101;
+            }`);
+            this.sheet.insertRule(`input[type=range]::-webkit-slider-thumb {
+                box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+                border: 1px solid #000000;
+                height: 2rem;
+                width: 2rem;
+                border-radius: 3px;
+                background: #ffffff;
+                cursor: pointer;
+                -webkit-appearance: none;
+                margin-top: -14px;
+            }`);
+            this.sheet.insertRule(`input[type=range]:focus::-webkit-slider-runnable-track {
+                background: var(--widget-color);
+            }`);
+          } catch (e) {
+              console.log(e);
+          }
+
+        try {
+            this.sheet.insertRule(`input[type=range]::-moz-range-track {
+                width: 100%;
+                height: 8.4px;
+                cursor: pointer;
+                box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+                background: var(--widget-color);
+                border-radius: 1.3px;
+                border: 0.2px solid #010101;
+            }`);
+            this.sheet.insertRule(`input[type=range]::-moz-range-thumb {
+                box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+                border: 1px solid #000000;
+                height: 2rem;
+                width: 2rem;
+                border-radius: 3px;
+                background: #ffffff;
+                cursor: pointer;
+            }`);
+
+            
+        } catch (e) {
+            console.log(e);
+        }
+        
+        this.sheet.insertRule(`label {
+            color: var(--widget-color);
+            text-align: center;
+        }`);
+
+        this.sheet.insertRule(`:host {
+            display:grid;
+            gap: 1rem;
+            grid-template-columns: 1fr;
+            justify-content: center;
+        }`);
+
+          this.label = document.createElement("label");
+          this.label.innerText = name;
+          this.input = document.createElement("input");
+          this.input.type = "range";
+          this.input.step = "1";
+          this.input.min = "1";
+          this.input.max = "100";
+          this.root.appendChild(this.label);
+          this.root.appendChild(this.input);
       }
+
+      public set value(value:string) {
+          this.input.value = value;
+      }
+
+      public get value(): string {
+          return this.input.value;
+      }
+
   }
 
 
@@ -236,4 +337,5 @@ window.customElements.define('button-normal', Button);
 window.customElements.define('button-small', ButtonSmall);
 window.customElements.define('modal-box', ModalBox);
 window.customElements.define('icon-view', IconView);
+window.customElements.define('input-range', RangeSet);
 

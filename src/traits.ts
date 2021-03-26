@@ -1,4 +1,4 @@
-import { BaseComponent, ButtonSmall } from "./components.js";
+import { BaseComponent, ButtonSmall, RangeSet } from "./components.js";
 export { TraitsFactory, Trait };
 
 class TraitsFactory {
@@ -15,6 +15,13 @@ class TraitsFactory {
                 ret = new RgbView();
                 break;
             }
+            
+
+            case "Dimmer": {
+                ret = new DimmerView();
+                break;
+            }
+
             default: {
                 console.log(`unsupported trait: ${traitName}`);
                 break;
@@ -101,35 +108,78 @@ class OnOffView extends Trait {
 }
 
 class RgbView extends Trait {
-    private template = document.createElement("template");
-    
-    private wrapper: HTMLElement;
-    private button: ButtonSmall;
+    private inputColor: HTMLInputElement;
+    public label: HTMLLabelElement;
     
     constructor() {
         super();
         this.statusList = ['rgb'];
-        
-        // this.sheet.insertRule(`:host {
-        //     grid-area: rgb;
-        // }`);
 
-        this.sheet.insertRule(`div {
+        this.sheet.insertRule(`input[type=color] {
+            width:100%;
+            min-height: 4rem;
+        }`);
+        
+        this.sheet.insertRule(`:host {
             display: grid;
+            grid-template-columns: 0.8fr;
+            gap: 1rem;
             justify-content: center;
         }`);
 
-        this.wrapper = document.createElement("div");
-        this.button = new ButtonSmall("Color");
-        this.wrapper.appendChild(this.button);
-        this.root.appendChild(this.wrapper);
+        this.label = document.createElement("label");
+        this.label.innerText = "Color";
+        this.inputColor = document.createElement("input");
+        this.inputColor.type = "color";
+        this.root.appendChild(this.label);
+        this.root.appendChild(this.inputColor);
     }
 
     static get observedAttributes() {
         return ['rgb'];
+    }
+
+    public attributeChangedCallback(name:string, oldValue:string, newValue:string) {
+        if (oldValue != newValue && name === "rgb") {
+            let rgb = parseInt(newValue);
+            let b =  rgb & 255;
+            let g = (rgb >> 8) & 255;
+            let r =   (rgb >> 16) & 255;
+            this.inputColor.value = `#${r.toString(16).padStart(2,'0')}${g.toString(16).padStart(2,'0')}${b.toString(16).padStart(2,'0')}`;
+        }
+    }
+}
+
+class DimmerView extends Trait {
+    private inputBright: RangeSet;
+    
+    constructor() {
+        super();
+        this.statusList = ['bright'];
+        
+        this.sheet.insertRule(`:host {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+            justify-content: center;
+        }`);
+
+        this.inputBright = new RangeSet("Bright");
+        this.root.appendChild(this.inputBright);
+    }
+
+    static get observedAttributes() {
+        return ['bright'];
+    }
+
+    public attributeChangedCallback(name:string, oldValue:string, newValue:string) {
+        if (oldValue != newValue && name === "bright") {
+            this.inputBright.value = newValue;
+        }
     }
 }
 
 
 window.customElements.define('onoff-view', OnOffView);
 window.customElements.define('rgb-view', RgbView);
+window.customElements.define('dimmer-view', DimmerView);

@@ -180,7 +180,7 @@ class DeviceModel {
     }
 
     public async update(key:string, value:any) {
-        console.log(`update from devices: ${key}, ${value}`);
+        console.log(`update from device ${this.sid}: ${key}, ${value}`);
         if (this.statuses[key] != undefined) {
             await this.statuses[key].setAttribute(key, value);
         }
