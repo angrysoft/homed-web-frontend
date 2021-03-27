@@ -133,21 +133,38 @@ class RgbView extends Trait {
         this.inputColor.type = "color";
         this.root.appendChild(this.label);
         this.root.appendChild(this.inputColor);
+
+        this.inputColor.addEventListener("change", (el) => {
+            this.setAttribute('rgb', this.hexToRgbInt(this.inputColor.value));
+            this.dispatchEvent(new CustomEvent('send-command', { detail: `rgb.${this.getAttribute("rgb")}`}));
+        });
     }
 
     static get observedAttributes() {
         return ['rgb'];
     }
+    
+    private rgbIntToHex(rgb:string): string {
+        let rgbInt = parseInt(rgb);
+        let b =  rgbInt & 255;
+        let g = (rgbInt >> 8) & 255;
+        let r =   (rgbInt >> 16) & 255;
+        console.log(r,g,b,`#${r.toString(16).padStart(2,'0')}${g.toString(16).padStart(2,'0')}${b.toString(16).padStart(2,'0')}`);
+        return `#${r.toString(16).padStart(2,'0')}${g.toString(16).padStart(2,'0')}${b.toString(16).padStart(2,'0')}`;
+        
+    }
+
+    private hexToRgbInt(hexColor:string) {
+        
+    }
 
     public attributeChangedCallback(name:string, oldValue:string, newValue:string) {
         if (oldValue != newValue && name === "rgb") {
-            let rgb = parseInt(newValue);
-            let b =  rgb & 255;
-            let g = (rgb >> 8) & 255;
-            let r =   (rgb >> 16) & 255;
-            this.inputColor.value = `#${r.toString(16).padStart(2,'0')}${g.toString(16).padStart(2,'0')}${b.toString(16).padStart(2,'0')}`;
+            this.inputColor.value = this.rgbIntToHex(newValue);
         }
     }
+
+    
 }
 
 class DimmerView extends Trait {
