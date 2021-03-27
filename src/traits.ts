@@ -11,14 +11,23 @@ class TraitsFactory {
                 break;
             }
 
+            case "MultiSwitch": {
+                ret = new MultiSwitchView();
+                break;
+            }
+
             case "Rgb": {
                 ret = new RgbView();
                 break;
             }
             
-
             case "Dimmer": {
                 ret = new DimmerView();
+                break;
+            }
+
+            case "ColorTemperature": {
+                ret = new ColorTemperatureView();
                 break;
             }
 
@@ -60,28 +69,22 @@ class Trait extends BaseComponent {
 }
 
 class OnOffView extends Trait {
-    private wrapper: HTMLElement;
     private button: ButtonSmall;
+    static attr: Array<string> = ['power'];
 
     constructor() {
         super();
         this._showInMainView = true;
-        this.statusList = ['power'];
+        this.statusList = OnOffView.attr;
         this._sendCommands = true;
-
-        // this.sheet.insertRule(`:host {
-        //     grid-area: onoff;
-        // }`);
         
-        this.sheet.insertRule(`div {
+        this.sheet.insertRule(`:host {
             display: grid;
             justify-content: center;
         }`);
 
-        this.wrapper = document.createElement("div");
         this.button = new ButtonSmall("on");
-        this.wrapper.appendChild(this.button);
-        this.root.appendChild(this.wrapper);
+        this.root.appendChild(this.button);
 
         this.button.addEventListener("click", (el) => {
             this.dispatchEvent(new CustomEvent('send-command', { detail: `power.${this.getAttribute("cmd")}`}));
@@ -89,7 +92,7 @@ class OnOffView extends Trait {
     }
     
     static get observedAttributes() {
-        return ['power'];
+        return OnOffView.attr;
     }
     
     public attributeChangedCallback(name:string, oldValue:string, newValue:string) {
@@ -107,12 +110,57 @@ class OnOffView extends Trait {
     }
 }
 
+class MultiSwitchView extends Trait {
+    // private switches: Array<ButtonSmall>;
+    static attr: Array<string> = ['switches'];
+
+    constructor() {
+        super();
+        this._showInMainView = true;
+        this.statusList = MultiSwitchView.attr;
+        this._sendCommands = true;
+        
+        this.sheet.insertRule(`:host {
+            display: grid;
+            justify-content: center;
+        }`);
+
+        // this.button = new ButtonSmall("on");
+        // this.root.appendChild(this.wrapper);
+
+        // this.button.addEventListener("click", (el) => {
+        //     this.dispatchEvent(new CustomEvent('send-command', { detail: `power.${this.getAttribute("cmd")}`}));
+        // });
+    }
+    
+    static get observedAttributes() {
+        return MultiSwitchView.attr;
+    }
+    
+    public attributeChangedCallback(name:string, oldValue:string, newValue:string) {
+        if (oldValue != newValue && name === "switches") {
+            console.log('attr switech', newValue);
+            // this.button.setAttribute('color', newValue);
+            
+            // if (newValue === "on") {
+            //     this.button.name = "off";
+            //     this.setAttribute("cmd", "off");
+            // } else {
+            //     this.button.name = "on";
+            //     this.setAttribute("cmd", "on");
+            // }
+        }
+    }
+}
+
 class RgbView extends Trait {
     private inputColor: HTMLInputElement;
     public label: HTMLLabelElement;
     
+    
     constructor() {
         super();
+        this._sendCommands = true;
         this.statusList = ['rgb'];
 
         this.sheet.insertRule(`input[type=color] {
@@ -136,7 +184,7 @@ class RgbView extends Trait {
 
         this.inputColor.addEventListener("change", (el) => {
             this.setAttribute('rgb', this.hexToRgbInt(this.inputColor.value));
-            this.dispatchEvent(new CustomEvent('send-command', { detail: `rgb.${this.getAttribute("rgb")}`}));
+            this.dispatchEvent(new CustomEvent('send-command', { detail: `set_color.${this.getAttribute("rgb")}`}));
         });
     }
 
@@ -154,8 +202,8 @@ class RgbView extends Trait {
         
     }
 
-    private hexToRgbInt(hexColor:string) {
-        
+    private hexToRgbInt(hexColor:string): string {
+        return parseInt(hexColor.substr(1), 16).toString();
     }
 
     public attributeChangedCallback(name:string, oldValue:string, newValue:string) {
@@ -163,8 +211,7 @@ class RgbView extends Trait {
             this.inputColor.value = this.rgbIntToHex(newValue);
         }
     }
-
-    
+ 
 }
 
 class DimmerView extends Trait {
@@ -172,6 +219,7 @@ class DimmerView extends Trait {
     
     constructor() {
         super();
+        this._sendCommands = true;
         this.statusList = ['bright'];
         
         this.sheet.insertRule(`:host {
@@ -181,8 +229,14 @@ class DimmerView extends Trait {
             justify-content: center;
         }`);
 
-        this.inputBright = new RangeSet("Bright");
+        this.inputBright = new RangeSet("Bright", "linear-gradient(to right, black, white)");
         this.root.appendChild(this.inputBright);
+
+        this.inputBright.addEventListener('change', () => {
+            console.log('event re-emited');
+            this.setAttribute('bright', this.inputBright.value);
+            this.dispatchEvent(new CustomEvent('send-command', { detail: `set_bright.${this.inputBright.value}`}));
+        });
     }
 
     static get observedAttributes() {
@@ -191,12 +245,62 @@ class DimmerView extends Trait {
 
     public attributeChangedCallback(name:string, oldValue:string, newValue:string) {
         if (oldValue != newValue && name === "bright") {
-            this.inputBright.value = newValue;
+            let intValue = parseInt(newValue);
+          if (intValue <= 100 && intValue >= 1) {
+              this.inputBright.value = newValue;
+          } else {
+              this.setAttribute('bright', oldValue);
+          }
+        }
+    }
+}
+
+class ColorTemperatureView extends Trait {
+    private inputCT: RangeSet;
+    
+    constructor() {
+        super();
+        this._sendCommands = true;
+        this.statusList = ['ct_pc'];
+        
+        this.sheet.insertRule(`:host {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+            justify-content: center;
+        }`);
+
+        this.inputCT = new RangeSet("Color Temperature", "linear-gradient(to right, orange, yellow, white)");
+        this.root.appendChild(this.inputCT);
+
+        this.inputCT.addEventListener('change', () => {
+            console.log('event re-emited');
+            this.setAttribute('ct_pc', this.inputCT.value);
+            this.dispatchEvent(new CustomEvent('send-command', { detail: `set_ct_pc.${this.inputCT.value}`}));
+        });
+    }
+
+    static get observedAttributes() {
+        return ['ct_pc'];
+    }
+
+    public attributeChangedCallback(name:string, oldValue:string, newValue:string) {
+        if (oldValue != newValue && name === "ct_pc") {
+            console.log(`ct_pc set att ${oldValue} => ${newValue} for ${name}`)
+            let intValue = parseInt(newValue);
+          if (intValue <= 100 && intValue >= 1) {
+              this.inputCT.value = newValue;
+          } else {
+              // wtf check pyiot for empty ct_pc
+              this.setAttribute('ct_pc', oldValue || "50");
+          }
         }
     }
 }
 
 
 window.customElements.define('onoff-view', OnOffView);
+window.customElements.define('multiswitch-view', MultiSwitchView);
 window.customElements.define('rgb-view', RgbView);
 window.customElements.define('dimmer-view', DimmerView);
+window.customElements.define('ct-view', ColorTemperatureView);

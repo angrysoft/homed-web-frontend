@@ -233,9 +233,11 @@ class ModalBox extends BaseComponent {
   class RangeSet extends BaseComponent {
       private input: HTMLInputElement;
       private label: HTMLLabelElement;
+      private sliderColor: string;
 
-      constructor(name:string = "Range") {
+      constructor(name:string = "Range", sliderColor:string = "var(--widget-color)") {
           super();
+          this.sliderColor = sliderColor;
           this.sheet.insertRule(`input[type=range] {
             -webkit-appearance: none;
             margin: 18px 0;
@@ -252,7 +254,7 @@ class ModalBox extends BaseComponent {
                 height: 8.4px;
                 cursor: pointer;
                 box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
-                background: var(--widget-color);
+                background: ${this.sliderColor};
                 border-radius: 1.3px;
                 border: 0.2px solid #010101;
             }`);
@@ -267,8 +269,9 @@ class ModalBox extends BaseComponent {
                 -webkit-appearance: none;
                 margin-top: -14px;
             }`);
+
             this.sheet.insertRule(`input[type=range]:focus::-webkit-slider-runnable-track {
-                background: var(--widget-color);
+                background: ${this.sliderColor};
             }`);
           } catch (e) {
               console.log(e);
@@ -280,10 +283,11 @@ class ModalBox extends BaseComponent {
                 height: 8.4px;
                 cursor: pointer;
                 box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
-                background: var(--widget-color);
+                background: ${this.sliderColor};
                 border-radius: 1.3px;
                 border: 0.2px solid #010101;
             }`);
+
             this.sheet.insertRule(`input[type=range]::-moz-range-thumb {
                 box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
                 border: 1px solid #000000;
@@ -300,7 +304,7 @@ class ModalBox extends BaseComponent {
         }
         
         this.sheet.insertRule(`label {
-            color: var(--widget-color);
+            color: white;
             text-align: center;
         }`);
 
@@ -320,10 +324,13 @@ class ModalBox extends BaseComponent {
           this.input.max = "100";
           this.root.appendChild(this.label);
           this.root.appendChild(this.input);
+          this.input.addEventListener('change', () => {
+              this.dispatchEvent(new Event('change'));
+            });
       }
 
       public set value(value:string) {
-          this.input.value = value;
+            this.input.value = value;
       }
 
       public get value(): string {
