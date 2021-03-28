@@ -42,7 +42,6 @@ class Device {
             if (key === '_id' || key === '_rev') {
                 continue;
             }
-            // console.log(`updateStatus ${key} ,${status[key]}`);
             await this.model.update(key, status[key]);
         }
     }
@@ -101,7 +100,6 @@ class DeviceView extends BaseComponent {
         this.traits.addEventListener("click", (el) => {
             let target = el.target as HTMLElement;
             if (target.tagName === "SECTION") {
-                console.log('click', target.tagName);
                 this.traitsView.show();
             }
         });
@@ -150,7 +148,7 @@ class DeviceView extends BaseComponent {
 
 
 class DeviceModel {
-    private info: Object;
+    public info: Object;
     private statuses: Object = {};
 
     constructor(deviceInfo:Object) {
@@ -174,13 +172,13 @@ class DeviceModel {
     }
 
     public registerTraitStatus(trait: Trait) {
-        for (let statusName of trait.getStatusList()) {
+        for (let statusName of trait.getStatusList(this.info)) {
             this.statuses[statusName] = trait;
         }
     }
 
     public async update(key:string, value:any) {
-        console.log(`update from device ${this.sid}: ${key}, ${value}`);
+        // console.log(`update from device ${this.sid}: ${key}, ${value}`);
         if (this.statuses[key] != undefined) {
             await this.statuses[key].setAttribute(key, value);
         }
