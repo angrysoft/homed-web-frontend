@@ -57,6 +57,8 @@ class MainWatcher:
                                                                   
         else:
             self.db_connection:pycouchdb.Client = pycouchdb.Client("http://localhost")
+            
+        print(f'main watcher, {self.db_connection}')
 
     def connect(self):
         while not self.connected and self.retry:
@@ -86,11 +88,9 @@ class MainWatcher:
                 homeid:str = event.get('homeid', '')
                 if homeid not in self.db_connection:
                     self.db_connection.create(homeid)
-                
-                self.homes[homeid] = HomeManager(self.connection, homeid, self.db_connection.db(homeid))
+                self.homes[homeid] = HomeManager(self.connection, homeid, self.db_connection.get_db(homeid))
             else:
                 print(event)
-                
         except json.JSONDecodeError as err:
                 logger.error(f'json {err} : {msg}')
     
@@ -119,6 +119,7 @@ class HomeManager:
         self.homeid = homeid
         self.db:pychoudb.db.Databse = db
         self.add_queues()
+        print('homemanager started')
     
     def add_queues(self):
         self.channel.queue_declare(self.homeid)
