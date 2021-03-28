@@ -52,12 +52,11 @@ class MainWatcher:
         self.homes:Dict[str, HomeManager] = {}
         
         if 'couchdb' in self.config:
-            self.db_connection:pycouchdb.Server = pycouchdb.Server(url=self.config['couchdb']['url'],
-                                                                   port=self.config['couchdb']['port'],
-                                                                   user=self.config['couchdb']['user'],
-                                                                   password=self.config['couchdb']['password'])
+            self.db_connection:pycouchdb.Client = pycouchdb.Client(
+                f"http://{self.config['couchdb']['user']}:{self.config['couchdb']['password']}@{self.config['couchdb']['url']}:{self.config['couchdb']['port']}")
+                                                                  
         else:
-            self.db_connection = pycouchdb.Server()
+            self.db_connection:pycouchdb.Client = pycouchdb.Client("http://localhost")
 
     def connect(self):
         while not self.connected and self.retry:
