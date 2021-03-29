@@ -72,6 +72,13 @@ class HomeView extends BaseComponent {
             overflow-y: auto;
             padding: 1rem;
         }`);
+        // this.sheet.insertRule(`section {
+        //     display: flex;
+        //     flex-flow: row wrap;
+        //     gap: 1rem;
+        //     overflow-y: auto;
+        //     padding: 1rem;
+        // }`);
         
         this.sheet.insertRule(`header {
             padding: 1rem;

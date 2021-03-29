@@ -31,6 +31,26 @@ class TraitsFactory {
                 break;
             }
 
+            case "TemperatureStatus": {
+                ret = new TemperatureStatusView();
+                break;
+            }
+
+            case "PressureStatus": {
+                ret = new PressureStatusView();
+                break;
+            }
+
+            case "HumidityStatus": {
+                ret = new HumidityStatusView();
+                break;
+            }
+
+            case "OpenClose": {
+                ret = new OpenCloseView();
+                break;
+            }
+
             default: {
                 console.log(`unsupported trait: ${traitName}`);
                 break;
@@ -314,8 +334,180 @@ class ColorTemperatureView extends Trait {
 }
 
 
+class TemperatureStatusView extends Trait {
+    private label: HTMLLabelElement;
+    private temp: HTMLElement;
+    static attr: Array<string> = ['temperature'];
+
+    constructor() {
+        super();
+        this._showInMainView = true;
+        this.statusList = TemperatureStatusView.attr;
+       
+        this.sheet.insertRule(`:host {
+            display: grid;
+            gap: 1rem;
+            grid-template-columns: 1fr 2fr;
+            justify-content: center;
+        }`);
+
+        this.sheet.insertRule(`label {
+            color: var(--widget-color);
+            font-weight: 600;
+        }`);
+
+        this.label = document.createElement("label");
+        this.label.innerText = "Temp:";
+        this.temp = document.createElement("span");
+        this.root.appendChild(this.label);
+        this.root.appendChild(this.temp);
+
+    }
+    
+    static get observedAttributes() {
+        return TemperatureStatusView.attr;
+    }
+    
+    public attributeChangedCallback(name:string, oldValue:string, newValue:string) {
+        console.log(name ,oldValue, newValue);
+        if (oldValue != newValue && name === "temperature") {
+            this.temp.innerText = `${newValue} C`;
+        }
+    }
+}
+
+class PressureStatusView extends Trait {
+    private label: HTMLLabelElement;
+    private temp: HTMLElement;
+    static attr: Array<string> = ['pressure'];
+
+    constructor() {
+        super();
+        this._showInMainView = true;
+        this.statusList = PressureStatusView.attr;
+       
+        this.sheet.insertRule(`:host {
+            display: grid;
+            gap: 1rem;
+            grid-template-columns: 1fr 2fr;
+            justify-content: center;
+        }`);
+
+        this.sheet.insertRule(`label {
+            color: var(--widget-color);
+            font-weight: 600;
+        }`);
+
+        this.label = document.createElement("label");
+        this.label.innerText = "Pressure:";
+        this.temp = document.createElement("span");
+        this.root.appendChild(this.label);
+        this.root.appendChild(this.temp);
+
+    }
+    
+    static get observedAttributes() {
+        return PressureStatusView.attr;
+    }
+    
+    public attributeChangedCallback(name:string, oldValue:string, newValue:string) {
+        console.log(name ,oldValue, newValue);
+        if (oldValue != newValue && name === "pressure") {
+            this.temp.innerText = `${newValue} KPa`;
+        }
+    }
+}
+
+class HumidityStatusView extends Trait {
+    private label: HTMLLabelElement;
+    private humidity: HTMLElement;
+    static attr: Array<string> = ['humidity'];
+
+    constructor() {
+        super();
+        this._showInMainView = true;
+        this.statusList = HumidityStatusView.attr;
+       
+        this.sheet.insertRule(`:host {
+            display: grid;
+            gap: 1rem;
+            grid-template-columns: 1fr 2fr;
+            justify-content: center;
+        }`);
+
+        this.sheet.insertRule(`label {
+            color: var(--widget-color);
+            font-weight: 600;
+        }`);
+
+        this.label = document.createElement("label");
+        this.label.innerText = "Humidity:";
+        this.humidity = document.createElement("span");
+        this.root.appendChild(this.label);
+        this.root.appendChild(this.humidity);
+
+    }
+    
+    static get observedAttributes() {
+        return HumidityStatusView.attr;
+    }
+    
+    public attributeChangedCallback(name:string, oldValue:string, newValue:string) {
+        console.log(name ,oldValue, newValue);
+        if (oldValue != newValue && name === "humidity") {
+            this.humidity.innerText = `${newValue} %`;
+        }
+    }
+}
+class OpenCloseView extends Trait {
+    private label: HTMLLabelElement;
+    private status: HTMLElement;
+    static attr: Array<string> = ['status'];
+
+    constructor() {
+        super();
+        this._showInMainView = true;
+        this.statusList = OpenCloseView.attr;
+       
+        this.sheet.insertRule(`:host {
+            display: grid;
+            gap: 1rem;
+            grid-template-columns: 1fr 2fr;
+            justify-content: center;
+        }`);
+
+        this.sheet.insertRule(`label {
+            color: var(--widget-color);
+            font-weight: 600;
+        }`);
+
+        this.label = document.createElement("label");
+        this.label.innerText = "Status:";
+        this.status = document.createElement("span");
+        this.root.appendChild(this.label);
+        this.root.appendChild(this.status);
+
+    }
+    
+    static get observedAttributes() {
+        return OpenCloseView.attr;
+    }
+    
+    public attributeChangedCallback(name:string, oldValue:string, newValue:string) {
+        console.log(name ,oldValue, newValue);
+        if (oldValue != newValue && name === "status") {
+            this.status.innerText = newValue;
+        }
+    }
+}
+
+
 window.customElements.define('onoff-view', OnOffView);
 window.customElements.define('doubleswitch-view', DoubleSwitchView);
 window.customElements.define('rgb-view', RgbView);
 window.customElements.define('dimmer-view', DimmerView);
 window.customElements.define('ct-view', ColorTemperatureView);
+window.customElements.define('temp-view', TemperatureStatusView);
+window.customElements.define('pressure-view', PressureStatusView);
+window.customElements.define('humidity-view', HumidityStatusView);
+window.customElements.define('openclose-view', OpenCloseView);
