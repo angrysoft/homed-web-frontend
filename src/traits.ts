@@ -134,7 +134,7 @@ class DoubleSwitchView extends Trait {
         });
 
         this.buttonTwo = new ButtonSmall("on");
-        this.buttonOne.addEventListener("click", (el) => {
+        this.buttonTwo.addEventListener("click", (el) => {
             this.dispatchEvent(new CustomEvent('send-command', { detail: `two.${this.getAttribute("cmd-two")}`}));
         });
         this.root.appendChild(this.buttonOne);
