@@ -79,7 +79,6 @@ class Button extends BaseComponent {
     }
 
     public attributeChangedCallback(name:string, oldValue:string, newValue:string) {
-        console.log(`${name}'s value has been changed from ${oldValue} to ${newValue}`);
         switch(name) {
             case "color":
                 this.setColor(newValue);
@@ -182,7 +181,15 @@ class ModalBox extends BaseComponent {
             display: grid;
             gap: 1rem;
             padding 0.5rem;
-
+            grid-template-areas: 
+            "color color color"
+            "colorTemp colorTemp colorTemp"
+            "bright bright bright"
+            ". arrows ."
+            "return arrows exit"
+            "mediaBtn mediaBtn mediaBtn"
+            "volume volume volume"
+            "channel channel channel";
         }`);
 
         this.content = document.createElement("section");

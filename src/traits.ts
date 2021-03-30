@@ -1,4 +1,4 @@
-import { BaseComponent, ButtonSmall, RangeSet } from "./components.js";
+import { BaseComponent, ButtonSmall, Button, RangeSet } from "./components.js";
 export { TraitsFactory, Trait };
 
 class TraitsFactory {
@@ -53,6 +53,41 @@ class TraitsFactory {
 
             case "MotionStatus": {
                 ret = new MotionStatusView();
+                break;
+            }
+
+            case "IlluminanceStatus": {
+                ret = new IlluminanceStatusView();
+                break;
+            }
+
+            case "Arrows": {
+                ret = new ArrowsView();
+                break;
+            }
+
+            case "ButtonReturn": {
+                ret = new ButtonReturnView();
+                break;
+            }
+
+            case "ButtonExit": {
+                ret = new ButtonExitView();
+                break;
+            }
+
+            case "MediaButtons": {
+                ret = new MediaButtonsView();
+                break;
+            }
+
+            case "Volume": {
+                ret = new VolumeView();
+                break;
+            }
+
+            case "Channels": {
+                ret = new ChannelsView();
                 break;
             }
 
@@ -148,7 +183,7 @@ class DoubleSwitchView extends Trait {
         
         this.sheet.insertRule(`:host {
             display: grid;
-            gap: 0.1rem;
+            gap: 0.5rem;
             grid-auto-flow: column;
             justify-content: center;
         }`);
@@ -213,6 +248,7 @@ class RgbView extends Trait {
             grid-template-columns: 0.8fr;
             gap: 1rem;
             justify-content: center;
+            grid-area: color;
         }`);
 
         this.label = document.createElement("label");
@@ -266,6 +302,7 @@ class DimmerView extends Trait {
             display: grid;
             grid-template-columns: 1fr;
             gap: 1rem;
+            grid-area: bright;
             justify-content: center;
         }`);
 
@@ -307,6 +344,7 @@ class ColorTemperatureView extends Trait {
             display: grid;
             grid-template-columns: 1fr;
             gap: 1rem;
+            grid-area: colorTemp;
             justify-content: center;
         }`);
 
@@ -538,7 +576,7 @@ class MotionStatusView extends Trait {
     }
     
     static get observedAttributes() {
-        return OpenCloseView.attr;
+        return MotionStatusView.attr;
     }
     
     public attributeChangedCallback(name:string, oldValue:string, newValue:string) {
@@ -549,6 +587,254 @@ class MotionStatusView extends Trait {
     }
 }
 
+class IlluminanceStatusView extends Trait {
+    private label: HTMLLabelElement;
+    private illuminance: HTMLElement;
+    static attr: Array<string> = ['illuminance'];
+
+    constructor() {
+        super();
+        this._showInMainView = true;
+        this.statusList = IlluminanceStatusView.attr;
+       
+        this.sheet.insertRule(`:host {
+            display: grid;
+            gap: 1rem;
+            grid-template-columns: 1fr 2fr;
+            justify-content: center;
+        }`);
+
+        this.sheet.insertRule(`label {
+            color: var(--widget-color);
+            font-weight: 600;
+        }`);
+
+        this.label = document.createElement("label");
+        this.label.innerText = "illuminance:";
+        this.illuminance = document.createElement("span");
+        this.root.appendChild(this.label);
+        this.root.appendChild(this.illuminance);
+
+    }
+    
+    static get observedAttributes() {
+        return IlluminanceStatusView.attr;
+    }
+    
+    public attributeChangedCallback(name:string, oldValue:string, newValue:string) {
+        console.log(name ,oldValue, newValue);
+        if (oldValue != newValue && name === "illuminance") {
+            this.illuminance.innerText = `${newValue} LUX`;
+        }
+    }
+}
+
+
+class ArrowsView extends Trait {
+    private buttons: Array<string> = ['up', 'left', 'ok', 'right', 'down'];
+    static attr: Array<string> = [];
+
+    constructor() {
+        super();
+        this.statusList = ArrowsView.attr;
+        this._sendCommands = true;
+        
+        this.sheet.insertRule(`:host {
+            display: grid;
+            gap: 0.5rem;
+            grid-auto-flow: column;
+            justify-content: center;
+            grid-area: arrows;
+            grid-template-areas: 
+            ". up ."
+            "left ok right"
+            ". down .";
+        }`);
+
+        this.buttons.forEach((btnName) => {
+            let btn: Button = new Button(btnName);
+            btn.addEventListener("click", (el) => {
+                this.dispatchEvent(new CustomEvent('send-command', { detail: `${btnName}`}));
+            });
+            btn.style.gridArea = btnName;
+            btn.setAttribute("color", btnName);
+            this.root.appendChild(btn);
+        });
+        
+    }
+    
+    static get observedAttributes() {
+        return ArrowsView.attr;
+    }
+
+}
+
+class ButtonReturnView extends Trait {
+    static attr: Array<string> = [];
+    
+    constructor() {
+        super();
+        this.statusList = ButtonReturnView.attr;
+        this._sendCommands = true;
+        
+        this.sheet.insertRule(`:host {
+            display: grid;
+            gap: 0.5rem;
+            grid-auto-flow: column;
+            grid-area: return;
+            justify-content: center;
+            
+        }`);
+        
+        let btn: Button = new Button("ret");
+        btn.addEventListener("click", (el) => {
+            this.dispatchEvent(new CustomEvent('send-command', { detail: "ret"}));
+        });
+        btn.setAttribute("color", "ret");
+        this.root.appendChild(btn);
+    }
+    
+    static get observedAttributes() {
+        return ButtonReturnView.attr;
+    }
+}
+
+class ButtonExitView extends Trait {
+    static attr: Array<string> = [];
+    
+    constructor() {
+        super();
+        this.statusList = ButtonExitView.attr;
+        this._sendCommands = true;
+        
+        this.sheet.insertRule(`:host {
+            display: grid;
+            gap: 0.5rem;
+            grid-auto-flow: column;
+            grid-area: exit;
+            justify-content: center;
+            
+        }`);
+        
+        let btn: Button = new Button("exit");
+        btn.addEventListener("click", (el) => {
+            this.dispatchEvent(new CustomEvent('send-command', { detail: "exit"}));
+        });
+        btn.setAttribute("color", "exit");
+        this.root.appendChild(btn);
+    }
+    
+    static get observedAttributes() {
+        return ButtonExitView.attr;
+    }
+}
+
+class MediaButtonsView extends Trait {
+    private buttons: Object = {">": 'play', "||":'pause', "[ ]":'stop', ">>":'rewind', "<<":'forward'};
+    static attr: Array<string> = [];
+
+    constructor() {
+        super();
+        this.statusList = MediaButtonsView.attr;
+        this._sendCommands = true;
+        
+        this.sheet.insertRule(`:host {
+            display: grid;
+            gap: 0.5rem;
+            grid-auto-flow: column;
+            justify-content: center;
+            grid-area: mediaBtn;
+            grid-template-areas: "play pause forward stop rewind";
+        }`);
+
+        Object.keys(this.buttons).forEach((btnName) => {
+            let btn: Button = new Button(btnName);
+            btn.addEventListener("click", (el) => {
+                this.dispatchEvent(new CustomEvent('send-command', { detail: `${this.buttons[btnName]}`}));
+            });
+            btn.style.gridArea = this.buttons[btnName];
+            btn.setAttribute("color", this.buttons[btnName]);
+            this.root.appendChild(btn);
+        });
+        
+    }
+    
+    static get observedAttributes() {
+        return MediaButtonsView.attr;
+    }
+
+}
+
+class VolumeView extends Trait {
+    private buttons: Object = {'vol+': 'volume_up', 'mute': 'mute', 'vol-': 'volume_down'};
+    static attr: Array<string> = [];
+
+    constructor() {
+        super();
+        this.statusList = VolumeView.attr;
+        this._sendCommands = true;
+        
+        this.sheet.insertRule(`:host {
+            display: grid;
+            gap: 0.5rem;
+            grid-auto-flow: column;
+            justify-content: center;
+            grid-area: volume;
+            grid-template-areas: "volume_up mute volume_down";
+        }`);
+
+        Object.keys(this.buttons).forEach((btnName) => {
+            let btn: Button = new Button(btnName);
+            btn.addEventListener("click", (el) => {
+                this.dispatchEvent(new CustomEvent('send-command', { detail: `${this.buttons[btnName]}`}));
+            });
+            btn.style.gridArea = this.buttons[btnName];
+            btn.setAttribute("color", this.buttons[btnName]);
+            this.root.appendChild(btn);
+        });
+        
+    }
+    
+    static get observedAttributes() {
+        return VolumeView.attr;
+    }
+
+}
+class ChannelsView extends Trait {
+    private buttons: Object = {'ch+': 'channel_up', 'ch-': 'channel_down'};
+    static attr: Array<string> = [];
+
+    constructor() {
+        super();
+        this.statusList = ChannelsView.attr;
+        this._sendCommands = true;
+        
+        this.sheet.insertRule(`:host {
+            display: grid;
+            gap: 0.5rem;
+            grid-auto-flow: column;
+            justify-content: center;
+            grid-area: channel;
+            grid-template-areas: "channel_up channel_down";
+        }`);
+
+        Object.keys(this.buttons).forEach((btnName) => {
+            let btn: Button = new Button(btnName);
+            btn.addEventListener("click", (el) => {
+                this.dispatchEvent(new CustomEvent('send-command', { detail: `${this.buttons[btnName]}`}));
+            });
+            btn.style.gridArea = this.buttons[btnName];
+            btn.setAttribute("color", this.buttons[btnName]);
+            this.root.appendChild(btn);
+        });
+        
+    }
+    
+    static get observedAttributes() {
+        return ChannelsView.attr;
+    }
+
+}
 
 window.customElements.define('onoff-view', OnOffView);
 window.customElements.define('doubleswitch-view', DoubleSwitchView);
@@ -560,3 +846,10 @@ window.customElements.define('pressure-view', PressureStatusView);
 window.customElements.define('humidity-view', HumidityStatusView);
 window.customElements.define('openclose-view', OpenCloseView);
 window.customElements.define('occupancy-view', MotionStatusView);
+window.customElements.define('illuminance-view', IlluminanceStatusView);
+window.customElements.define('arrow-view', ArrowsView);
+window.customElements.define('return-view', ButtonReturnView);
+window.customElements.define('exit-view', ButtonExitView);
+window.customElements.define('media-view', MediaButtonsView);
+window.customElements.define('volume-view', VolumeView);
+window.customElements.define('channels-view', ChannelsView);
