@@ -16,10 +16,6 @@ buildjs:
 stylescss: $(path)/styles.scss
 	sassc -t compressed $(path)/styles.scss $(path)/styles.css
 
-devicesscss: $(path)/devices.scss
-	sassc -t compressed $(path)/devices.scss $(path)/devices.min.css
-
-
 install:
 	install -v -m 755  -g $(GRP) -o $(USR) -d $(DESTDIR)/var/www/homedaemon
 	install -v -m 775  -g $(GRP) -o $(USR) -d $(DESTDIR)/var/run/homedaemon

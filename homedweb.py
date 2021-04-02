@@ -15,6 +15,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 from __future__ import annotations
+import re
 __author__ = 'Sebastian Zwierzchowski'
 __copyright__ = 'Copyright 2019 - 2021 Sebastian Zwierzchowski'
 __license__ = 'GPL2'
@@ -23,6 +24,7 @@ __version__ = '0.1'
 import json
 import os
 import logging
+from os import urandom
 from starlette.applications import Starlette
 from starlette.routing import Route, Mount
 from starlette.requests import Request
@@ -30,11 +32,16 @@ from starlette.staticfiles import StaticFiles
 from starlette.responses import JSONResponse, PlainTextResponse, Response
 from starlette.templating import Jinja2Templates
 from starlette.responses import Response
+from starlette.middleware import Middleware
+from starlette.middleware.sessions import SessionMiddleware
+from starlette.middleware.authentication import AuthenticationMiddleware
+from starlette.authentication import requires
 from pycouchdb import Client
 import uvicorn
+from auth import AuthBackend
 from typing import Dict, Any, List
 
-conf_file = 'homedweb.json'
+conf_file = 'tmp/homed.json'
 if not os.path.exists(conf_file):
     raise FileNotFoundError('can`find config file /etc/homerelay.json')
 
@@ -59,12 +66,12 @@ logging.warning('app starts')
 #     return decorated_function
 
 
-# @login_required
+@requires('authenticated', redirect='signin')
 async def home(request: Request) -> Response:
     homeid: str = request.path_params['homeid']
     if homeid == 'favicon.ico':
         return PlainTextResponse(homeid)
-    print(request.headers.get("accept-language"))
+    # print(request.user.username, request.user.is_authenticated)
     return templates.TemplateResponse('home.html', {"request": request})
 
 
@@ -81,15 +88,36 @@ async def send_command(request: Request):
     return PlainTextResponse("ok")
 
 
+async def signin(request: Request):
+    if request.method == 'GET':
+        return templates.TemplateResponse('signin.html', {"request": request})
+        # return PlainTextResponse("ok")
+    elif request.method == 'POST':
+        gs = GoogleSignin(await request.form(), request.session)
+        return PlainTextResponse(gs.status)
+    
+
 routes: List[Any] = [
-    Route('/{homeid:str}', home),
-    Route('/{homeid:str}/devices/all', get_all_devices),
-    Route('/{homeid:str}/devices/send', send_command, methods=['POST']),
+    Route('/home/{homeid:str}', endpoint=home),
+    Route('/home/{homeid:str}/devices/all', endpoint=get_all_devices),
+    Route('/home/{homeid:str}/devices/send', endpoint=send_command, methods=['POST']),
+    Route('/signin', endpoint=signin, methods=['GET', 'POST']),
     Mount('/static', StaticFiles(directory='static'), name='static')
 ]
 
-app = Starlette(routes=routes, debug=True)
-# app.mount('/static', StaticFiles(directory='static'), name='static')
+
+if config.get('debug', False):
+    middleware = [
+        Middleware(SessionMiddleware, secret_key=str(urandom(24))),
+        Middleware(AuthenticationMiddleware, backend=GoogleAuthBackend())
+    ]
+else:
+    middleware = [
+        Middleware(SessionMiddleware, secret_key=str(urandom(24)), https_only=True),
+        Middleware(AuthenticationMiddleware, backend=AuthBackend())
+    ]
+    
+app = Starlette(routes=routes, debug=True, middleware=middleware)
 
 if __name__ == "__main__":
     uvicorn.run(app, host='127.0.0.1',debug=True, port=8000)

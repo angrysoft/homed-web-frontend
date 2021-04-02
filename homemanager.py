@@ -163,6 +163,6 @@ class HomeManager:
 
 if __name__ == '__main__':
     config = JConfig()
-    config.load_config_from_file('tmp/homedb.json')
+    config.load_config_from_file('tmp/homed.json')
     watcher = MainWatcher(config)
     watcher.run()
