@@ -67,7 +67,7 @@ def login_required(func:Callable[[Request], Response]): # -> Coroutine[Request, 
     async def decorated_function(request: Request) -> Response:
         if request.user. is_authenticated:
             return await func(request)
-        return RedirectResponse(url=f'/signin?next={quote_plus(request.url.path)}')
+        return RedirectResponse(url=f'/signin?next={request.url.path}')
     return decorated_function
 
 
@@ -92,10 +92,11 @@ async def send_command(request: Request):
 
 async def signin(request: Request):
     if request.method == 'GET':
-        print(dir(request))
-        print(request.headers)
         return templates.TemplateResponse('signin.html', {"request": request})
     elif request.method == 'POST':
+        if request.user. is_authenticated:
+            return PlainTextResponse('ok')
+            
         token:bytes = await request.body()
         gs = GoogleSignIn(token.decode())
         await gs.authenticate()
@@ -104,10 +105,10 @@ async def signin(request: Request):
             request.session['locale'] = gs.locale
             request.session['picture'] = gs.picture
             request.session['name'] = gs.name
-            print(await request.query_params)
-            return RedirectResponse(url=request.query_params.get('next', '/'))
+            return PlainTextResponse('ok')
+            # return RedirectResponse(url=request.url.path, status_code=303)
         return PlainTextResponse('Unknown User')
-    
+ 
 
 routes: List[Any] = [
     Route('/home/{homeid:str}', endpoint=home),

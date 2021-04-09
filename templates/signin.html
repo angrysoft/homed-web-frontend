@@ -12,13 +12,14 @@
 <script>
     function onSignIn(googleUser) {
         let id_token = googleUser.getAuthResponse().id_token;
-        fetch('/signin', {
+        fetch(window.location.href, {
             method: 'POST',
             // headers: {'Content-Type': 'application/x-www-form-urlencoded'},
             body: id_token.toString()
         })
-        .then(response => response.text)
+        .then(response => response.text())
         .then(txt => {
+            console.log('wtf',txt);
             if (txt === 'ok') {
                 let url = new URL(window.location.href);
                 let target = url.searchParams.get("next") || '/';
