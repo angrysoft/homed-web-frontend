@@ -1,5 +1,4 @@
 
-from pycouchdb.client import Client
 from starlette.authentication import (
     AuthenticationBackend, AuthenticationError, SimpleUser, UnauthenticatedUser,
     AuthCredentials
@@ -26,8 +25,8 @@ class GoogleSignIn:
         try:
             # Specify the CLIENT_ID of the app that accesses the backend:
             self._user_info = id_token.verify_oauth2_token(self.token,
-                                                  g_requests.Request(),
-                                                  '877412399754-shou706hpt8q4llqenm6p93vthr4q28o.apps.googleusercontent.com')
+                                                           g_requests.Request(),
+                                                           '877412399754-shou706hpt8q4llqenm6p93vthr4q28o.apps.googleusercontent.com')
             if self._user_info['iss'] not in ['accounts.google.com', 'https://accounts.google.com']:
                 self._user_info.clear()
                 raise ValueError('Wrong issuer.')
