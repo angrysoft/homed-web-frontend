@@ -16,7 +16,6 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 from __future__ import annotations
 
-from starlette.background import BackgroundTask
 __author__ = 'Sebastian Zwierzchowski'
 __copyright__ = 'Copyright 2019 - 2021 Sebastian Zwierzchowski'
 __license__ = 'GPL2'
@@ -37,10 +36,11 @@ from starlette.responses import Response
 from starlette.middleware import Middleware
 from starlette.middleware.sessions import SessionMiddleware
 from starlette.middleware.authentication import AuthenticationMiddleware
+from starlette.background import BackgroundTask
+from sse_starlette.sse import EventSourceResponse
 from pycouchdb import Client
 from auth import AuthBackend, GoogleSignIn
 from devices import HomeManager
-from threading import Thread
 from typing import Callable, Dict, Any, List, Coroutine
 from functools import wraps
 
@@ -60,8 +60,8 @@ async def home(request: Request) -> Response:
     homeid: str = request.path_params['homeid']
     if homeid == 'favicon.ico':
         return PlainTextResponse(homeid)
-    task = BackgroundTask(dm.setup_queue, homeid=request.session['homeid'])
-    return templates.TemplateResponse('home.html', {"request": request}, background=task)
+    
+    return templates.TemplateResponse('home.html', {"request": request})
 
 
 @login_required
@@ -75,7 +75,7 @@ async def get_all_devices(request: Request) -> Response:
 @login_required
 async def send_command(request: Request):
     cmd:bytes = await request.body()
-    await dm.publish_msg(cmd.decode(), request.path_params['homeid'])
+    dm.publish_msg(cmd.decode(), request.session['homeid'])
     return PlainTextResponse("ok")
 
 
@@ -95,10 +95,22 @@ async def signin(request: Request):
             request.session['picture'] = gs.picture
             request.session['name'] = gs.name
             request.session['homeid'] = db['residents'][gs.user_id]['homeid']
+            
+            dm.register_home(request.session['homeid'])
+            
             return PlainTextResponse('ok')
             # return RedirectResponse(url=request.url.path, status_code=303)
         return PlainTextResponse('Unknown User')
  
+
+async def numbers(minimum, maximum):
+    for i in range(minimum, maximum + 1):
+        await asyncio.sleep(0.9)
+        yield dict(data=i)
+
+async def sse(request):
+    generator = numbers(1, 5)
+    return EventSourceResponse(generator)
 
 
 conf_file = 'tmp/homed.json'
@@ -111,7 +123,6 @@ with open(conf_file) as jfile:
 
 db:Client  = Client(f"http://{config['db']['user']}:{config['db']['password']}@localhost")
 dm = HomeManager(config.get('rabbitmq', {}))
-
 templates = Jinja2Templates(directory='templates')
 
 
@@ -146,3 +157,4 @@ app = Starlette(routes=routes,
 
 if __name__ == "__main__":
     uvicorn.run(app, host='127.0.0.1',debug=True, port=8000)
+    print('uvicorn stop')

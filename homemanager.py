@@ -1,10 +1,10 @@
 #!/usr/bin/python
 from __future__ import annotations
-
 import json
-import aioamqp
-import asyncio
+import amqpstorm
 import ssl
+from time import sleep
+from threading import Thread
 from typing import Dict, Any
 import logging
 from systemd.journal import JournalHandler
@@ -46,6 +46,7 @@ class MainWatcher:
         self.retry = True
         self.homes:Dict[str, HomeManager] = {}
         self.db_connection:Client
+        self.connection:amqpstorm.Connection
          
         if 'couchdb' in config:
             self.db_connection = Client(
@@ -55,103 +56,127 @@ class MainWatcher:
             self.db_connection = Client("http://localhost")
             
         print(f'main watcher, {self.db_connection}')
-        self.loop = asyncio.get_event_loop()
-        self.loop.run_until_complete(self.connect())
-        self.loop.run_forever()
 
-
-    async def connect(self):
+    def connect(self):
         while not self.connected and self.retry:
             try:
                 context = ssl.create_default_context(cafile=self.config['cafile'])
                 context.load_cert_chain(certfile=self.config['certfile'],
                                         keyfile=self.config['keyfile'],
                                         password=self.config['password'])
+                self.ssl_options = {'context': context,
+                                    'check_hostname': True,
+                                    'server_hostname': self.config['host']}
                 
-                self.transport, self.protocol = await aioamqp.connect(host=self.config['host'],
-                                                                      port=self.config['port'],
-                                                                      login=self.config['user'],
-                                                                      password=self.config['user_password'],
-                                                                      ssl=context)
+                self.connection:amqpstorm.Connection = amqpstorm.Connection(hostname=self.config['host'],
+                                                                            username=self.config['user'],
+                                                                            password=self.config['user_password'],
+                                                                            port=self.config['port'],
+                                                                            ssl=self.config['ssl'],
+                                                                            ssl_options=self.ssl_options)
                 
-                channel = await self.protocol.channel()
-                await channel.exchange_declare('homedaemon', 'topic', auto_delete=False)
-                await channel.queue_declare('main_queue')
-                await channel.queue_bind('main_queue', 'homedaemon', routing_key='homedaemon.main')
-                await channel.basic_consume(self.on_message, 'main_queue', no_ack=True)
+                
+                self.channel:amqpstorm.Channel = self.connection.channel()
+                self.channel.exchange.declare(exchange='homedaemon', exchange_type='topic', auto_delete=False)
+                self.channel.queue.declare(queue='main_queue')
+                self.channel.queue.bind(queue='main_queue', exchange='homedaemon', routing_key='homedaemon.main')
+                self.channel.basic.consume(queue='main_queue', callback=self.on_message, no_ack=True)
                 self.connected = True
-            except aioamqp.AmqpClosedConnection as err:
+                self.channel.start_consuming()
+            except amqpstorm.AMQPConnectionError as err:
                 self.connected = False
                 print(err)
-                await asyncio.sleep(10)
+                sleep(5)
                 print('Retray after 5s')
+            except KeyboardInterrupt:
+                self.stop()
+                
+    def stop(self):
+        for home_name, home in self.homes.items():
+            print(f'Stop {home_name}')
+            home.stop()
+        self.channel.close()
     
-    async def on_message(self, channel, body, envelope, properties):
+    
+    def on_message(self, msg_data:amqpstorm.Message):
         try:
-            event = json.loads(body)
+            event = json.loads(msg_data.body)
             cmd:str = event.get('cmd', '')
-            if cmd == 'connect':
-                print('connect: ', event)
-                homeid:str = event.get('homeid', '')
-                if homeid not in self.db_connection:
-                    self.db_connection.create(homeid)
-                self.homes[homeid] = HomeManager(channel, homeid, self.db_connection.get_db(homeid))
-                await self.loop.create_task(self.homes[homeid].add_queues())
+            homeid:str = event.get('homeid', '')
+            if cmd == 'connect' or cmd == 'ping':
+                self.register_home(homeid)
             else:
                 print(event)
         except json.JSONDecodeError as err:
-                logger.error(f'json {err} : {msg}')
+                logger.error(f'json {err} : {msg_data}')
+    
+    def register_home(self, homeid:str):
+        if homeid in self.homes:
+            return
+        
+        if homeid not in self.db_connection:
+            self.db_connection.create(homeid)
+        
+        self.homes[homeid] = HomeManager(self.channel, homeid, self.db_connection.get_db(homeid))
+        self.homes[homeid].start()
                 
 
-class HomeManager:
-    def __init__(self, channel: aioamqp.channel.Channel, homeid:str, db:Database) -> None:
+class HomeManager(Thread):
+    def __init__(self, channel:  amqpstorm.Channel, homeid:str, db:Database) -> None:
+        super().__init__()
+        self.daemon = True
         self.channel = channel
         self.homeid = homeid
         self.db: Database = db
         print('homemanager started')
     
-    async def add_queues(self):
-        await self.channel.queue_declare(self.homeid)
-        await self.channel.queue_bind(self.homeid, 'homedaemon', routing_key=f'homedaemon.{self.homeid}.reports')
-        await self.channel.basic_consume(self.on_event, self.homeid, no_ack=True)
+    def start(self):
+        self.channel.queue.declare(self.homeid)
+        self.channel.queue.bind(queue=self.homeid, exchange='homedaemon', routing_key=f'homedaemon.{self.homeid}.reports')
+        self.channel.basic.consume(callback=self.on_event, queue=self.homeid, no_ack=True)
     
-    async def on_event(self, channel, body, envelope, properties):
+    def stop(self):
+        self.channel.basic.consume.cancel()
+        self.channel.queue.unbind(queue=self.homeid, exchange='homedaemon', routing_key=f'homedaemon.{self.homeid}.reports')
+    
+    def on_event(self, msg_data: amqpstorm.Message):
         actions:Dict[str, Any] = {
             'report': self.update_device,
             'init_device': self.init_device,
             'del_device': self.del_device
             }
         try:
-            event = json.loads(body)
+            event = json.loads(msg_data.body)
             cmd:str = event.pop('cmd', '')
             print('cmd', event)
             if event.get('sid'):
                 actions.get(cmd, self._command_not_found)(event)
         except json.JSONDecodeError as err:
-                logger.error(f'json {err} : {body}')
+                logger.error(f'json {err} : {msg_data.body}')
         except AttributeError as err:
-                logger.error(f'AtrributeError {err} : {body}')
+                logger.error(f'AtrributeError {err} : {msg_data.body}')
     
-    async def update_device(self, event:Dict[str, Any]) -> None:
+    def update_device(self, event:Dict[str, Any]) -> None:
         self.db[event['sid']] = event.get('data', {})
     
-    async def init_device(self, event:Dict[str, Any]) -> None:
+    def init_device(self, event:Dict[str, Any]) -> None:
         if event['sid'] in self.db:
             self.db.delete(event['sid'])
         self.db[event['sid']] = event
     
-    async def del_device(self, event:Dict[str, Any]) -> None:
+    def del_device(self, event:Dict[str, Any]) -> None:
         self.db.delete(event['sid'])
     
-    async def _command_not_found(self, data:Dict[str, Any]) -> None:
+    def _command_not_found(self, data:Dict[str, Any]) -> None:
         pass
     
-    async def __del__(self):
-        await self.channel.queue_unbind(self.homeid, 'homedaemon', routing_key=f'homedaemon.{self.homeid}.reports')
+    def __del__(self):
+        self.channel.queue.unbind(self.homeid, 'homedaemon', routing_key=f'homedaemon.{self.homeid}.reports')
 
 
 if __name__ == '__main__':
     config = JConfig()
     config.load_config_from_file('tmp/homed.json')
     watcher = MainWatcher(config)
+    watcher.connect()
     

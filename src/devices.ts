@@ -29,8 +29,8 @@ class Device {
     public commandHandler(trait) {
         if (trait.sendCommands) {
             trait.addEventListener("send-command", (cmd:any) => {
-                let command:string = `execute.${this.model.sid}.${cmd.detail}`;
-                console.log(command);
+                let command:string = `"cmd":"execute", "sid": "${this.model.sid}", "data":"${cmd.detail}"`;
+                console.log(cmd.detail);
                 fetch(`${document.location.pathname}/devices/send`, { method: 'POST', body: command});
             });
         }
