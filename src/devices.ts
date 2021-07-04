@@ -29,13 +29,15 @@ class Device {
     public commandHandler(trait) {
         if (trait.sendCommands) {
             trait.addEventListener("send-command", (cmd:any) => {
-                let command:string = `"cmd":"execute", "sid": "${this.model.sid}", "data":"${cmd.detail}"`;
-                console.log(cmd.detail);
-                fetch(`${document.location.pathname}/devices/send`, { method: 'POST', body: command});
+                let event:object = {
+                    'event': `execute.${this.model.sid}.${cmd.detail[0]}.${cmd.detail[1]}`,
+                    'args' : cmd.detail 
+                };
+                console.log(event);
+                fetch(`${document.location.pathname}/devices/send`, { method: 'POST', body: JSON.stringify(event) });
             });
         }
     }
-
 
     public async updateStatus(status:Object) {
         for (let key in status) {

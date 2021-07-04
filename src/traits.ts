@@ -147,7 +147,7 @@ class OnOffView extends Trait {
         this.root.appendChild(this.button);
 
         this.button.addEventListener("click", (el) => {
-            this.dispatchEvent(new CustomEvent('send-command', { detail: `{"power":"${this.getAttribute("cmd")}"}`}));
+            this.dispatchEvent(new CustomEvent('send-command', { detail: [this.getAttribute("cmd"), null] }));
         });
     }
     
@@ -190,12 +190,12 @@ class DoubleSwitchView extends Trait {
 
         this.buttonOne = new ButtonSmall("on");
         this.buttonOne.addEventListener("click", (el) => {
-            this.dispatchEvent(new CustomEvent('send-command', { detail: `{"one": "${this.getAttribute("cmd-one")}"}`}));
+            this.dispatchEvent(new CustomEvent('send-command', { detail: ['one', this.getAttribute("cmd-one")] }));
         });
 
         this.buttonTwo = new ButtonSmall("on");
         this.buttonTwo.addEventListener("click", (el) => {
-            this.dispatchEvent(new CustomEvent('send-command', { detail: `{"two"."${this.getAttribute("cmd-two")}"}`}));
+            this.dispatchEvent(new CustomEvent('send-command', { detail: ['two', this.getAttribute("cmd-two")] }));
         });
         this.root.appendChild(this.buttonOne);
         this.root.appendChild(this.buttonTwo);
@@ -260,7 +260,7 @@ class RgbView extends Trait {
 
         this.inputColor.addEventListener("change", (el) => {
             this.setAttribute('rgb', this.hexToRgbInt(this.inputColor.value));
-            this.dispatchEvent(new CustomEvent('send-command', { detail: `{"set_color":"${this.getAttribute("rgb")}"}`}));
+            this.dispatchEvent(new CustomEvent('send-command', { detail: ['set_color', Number(this.getAttribute("rgb"))] }));
         });
     }
 
@@ -312,7 +312,7 @@ class DimmerView extends Trait {
         this.inputBright.addEventListener('change', () => {
             console.log('event re-emited');
             this.setAttribute('bright', this.inputBright.value);
-            this.dispatchEvent(new CustomEvent('send-command', { detail: `{"set_bright":"${this.inputBright.value}"}`}));
+            this.dispatchEvent(new CustomEvent('send-command', { detail: ['set_bright', Number(this.inputBright.value)] }));
         });
     }
 
@@ -354,7 +354,7 @@ class ColorTemperatureView extends Trait {
         this.inputCT.addEventListener('change', () => {
             console.log('event re-emited');
             this.setAttribute('ct_pc', this.inputCT.value);
-            this.dispatchEvent(new CustomEvent('send-command', { detail: `{"set_ct_pc":"${this.inputCT.value}"}`}));
+            this.dispatchEvent(new CustomEvent('send-command', { detail: ['set_ct_pc', Number(this.inputCT.value)] }));
         });
     }
 
@@ -654,7 +654,7 @@ class ArrowsView extends Trait {
         this.buttons.forEach((btnName) => {
             let btn: Button = new Button(btnName);
             btn.addEventListener("click", (el) => {
-                this.dispatchEvent(new CustomEvent('send-command', { detail: `${btnName}`}));
+                this.dispatchEvent(new CustomEvent('send-command', { detail: [btnName, null]}));
             });
             btn.style.gridArea = btnName;
             btn.setAttribute("color", btnName);
@@ -688,7 +688,7 @@ class ButtonReturnView extends Trait {
         
         let btn: Button = new Button("ret");
         btn.addEventListener("click", (el) => {
-            this.dispatchEvent(new CustomEvent('send-command', { detail: '{"button": "ret"}'}));
+            this.dispatchEvent(new CustomEvent('send-command', { detail: ['ret', null] }));
         });
         btn.setAttribute("color", "ret");
         this.root.appendChild(btn);
@@ -718,7 +718,7 @@ class ButtonExitView extends Trait {
         
         let btn: Button = new Button("exit");
         btn.addEventListener("click", (el) => {
-            this.dispatchEvent(new CustomEvent('send-command', { detail: "exit"}));
+            this.dispatchEvent(new CustomEvent('send-command', { detail: ['exit', null] }));
         });
         btn.setAttribute("color", "exit");
         this.root.appendChild(btn);
@@ -750,7 +750,7 @@ class MediaButtonsView extends Trait {
         Object.keys(this.buttons).forEach((btnName) => {
             let btn: Button = new Button(btnName);
             btn.addEventListener("click", (el) => {
-                this.dispatchEvent(new CustomEvent('send-command', { detail: `${this.buttons[btnName]}`}));
+                this.dispatchEvent(new CustomEvent('send-command', { detail: [this.buttons[btnName], null] }));
             });
             btn.style.gridArea = this.buttons[btnName];
             btn.setAttribute("color", this.buttons[btnName]);
@@ -786,7 +786,7 @@ class VolumeView extends Trait {
         Object.keys(this.buttons).forEach((btnName) => {
             let btn: Button = new Button(btnName);
             btn.addEventListener("click", (el) => {
-                this.dispatchEvent(new CustomEvent('send-command', { detail: `${this.buttons[btnName]}`}));
+                this.dispatchEvent(new CustomEvent('send-command', { detail: [this.buttons[btnName], null] }));
             });
             btn.style.gridArea = this.buttons[btnName];
             btn.setAttribute("color", this.buttons[btnName]);
@@ -821,7 +821,7 @@ class ChannelsView extends Trait {
         Object.keys(this.buttons).forEach((btnName) => {
             let btn: Button = new Button(btnName);
             btn.addEventListener("click", (el) => {
-                this.dispatchEvent(new CustomEvent('send-command', { detail: `${this.buttons[btnName]}`}));
+                this.dispatchEvent(new CustomEvent('send-command', { detail: [this.buttons[btnName], null] }));
             });
             btn.style.gridArea = this.buttons[btnName];
             btn.setAttribute("color", this.buttons[btnName]);
