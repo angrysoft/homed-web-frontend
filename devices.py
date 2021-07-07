@@ -1,9 +1,8 @@
-from typing import Set, Dict ,Any
+from typing import List, Set, Dict ,Any
 import amqpstorm
 from threading import Thread
 import ssl
 from time import sleep
-import json
 
 class HomeManager(Thread):
     def __init__(self, config: Dict[str, Any]) -> None:
@@ -16,6 +15,7 @@ class HomeManager(Thread):
         self.setuped:Set[str] = set()
         self.retry = True
         self.loop = True
+        self.queue : EventQueue
     
     def connect(self):
         if self.connected:
@@ -63,8 +63,12 @@ class HomeManager(Thread):
             self.start()
     
     def on_event(self, msg_data:amqpstorm.Message):
+        if self.queue:
+            self.queue.put(msg_data.body)
         print(msg_data.body)
-        # callable class ?? 
+    
+    def get_queue(self):
+        pass
     
     def publish_msg(self, msg:str, homeid:str) -> None:
         routing_key = f"homedaemon.{homeid}.in"
@@ -88,3 +92,23 @@ class HomeManager(Thread):
         self.loop = False
         self.channel.close()
         
+class EventQueue:
+    def __init__(self) -> None:
+        self.lock = asyncio.Lock()
+        self._queue:List[str] = []
+        self._event = asyncio.Event()
+    
+    async def put(self, item:str) -> None:
+        async with self.lock:
+            self._queue.insert(0)
+            
+    async def get(self) -> str:
+        ret:str  = ''
+        if not self.is_empty():
+            async with self.lock:
+                ret = self._queue[-1]
+        
+        return ret
+    
+    async is_empty(self) -> bool:
+        return len(self._queue) == 0

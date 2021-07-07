@@ -15,6 +15,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 from __future__ import annotations
+from posixpath import expanduser
 
 __author__ = 'Sebastian Zwierzchowski'
 __copyright__ = 'Copyright 2019 - 2021 Sebastian Zwierzchowski'
@@ -25,6 +26,7 @@ import json
 import os
 import logging
 import uvicorn
+import asyncio
 from os import urandom
 from starlette.applications import Starlette
 from starlette.routing import Route, Mount
@@ -103,13 +105,15 @@ async def signin(request: Request):
         return PlainTextResponse('Unknown User')
  
 
-async def numbers(minimum, maximum):
-    for i in range(minimum, maximum + 1):
+async def numbers(start:int):
+    i:int = start
+    while True:
+        i += 1
         await asyncio.sleep(0.9)
         yield dict(data=i)
 
-async def sse(request):
-    generator = numbers(1, 5)
+async def sse(request: Request):
+    generator = numbers(1)
     return EventSourceResponse(generator)
 
 
@@ -132,6 +136,7 @@ logging.warning('app starts')
 
 routes: List[Any] = [
     Route('/home/{homeid:str}', endpoint=home),
+    Route('/home/{homeid:str}/events', endpoint=sse),
     Route('/home/{homeid:str}/devices/all', endpoint=get_all_devices),
     Route('/home/{homeid:str}/devices/send', endpoint=send_command, methods=['POST']),
     Route('/signin', endpoint=signin, methods=['GET', 'POST']),
