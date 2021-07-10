@@ -105,16 +105,17 @@ async def signin(request: Request):
         return PlainTextResponse('Unknown User')
  
 
-async def numbers(start:int):
-    i:int = start
-    while True:
-        i += 1
-        await asyncio.sleep(0.9)
-        yield dict(data=i)
 
 async def sse(request: Request):
-    generator = numbers(1)
-    return EventSourceResponse(generator)
+    homeid: str = request.path_params['homeid']
+    async def messages(homeid:str):
+        while True:
+            disconnected = await request.is_disconnected()
+            if disconnected:  
+                break
+            ret = await dm.get_msg_from_queue(homeid)
+            yield ret
+    return EventSourceResponse(messages(homeid))
 
 
 conf_file = 'tmp/homed.json'

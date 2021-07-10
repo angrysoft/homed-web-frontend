@@ -3,6 +3,7 @@ import amqpstorm
 from threading import Thread
 import ssl
 from time import sleep
+import asyncio
 
 class HomeManager(Thread):
     def __init__(self, config: Dict[str, Any]) -> None:
@@ -15,7 +16,7 @@ class HomeManager(Thread):
         self.setuped:Set[str] = set()
         self.retry = True
         self.loop = True
-        self.queue : EventQueue
+        self.queues : Dict[str, EventQueue] = {}
     
     def connect(self):
         if self.connected:
@@ -61,14 +62,23 @@ class HomeManager(Thread):
         print(f'add queue {queue_name}')
         if not self.is_alive:
             self.start()
+            
+        if homeid not in self.queues:
+            self.queues[homeid] = EventQueue()
     
     def on_event(self, msg_data:amqpstorm.Message):
         if self.queue:
             self.queue.put(msg_data.body)
         print(msg_data.body)
     
-    def get_queue(self):
-        pass
+    async def get_msg_from_queue(self, homeid:str):
+        if homeid in self.queues:
+            return await self.queues[homeid].get()
+    
+    async def set_block_state_msg_queue(self, homeid:str, state:bool):
+        
+        if homeid in self.queues:
+            self.queues[homeid].block = True
     
     def publish_msg(self, msg:str, homeid:str) -> None:
         routing_key = f"homedaemon.{homeid}.in"
@@ -91,24 +101,40 @@ class HomeManager(Thread):
         self.retry = False
         self.loop = False
         self.channel.close()
-        
+
+  
 class EventQueue:
     def __init__(self) -> None:
-        self.lock = asyncio.Lock()
+        self.lock: asyncio.Lock = asyncio.Lock()
         self._queue:List[str] = []
         self._event = asyncio.Event()
+        self._block = False
+    
+    @property
+    def block(self) -> bool:
+        return self._block
+     
+    @block.setter
+    def block(self, state:bool):
+        self._block = state   
     
     async def put(self, item:str) -> None:
         async with self.lock:
-            self._queue.insert(0)
+            if self._block:
+                return
+            self._queue.insert(0, item)
+            if not self._event.is_set():
+                self._event.set()
             
     async def get(self) -> str:
         ret:str  = ''
-        if not self.is_empty():
-            async with self.lock:
-                ret = self._queue[-1]
+        if self.is_empty():
+            await self._event.wait()
+               
+        async with self.lock:
+            ret = self._queue[-1]
         
         return ret
     
-    async is_empty(self) -> bool:
+    async def is_empty(self) -> bool:
         return len(self._queue) == 0
