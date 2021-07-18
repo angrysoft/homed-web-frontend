@@ -33,7 +33,7 @@ class Device {
                     'event': `execute.${this.model.sid}.${cmd.detail[0]}.${cmd.detail[1]}`,
                     'args' : cmd.detail 
                 };
-                console.log(event);
+              
                 fetch(`${document.location.pathname}/devices/send`, { method: 'POST', body: JSON.stringify(event) });
             });
         }

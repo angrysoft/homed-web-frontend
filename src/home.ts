@@ -6,10 +6,17 @@ class HomeApp {
     private model:HomeModel;
     private view:HomeView;
     private ready:boolean = false;
+    private evSource: EventSource;
     
     constructor() {
         this.model = new HomeModel();
         this.view = new HomeView();
+        this.evSource = new EventSource(`/${this.model.getHomeId()}/events`);
+        this.evSource.onmessage = async (event) => {
+            if (event.data.startsWith('{')) {
+                await this.updateDeviceStatus(JSON.parse(event.data));
+            }
+        }
     }
     
     public async run() {
@@ -24,10 +31,9 @@ class HomeApp {
         this.view.render();
     }
 
-    public updateDeviceStatus(status:object) {
-        console.log(`updateDeviceStatus ${status}`);
+    public async updateDeviceStatus(status:object) {
         if (status["sid"] in this.model.devices && "data" in status) {
-            this.model.devices[status["sid"]].updateStatus(status["data"]);
+            await this.model.devices[status["sid"]].updateStatus(status["data"]);
         }
 
     }
@@ -118,7 +124,6 @@ class HomeModel {
         this.homeid = document.location.pathname;
         this.homeid = this.homeid.substr(1);
         this.url = `${document.location.pathname}/devices/all`;
-        console.log(this.homeid);
     }
     
     public async getData() {
@@ -137,6 +142,10 @@ class HomeModel {
     
     public getDevicesInfo() {
         return this.data;
+    }
+
+    public getHomeId():string {
+        return this.homeid;
     }
     
     public getPlacesList(): string[] {

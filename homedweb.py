@@ -103,9 +103,8 @@ async def signin(request: Request):
             return PlainTextResponse('ok')
             # return RedirectResponse(url=request.url.path, status_code=303)
         return PlainTextResponse('Unknown User')
- 
 
-
+@login_required
 async def sse(request: Request):
     homeid: str = request.path_params['homeid']
     async def messages(homeid:str):
@@ -113,8 +112,10 @@ async def sse(request: Request):
             disconnected = await request.is_disconnected()
             if disconnected:  
                 break
-            ret = await dm.get_msg_from_queue(homeid)
-            yield ret
+            dm.set_block_state_msg_queue(homeid, True)
+            ret = dm.get_msg_from_queue(homeid)
+            if ret:
+                yield {'data': ret}
     return EventSourceResponse(messages(homeid))
 
 
@@ -122,7 +123,7 @@ conf_file = 'tmp/homed.json'
 if not os.path.exists(conf_file):
     raise FileNotFoundError('can`find config file /etc/homerelay.json')
 
-config: Dict[str, Any] ={}
+config: Dict[str, Any] = {}
 with open(conf_file) as jfile:
     config = json.load(jfile)
 

@@ -1,6 +1,6 @@
 from typing import List, Set, Dict ,Any
 import amqpstorm
-from threading import Thread
+from threading import RLock, Thread, Event
 import ssl
 from time import sleep
 import asyncio
@@ -16,7 +16,7 @@ class HomeManager(Thread):
         self.setuped:Set[str] = set()
         self.retry = True
         self.loop = True
-        self.queues : Dict[str, EventQueue] = {}
+        self.event_handlers : Dict[str, EventHandler] = {}
     
     def connect(self):
         if self.connected:
@@ -45,8 +45,7 @@ class HomeManager(Thread):
                 sleep(5)
                 print('Retray after 5s')
     
-    def start(self):
-        print('Starting')
+    def run(self):
         self.channel.start_consuming()
         
     
@@ -54,31 +53,30 @@ class HomeManager(Thread):
         if homeid in self.setuped:
             return
         queue_name = f'{homeid}_www'
+        event_handler = EventHandler(homeid)
+        
         self.channel = self.connection.channel()
+        self.channel.exchange.declare(exchange='homedaemon', exchange_type='topic', auto_delete=False)
         self.channel.queue.declare(queue=queue_name)
         self.channel.queue.bind(queue=queue_name, exchange='homedaemon', routing_key=f'homedaemon.{homeid}.reports')
-        self.channel.basic.consume(self.on_event, queue=queue_name, no_ack=True)
+        self.channel.basic.consume(callback=event_handler, queue=queue_name, no_ack=True, arguments={'homeid':homeid})
         self.setuped.add(homeid)
-        print(f'add queue {queue_name}')
-        if not self.is_alive:
+        if not self.is_alive():
             self.start()
             
-        if homeid not in self.queues:
-            self.queues[homeid] = EventQueue()
+        if homeid not in self.event_handlers:
+            self.event_handlers[homeid] = event_handler
     
-    def on_event(self, msg_data:amqpstorm.Message):
-        if self.queue:
-            self.queue.put(msg_data.body)
-        print(msg_data.body)
+    def get_msg_from_queue(self, homeid:str):
+        if homeid in self.event_handlers:
+            self.set_block_state_msg_queue(homeid, False)
+            ret = self.event_handlers[homeid].queue.get()
+            return ret
     
-    async def get_msg_from_queue(self, homeid:str):
-        if homeid in self.queues:
-            return await self.queues[homeid].get()
-    
-    async def set_block_state_msg_queue(self, homeid:str, state:bool):
+    def set_block_state_msg_queue(self, homeid:str, state:bool):
         
-        if homeid in self.queues:
-            self.queues[homeid].block = True
+        if homeid in self.event_handlers:
+            self.event_handlers[homeid].queue.block = state
     
     def publish_msg(self, msg:str, homeid:str) -> None:
         routing_key = f"homedaemon.{homeid}.in"
@@ -102,12 +100,20 @@ class HomeManager(Thread):
         self.loop = False
         self.channel.close()
 
+ 
+class EventHandler:
+    def __init__(self, homeid) -> None:
+        self.homeid = homeid
+        self.queue = EventQueue()
+    
+    def __call__(self, msg_data:amqpstorm.Message) -> Any:
+        self.queue.put(msg_data.body)
   
 class EventQueue:
     def __init__(self) -> None:
-        self.lock: asyncio.Lock = asyncio.Lock()
+        self.lock: RLock = RLock()
         self._queue:List[str] = []
-        self._event = asyncio.Event()
+        self._event = Event()
         self._block = False
     
     @property
@@ -118,23 +124,29 @@ class EventQueue:
     def block(self, state:bool):
         self._block = state   
     
-    async def put(self, item:str) -> None:
-        async with self.lock:
-            if self._block:
-                return
+    def put(self, item:str) -> None:
+        if self._block:
+            return
+        
+        with self.lock:
             self._queue.insert(0, item)
-            if not self._event.is_set():
-                self._event.set()
+        
+        if not self._event.is_set():
+            self._event.set()
             
-    async def get(self) -> str:
+    def get(self) -> str:
         ret:str  = ''
         if self.is_empty():
-            await self._event.wait()
+            self._event.wait()
+            self._event.clear()
                
-        async with self.lock:
-            ret = self._queue[-1]
-        
+        with self.lock:
+            try:
+                ret = self._queue.pop()
+            except IndexError as err:
+                print(err)
         return ret
     
-    async def is_empty(self) -> bool:
-        return len(self._queue) == 0
+    def is_empty(self) -> bool:
+        with self.lock:
+            return len(self._queue) == 0
