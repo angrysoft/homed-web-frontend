@@ -15,7 +15,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 from __future__ import annotations
-from posixpath import expanduser
+from threading import Thread, current_thread, main_thread
 
 __author__ = 'Sebastian Zwierzchowski'
 __copyright__ = 'Copyright 2019 - 2021 Sebastian Zwierzchowski'
@@ -26,7 +26,6 @@ import json
 import os
 import logging
 import uvicorn
-import asyncio
 from os import urandom
 from starlette.applications import Starlette
 from starlette.routing import Route, Mount
@@ -45,6 +44,7 @@ from auth import AuthBackend, GoogleSignIn
 from devices import HomeManager
 from typing import Callable, Dict, Any, List, Coroutine
 from functools import wraps
+import asyncio
 
 
 
@@ -97,7 +97,7 @@ async def signin(request: Request):
             request.session['picture'] = gs.picture
             request.session['name'] = gs.name
             request.session['homeid'] = db['residents'][gs.user_id]['homeid']
-            
+            print('main', main_thread(), current_thread())
             dm.register_home(request.session['homeid'])
             
             return PlainTextResponse('ok')
@@ -111,11 +111,13 @@ async def sse(request: Request):
         while True:
             disconnected = await request.is_disconnected()
             if disconnected:  
+                dm.set_block_state_msg_queue(homeid, True)
                 break
-            dm.set_block_state_msg_queue(homeid, True)
             ret = dm.get_msg_from_queue(homeid)
             if ret:
                 yield {'data': ret}
+            else:
+                await asyncio.sleep(0.5)
     return EventSourceResponse(messages(homeid))
 
 
@@ -129,6 +131,9 @@ with open(conf_file) as jfile:
 
 db:Client  = Client(f"http://{config['db']['user']}:{config['db']['password']}@localhost")
 dm = HomeManager(config.get('rabbitmq', {}))
+dm_worker = Thread(target=dm.run, name="DeicesMSG")
+dm_worker.setDaemon(True)
+dm_worker.start()
 templates = Jinja2Templates(directory='templates')
 
 
@@ -159,8 +164,9 @@ else:
 app = Starlette(routes=routes,
                 debug=True,
                 middleware=middleware,
-                on_startup=[dm.connect],
-                on_shutdown=[dm.stop])
+                # on_startup=[dm.start],
+                # on_shutdown=[dm_worker.join]
+                )
 
 if __name__ == "__main__":
     uvicorn.run(app, host='127.0.0.1',debug=True, port=8000)

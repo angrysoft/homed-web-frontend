@@ -1,13 +1,12 @@
-from typing import List, Set, Dict ,Any
+from typing import List, NoReturn, Set, Dict ,Any
 import amqpstorm
-from threading import RLock, Thread, Event
+from threading import RLock, Event
 import ssl
 from time import sleep
-import asyncio
 
-class HomeManager(Thread):
+class HomeManager:
     def __init__(self, config: Dict[str, Any]) -> None:
-        super().__init__()
+        # super().__init__()
         # self.daemon = True
         self.config = config
         self.connection:amqpstorm.Connection
@@ -45,9 +44,12 @@ class HomeManager(Thread):
                 sleep(5)
                 print('Retray after 5s')
     
-    def run(self):
-        self.channel.start_consuming()
-        
+    def run(self) -> NoReturn:
+        self.connect()
+        while True:
+            if self.setuped:
+                self.channel.start_consuming()
+            sleep(2)
     
     def register_home(self, homeid:str):
         if homeid in self.setuped:
@@ -61,8 +63,8 @@ class HomeManager(Thread):
         self.channel.queue.bind(queue=queue_name, exchange='homedaemon', routing_key=f'homedaemon.{homeid}.reports')
         self.channel.basic.consume(callback=event_handler, queue=queue_name, no_ack=True, arguments={'homeid':homeid})
         self.setuped.add(homeid)
-        if not self.is_alive():
-            self.start()
+        # if not self.is_alive():
+        #     self.start()
             
         if homeid not in self.event_handlers:
             self.event_handlers[homeid] = event_handler
@@ -70,8 +72,7 @@ class HomeManager(Thread):
     def get_msg_from_queue(self, homeid:str):
         if homeid in self.event_handlers:
             self.set_block_state_msg_queue(homeid, False)
-            ret = self.event_handlers[homeid].queue.get()
-            return ret
+            return self.event_handlers[homeid].queue.get()
     
     def set_block_state_msg_queue(self, homeid:str, state:bool):
         
@@ -102,7 +103,7 @@ class HomeManager(Thread):
 
  
 class EventHandler:
-    def __init__(self, homeid) -> None:
+    def __init__(self, homeid:str) -> None:
         self.homeid = homeid
         self.queue = EventQueue()
     
@@ -130,21 +131,12 @@ class EventQueue:
         
         with self.lock:
             self._queue.insert(0, item)
-        
-        if not self._event.is_set():
-            self._event.set()
             
     def get(self) -> str:
         ret:str  = ''
-        if self.is_empty():
-            self._event.wait()
-            self._event.clear()
-               
         with self.lock:
-            try:
+            if self._queue:
                 ret = self._queue.pop()
-            except IndexError as err:
-                print(err)
         return ret
     
     def is_empty(self) -> bool:

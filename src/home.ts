@@ -1,7 +1,6 @@
 import { Device } from "./devices.js";
 import { BaseComponent } from "./components.js";
 
-
 class HomeApp {
     private model:HomeModel;
     private view:HomeView;

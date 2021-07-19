@@ -11,8 +11,8 @@ class TraitsFactory {
                 break;
             }
 
-            case "DoubleSwitch": {
-                ret = new DoubleSwitchView();
+            case "MultiSwitch": {
+                ret = new MultiSwitchView();
                 break;
             }
 
@@ -156,6 +156,7 @@ class OnOffView extends Trait {
     }
     
     public attributeChangedCallback(name:string, oldValue:string, newValue:string) {
+        newValue = newValue.toLowerCase();
         if (oldValue != newValue && name === "power") {
             this.button.setAttribute('color', newValue);
             
@@ -170,15 +171,15 @@ class OnOffView extends Trait {
     }
 }
 
-class DoubleSwitchView extends Trait {
-    private buttonOne: ButtonSmall;
-    private buttonTwo: ButtonSmall;
-    static attr: Array<string> = ['one', 'two'];
+class MultiSwitchView extends Trait {
+    private buttonLeft: ButtonSmall;
+    private buttonRight: ButtonSmall;
+    static attr: Array<string> = ['left', 'right'];
 
     constructor() {
         super();
         this._showInMainView = true;
-        this.statusList = DoubleSwitchView.attr;
+        this.statusList = MultiSwitchView.attr;
         this._sendCommands = true;
         
         this.sheet.insertRule(`:host {
@@ -188,25 +189,26 @@ class DoubleSwitchView extends Trait {
             justify-content: center;
         }`);
 
-        this.buttonOne = new ButtonSmall("on");
-        this.buttonOne.addEventListener("click", (el) => {
-            this.dispatchEvent(new CustomEvent('send-command', { detail: ['one', this.getAttribute("cmd-one")] }));
+        this.buttonLeft = new ButtonSmall("on");
+        this.buttonLeft.addEventListener("click", (el) => {
+            this.dispatchEvent(new CustomEvent('send-command', { detail: [this.getAttribute("cmd-left"), 'left'] }));
         });
 
-        this.buttonTwo = new ButtonSmall("on");
-        this.buttonTwo.addEventListener("click", (el) => {
-            this.dispatchEvent(new CustomEvent('send-command', { detail: ['two', this.getAttribute("cmd-two")] }));
+        this.buttonRight = new ButtonSmall("on");
+        this.buttonRight.addEventListener("click", (el) => {
+            this.dispatchEvent(new CustomEvent('send-command', { detail: [this.getAttribute("cmd-right"), 'right'] }));
         });
-        this.root.appendChild(this.buttonOne);
-        this.root.appendChild(this.buttonTwo);
+        this.root.appendChild(this.buttonLeft);
+        this.root.appendChild(this.buttonRight);
         
     }
     
     static get observedAttributes() {
-        return DoubleSwitchView.attr;
+        return MultiSwitchView.attr;
     }
     
     public attributeChangedCallback(name:string, oldValue:string, newValue:string) {
+        newValue = newValue.toLowerCase();
         if (oldValue != newValue) {
             let button: ButtonSmall;
             let valueToSet:string;
@@ -215,11 +217,11 @@ class DoubleSwitchView extends Trait {
             } else {
                 valueToSet = "on";
             }
-            if (name === 'one') {
-                button = this.buttonOne;
+            if (name === 'left') {
+                button = this.buttonLeft;
                 
-            } else if (name === 'two') {
-                button = this.buttonTwo;
+            } else if (name === 'right') {
+                button = this.buttonRight;
             } else { return }
             button.setAttribute('color', newValue);
             button.name = valueToSet;
@@ -837,7 +839,7 @@ class ChannelsView extends Trait {
 }
 
 window.customElements.define('onoff-view', OnOffView);
-window.customElements.define('doubleswitch-view', DoubleSwitchView);
+window.customElements.define('doubleswitch-view', MultiSwitchView);
 window.customElements.define('rgb-view', RgbView);
 window.customElements.define('dimmer-view', DimmerView);
 window.customElements.define('ct-view', ColorTemperatureView);
