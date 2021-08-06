@@ -176,7 +176,7 @@ class HomeManager(Thread):
 
 if __name__ == '__main__':
     config = JConfig()
-    config.load_config_from_file('tmp/homed.json')
+    config.load_config_from_file('/etc/homedaemon/homed.json')
     watcher = MainWatcher(config)
     watcher.connect()
     
