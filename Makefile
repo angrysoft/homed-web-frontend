@@ -7,7 +7,7 @@ USRPAN=http
 GRPPAN=http
 PREFIX = /usr
 
-all: buildjs stylescss
+all: buildjs
 
 buildjs:
 	tsc -b src
