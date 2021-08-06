@@ -1,0 +1,4 @@
+starlette
+sse-starlette
+uvicorn
+pycouchdb
