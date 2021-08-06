@@ -121,9 +121,9 @@ async def sse(request: Request):
     return EventSourceResponse(messages(homeid))
 
 
-conf_file = 'tmp/homed.json'
+conf_file = '/etc/homedaemon/homemanager.json'
 if not os.path.exists(conf_file):
-    raise FileNotFoundError('can`find config file /etc/homerelay.json')
+    raise FileNotFoundError('can`find config file /etc/homedaemon/homemanager.json')
 
 config: Dict[str, Any] = {}
 with open(conf_file) as jfile:
