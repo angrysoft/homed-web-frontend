@@ -129,7 +129,7 @@ config: Dict[str, Any] = {}
 with open(conf_file) as jfile:
     config = json.load(jfile)
 
-db:Client  = Client(f"http://{config['db']['user']}:{config['db']['password']}@localhost")
+db:Client  = Client(f"http://{config['couchdb']['user']}:{config['couchdb']['password']}@localhost")
 dm = HomeManager(config.get('rabbitmq', {}))
 dm_worker = Thread(target=dm.run, name="DeicesMSG")
 dm_worker.setDaemon(True)
