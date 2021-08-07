@@ -28,7 +28,7 @@ export class DeviceModel {
 
     private getTranslation(key:string):string {
         let ret = "";
-        console.log(key, this.info[key]);
+        console.log(`aaaa ${key},  ${this.info[key]}, ${navigator.language}`);
         if ( this.info[key] != undefined) {
             ret  = this.info[key][this.langCodes.get(navigator.language)];
         }

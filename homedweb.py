@@ -24,6 +24,7 @@ __version__ = '0.1'
 
 import json
 import os
+import sys
 import logging
 import uvicorn
 from os import urandom
@@ -121,7 +122,11 @@ async def sse(request: Request):
     return EventSourceResponse(messages(homeid))
 
 
-conf_file = '/etc/homedaemon/homed.json'
+if len(sys.argv) > 1:
+    conf_file = sys.argv[1]
+else:
+    conf_file = '/etc/homedaemon/homed.json'
+
 if not os.path.exists(conf_file):
     raise FileNotFoundError('can`find config file /etc/homedaemon/homed.json')
 
