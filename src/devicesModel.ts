@@ -15,11 +15,11 @@ export class DeviceModel {
     }
 
     get name():string {
-        return this.getTranslation("name") || "";
+        return this.getTranslation("name");
     }
 
     get place():string {
-        return this.getTranslation("place") || "";
+        return this.getTranslation("place");
     }
 
     get traitsNames(): string[] {
@@ -27,7 +27,11 @@ export class DeviceModel {
     }
 
     private getTranslation(key:string):string {
-        return this.info[key][this.langCodes.get(navigator.language)];
+        let ret = "";
+        if ( this.info[key] != undefined) {
+            ret  = this.info[key][this.langCodes.get(navigator.language)];
+        }
+        return ret;
     }
 
     public registerTraitStatus(trait: Trait) {
