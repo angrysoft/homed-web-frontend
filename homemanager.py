@@ -1,6 +1,7 @@
 #!/usr/bin/python
 from __future__ import annotations
 import json
+import os
 import amqpstorm
 import ssl
 from time import sleep
@@ -176,7 +177,7 @@ class HomeManager(Thread):
 
 if __name__ == '__main__':
     config = JConfig()
-    config.load_config_from_file('/etc/homedaemon/homed.json')
+    config.load_config_from_file(os.environ.get('CONF_FILE', '/etc/homedaemon/homed.json'))
     watcher = MainWatcher(config)
     watcher.connect()
     
