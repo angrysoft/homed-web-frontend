@@ -3,9 +3,11 @@ import { Trait } from "traits";
 export class DeviceModel {
     public info: Object;
     private statuses: Object = {};
+    private langCodes: LanguagesCodes;
 
     constructor(deviceInfo:Object) {
         this.info = deviceInfo;
+        this.langCodes = new LanguagesCodes();
     }
 
     get sid():string {
@@ -13,15 +15,19 @@ export class DeviceModel {
     }
 
     get name():string {
-        return this.info["name"] || "";
+        return this.getTranslation("name") || "";
     }
 
     get place():string {
-        return this.info["place"] || "";
+        return this.getTranslation("place") || "";
     }
 
     get traitsNames(): string[] {
         return this.info["traits"] || [];
+    }
+
+    private getTranslation(key:string):string {
+        return this.info[key][this.langCodes.get(navigator.language)];
     }
 
     public registerTraitStatus(trait: Trait) {
@@ -35,5 +41,25 @@ export class DeviceModel {
             await this.statuses[key].setAttribute(key, value);
         }
     }
-    
+}
+
+class LanguagesCodes {
+    private codes: Object 
+    constructor() {
+        this.codes = {
+            "pl-PL": "pl",
+            "pl": "pl",
+            "en": "en",
+            "en-US": "en"
+        }
+    }
+
+    public get(code:string):string {
+        if (this.codes[code] != undefined) {
+            return this.codes[code];
+        } else {
+            return "en";
+        }
+
+    }
 }
