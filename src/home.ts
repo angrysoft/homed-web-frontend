@@ -71,10 +71,12 @@ class HomeView extends BaseComponent {
         }`);
 
         this.sheet.insertRule(`section {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
+            display: flex;
             gap: 0.5rem;
             overflow-y: auto;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            align-items: flex-start;
         }`);
         // this.sheet.insertRule(`section {
         //     display: flex;
