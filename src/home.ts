@@ -88,7 +88,10 @@ class HomeView extends BaseComponent {
         // }`);
         
         this.sheet.insertRule(`header {
+            display: flex;
             padding: 1rem;
+            overflow-x: auto;
+            gap: 0.1rem;
         }`);
         
         this.sheet.insertRule(`footer {
