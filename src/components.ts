@@ -318,6 +318,8 @@ class RangeSet extends BaseComponent {
         gap: 1rem;
         grid-template-columns: 1fr;
         justify-content: center;
+        align-items: center;
+        justify-items: center;
     }`);
 
         this.label = document.createElement("label");
