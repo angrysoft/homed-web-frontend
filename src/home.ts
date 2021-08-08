@@ -79,20 +79,16 @@ class HomeView extends BaseComponent {
             flex-wrap: wrap;
             justify-content: space-around;
             align-items: flex-start;
+            border-top: 2px solid back;
+            padding-top: 1rem;
         }`);
-        // this.sheet.insertRule(`section {
-        //     display: flex;
-        //     flex-flow: row wrap;
-        //     gap: 1rem;
-        //     overflow-y: auto;
-        //     padding: 1rem;
-        // }`);
         
         this.sheet.insertRule(`header {
             display: flex;
-            padding: 1rem;
+            padding: 1rem 0.5rem;
             overflow-x: auto;
-            gap: 0.1rem;
+            gap: 1rem;
+            white-space: pre;
         }`);
         
         this.sheet.insertRule(`footer {
@@ -165,7 +161,9 @@ class HomeModel {
         let langCodes: LanguagesCodes = new LanguagesCodes();
         let ret: Set<string> = new Set()
         this.places.forEach((place) => {
-            ret.add(place[langCodes.get(navigator.language)]);
+            if (place[langCodes.get(navigator.language)] != undefined) {
+                ret.add(place[langCodes.get(navigator.language)]);
+            }
         });
         return ret;
     }
