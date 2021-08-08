@@ -20,6 +20,7 @@ class HomeApp {
     
     public async run() {
         await this.model.getData();
+        this.view.addPlaces(this.model.getPlacesList);
         this.model.getDevicesInfo().forEach(deviceInfo => {
             let dev = new Device(deviceInfo);
             this.view.addDevice(dev.getView());
@@ -50,7 +51,7 @@ class HomeView extends BaseComponent {
         this.header = document.createElement("header");
         this.devices = document.createElement("section");
         this.footer = document.createElement("footer");
-        this.header.innerText = "Header";
+        // this.header.innerText = "Header";
         this.footer.innerHTML = `
         <span class=".material-icons"><a href="#">home</a></span>
         <span class=".material-icons"><a href="#">favorite</a></span>
@@ -105,6 +106,14 @@ class HomeView extends BaseComponent {
     
     public delDevice(devView:HTMLElement) {
         this.devices.removeChild(devView);
+    }
+
+    public addPlaces(places:string[]) {
+        places.forEach(place=> {
+            let div = document.createElement('div');
+            div.innerText = place;
+            this.header.appendChild(div);
+        });
     }
     
     public render() {
