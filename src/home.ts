@@ -20,7 +20,7 @@ class HomeApp {
     
     public async run() {
         await this.model.getData();
-        this.view.addPlaces(this.model.getPlacesList);
+        this.view.addPlaces(this.model.getPlacesList());
         this.model.getDevicesInfo().forEach(deviceInfo => {
             let dev = new Device(deviceInfo);
             this.view.addDevice(dev.getView());
