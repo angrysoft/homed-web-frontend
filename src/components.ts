@@ -129,8 +129,6 @@ class ModalBox extends BaseComponent {
 
         this.sheet.insertRule(`:host {
             display:none;
-            justify-content: center;
-            align-items: center;
             grid-auto-columns: 1fr;
             position: fixed;
             z-index: 100;
@@ -182,14 +180,14 @@ class ModalBox extends BaseComponent {
             gap: 1rem;
             padding 0.5rem;
             grid-template-areas: 
-            "color color color"
-            "colorTemp colorTemp colorTemp"
-            "bright bright bright"
-            ". arrows ."
-            "return arrows exit"
-            "mediaBtn mediaBtn mediaBtn"
-            "volume volume volume"
-            "channel channel channel";
+            "color color color color color color"
+            "colorTemp colorTemp colorTemp colorTemp colorTemp colorTemp"
+            "bright bright bright bright bright bright"
+            ". . arrows arrows . ."
+            ". . return exit . ."
+            "mediaBtn mediaBtn mediaBtn mediaBtn mediaBtn mediaBtn"
+            "volume volume volume volume volume volume"
+            "channel channel channel channel channel channel"
         }`);
 
         this.content = document.createElement("section");
