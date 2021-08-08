@@ -41,9 +41,8 @@ export class DeviceView extends BaseComponent {
             padding: 1rem;
         }`);
 
-        this.traits.addEventListener("click", (el) => {
+        this.header.addEventListener("click", (el) => {
             let target = el.target as HTMLElement;
-            console.log(target.tagName);
             if (target.tagName === "HEADER") {
                 this.traitsView.show();
             }
