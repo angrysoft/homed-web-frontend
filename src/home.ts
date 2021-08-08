@@ -73,9 +73,8 @@ class HomeView extends BaseComponent {
         this.sheet.insertRule(`section {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 1rem;
+            gap: 0.5rem;
             overflow-y: auto;
-            padding: 1rem;
         }`);
         // this.sheet.insertRule(`section {
         //     display: flex;
