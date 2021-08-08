@@ -79,13 +79,13 @@ class HomeView extends BaseComponent {
             flex-wrap: wrap;
             justify-content: space-around;
             align-items: flex-start;
-            border-top: 2px solid back;
+            border-top: 2px solid black;
             padding-top: 1rem;
         }`);
         
         this.sheet.insertRule(`header {
             display: flex;
-            padding: 1rem 0.5rem;
+            padding: 2rem 0.5rem 1rem;
             overflow-x: auto;
             gap: 1rem;
             white-space: pre;
