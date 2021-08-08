@@ -43,6 +43,7 @@ export class DeviceView extends BaseComponent {
 
         this.traits.addEventListener("click", (el) => {
             let target = el.target as HTMLElement;
+            console.log(target.tagName);
             if (target.tagName === "HEADER") {
                 this.traitsView.show();
             }
