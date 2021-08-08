@@ -1,4 +1,5 @@
-import { Device } from "./devices.js";
+import { Device} from "./devices.js";
+import { LanguagesCodes } from "./devicesModel.js";
 import { BaseComponent } from "./components.js";
 
 class HomeApp {
@@ -111,7 +112,7 @@ class HomeView extends BaseComponent {
         this.devices.removeChild(devView);
     }
 
-    public addPlaces(places:string[]) {
+    public addPlaces(places:Set<string>) {
         places.forEach(place=> {
             let div = document.createElement('div');
             div.innerText = place;
@@ -160,10 +161,11 @@ class HomeModel {
         return this.homeid;
     }
     
-    public getPlacesList(): string[] {
-        let ret:string[] = []
+    public getPlacesList(): Set<string> {
+        let langCodes: LanguagesCodes = new LanguagesCodes();
+        let ret: Set<string> = new Set()
         this.places.forEach((place) => {
-            ret.push(place);
+            ret.add(place[langCodes.get(navigator.language)]);
         });
         return ret;
     }

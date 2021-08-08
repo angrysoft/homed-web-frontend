@@ -47,7 +47,7 @@ export class DeviceModel {
     }
 }
 
-class LanguagesCodes {
+export class LanguagesCodes {
     private codes: Object 
     constructor() {
         this.codes = {
