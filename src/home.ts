@@ -159,8 +159,9 @@ class HomeModel {
     
     public getPlacesList(): Set<string> {
         let langCodes: LanguagesCodes = new LanguagesCodes();
-        let ret: Set<string> = new Set()
+        let ret: Set<string> = new Set();
         this.places.forEach((place) => {
+            console.log(place);
             if (place[langCodes.get(navigator.language)] != undefined) {
                 ret.add(place[langCodes.get(navigator.language)]);
             }
