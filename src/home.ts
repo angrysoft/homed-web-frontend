@@ -145,8 +145,9 @@ class HomeModel {
             }
         }
         this.data.forEach( (devInfo) => {
-            console.log(typeof(devInfo["place"]));
-            this.places.add(devInfo["place"]);
+            if (typeof(devInfo["place"]) === "object") {
+                this.places.add(devInfo["place"]);
+            }
         });
     }
     
