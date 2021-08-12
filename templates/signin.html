@@ -25,7 +25,7 @@
 <script>
     function onSignIn(googleUser) {
 
-        let id_token = googleUser.getAuthResponse().id_token;
+        let id_token = googleUser.getId();
         fetch(window.location.href, {
             method: 'POST',
             body: id_token.toString()
