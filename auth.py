@@ -18,6 +18,7 @@ class AuthBackend(AuthenticationBackend):
 
 class GoogleSignIn:
     def __init__(self, token:str) -> None:
+        print(token)
         self._user_info:Dict[str,str] = {}
         self.token = token
         
