@@ -24,8 +24,7 @@
 </div>
 <script>
     function onSignIn(googleCredential) {
-        console.log(googleCredential);
-        let id_token = googleCredential.clientId;
+        let id_token = googleCredential.credential;
         fetch(window.location.href, {
             method: 'POST',
             body: id_token.toString()
