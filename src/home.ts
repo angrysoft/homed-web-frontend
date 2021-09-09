@@ -77,7 +77,11 @@ class HomeView extends BaseComponent {
             gap: 0.5rem;
             overflow-y: auto;
             flex-wrap: wrap;
-            justify-content: space-around;
+            justify-co
+            Salon
+            Łazienka
+            Kuchnia
+            tent: space-around;
             align-items: flex-start;
             border-top: 2px solid black;
             padding-top: 1rem;
@@ -100,10 +104,6 @@ class HomeView extends BaseComponent {
 
         this.header.addEventListener('click', (el)=>{
             console.log(el.target);
-        });
-        
-        document.addEventListener('change-place', (e)=>{
-            this.setPlaceFilter(e["detail"]["name"]);
         });
     }
 
