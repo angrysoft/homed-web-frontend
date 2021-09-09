@@ -51,7 +51,7 @@ import asyncio
 def login_required(func:Callable[[Request], Response]) -> Coroutine[Any, Any, Response]:
     @wraps(func)
     async def decorated_function(request: Request) -> Response:
-        if request.user. is_authenticated:
+        if request.user.is_authenticated:
             return await func(request)
         return RedirectResponse(url=f'/signin?next={request.url.path}')
     return decorated_function

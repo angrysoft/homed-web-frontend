@@ -1,6 +1,7 @@
 import { Device} from "./devices.js";
 import { LanguagesCodes } from "./devicesModel.js";
 import { BaseComponent } from "./components.js";
+import { Place } from "./placeView.js";
 
 class HomeApp {
     private model:HomeModel;
@@ -52,7 +53,6 @@ class HomeView extends BaseComponent {
         this.header = document.createElement("header");
         this.devices = document.createElement("section");
         this.footer = document.createElement("footer");
-        // this.header.innerText = "Header";
         this.footer.innerHTML = `
         <span class=".material-icons"><a href="#">home</a></span>
         <span class=".material-icons"><a href="#">favorite</a></span>
@@ -98,6 +98,17 @@ class HomeView extends BaseComponent {
             background: black;
         }`);
         
+        document.addEventListener('change-place', (e)=>{
+            this.setPlaceFilter(e["detail"]);
+        });
+    }
+
+    private setPlaceFilter(name:string) {
+        this.devices.childNodes.forEach((el) =>  {
+        console.log(el);
+        //   if (el.indexOf(filter) < 0 ) {
+  
+        });
     }
     
     public addDevice(devView:HTMLElement) {
@@ -110,9 +121,7 @@ class HomeView extends BaseComponent {
 
     public addPlaces(places:Set<string>) {
         places.forEach(place=> {
-            let div = document.createElement('div');
-            div.innerText = place;
-            this.header.appendChild(div);
+            this.header.appendChild(new Place(place));
         });
     }
     
@@ -144,6 +153,7 @@ class HomeModel {
                 console.log(e);
             }
         }
+
         this.data.forEach( (devInfo) => {
             if (typeof(devInfo["place"]) === "object") {
                 this.places.add(devInfo["place"]);
@@ -175,6 +185,7 @@ class HomeModel {
         this.devices[dev.sid] = dev;
     }
 }
+
 
 
 window.onload = async () => {
