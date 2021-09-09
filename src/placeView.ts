@@ -1,4 +1,4 @@
-export class Place extends HTMLElement {
+export class PlaceView extends HTMLElement {
     constructor(name:string) {
         super();
         this.textContent = name;
@@ -10,3 +10,5 @@ export class Place extends HTMLElement {
         });
     }
 }
+
+window.customElements.define('place-view', PlaceView);
