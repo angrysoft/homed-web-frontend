@@ -99,7 +99,7 @@ class HomeView extends BaseComponent {
         }`);
         
         document.addEventListener('change-place', (e)=>{
-            this.setPlaceFilter(e["detail"]);
+            this.setPlaceFilter(e["detail"]["name"]);
         });
     }
 

@@ -3,8 +3,9 @@ export class PlaceView extends HTMLElement {
         super();
         this.textContent = name;
         this.addEventListener('click', ()=> {
+            console.log(`click on place ${name}`)
             this.dispatchEvent(new CustomEvent('change-place', {
-                detail: name,
+                detail: {"name":name},
                 bubbles: true
             }));
         });
