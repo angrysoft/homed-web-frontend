@@ -1,7 +1,7 @@
 import { Device} from "./devices.js";
 import { LanguagesCodes } from "./devicesModel.js";
 import { BaseComponent } from "./components.js";
-import { PlaceView } from "./placeView.js";
+import { Place } from "./placeView.js";
 
 class HomeApp {
     private model:HomeModel;
@@ -104,6 +104,7 @@ class HomeView extends BaseComponent {
     }
 
     private setPlaceFilter(name:string) {
+        console.log(`change to ${name}`);
         this.devices.childNodes.forEach((el) =>  {
         console.log(el);
         //   if (el.indexOf(filter) < 0 ) {
@@ -121,7 +122,7 @@ class HomeView extends BaseComponent {
 
     public addPlaces(places:Set<string>) {
         places.forEach(place=> {
-            this.header.appendChild(new PlaceView(place));
+            this.header.appendChild(new Place(place));
         });
     }
     
