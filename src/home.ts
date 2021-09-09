@@ -104,7 +104,7 @@ class HomeView extends BaseComponent {
 
         this.header.addEventListener('click', (el)=>{
             let place = el.target as HTMLElement;
-            if (place.tagName != 'place-view') {
+            if (place.tagName.toLowerCase() != 'place-view') {
                 return;
             }
             this.setPlaceFilter(place.textContent); 
