@@ -1,7 +1,7 @@
 import { Device} from "./devices.js";
 import { LanguagesCodes } from "./devicesModel.js";
 import { BaseComponent } from "./components.js";
-import { Place } from "./placeView.js";
+import { PlaceView } from "./placeView.js";
 
 class HomeApp {
     private model:HomeModel;
@@ -126,7 +126,7 @@ class HomeView extends BaseComponent {
 
     public addPlaces(places:Set<string>) {
         places.forEach(place=> {
-            this.header.appendChild(new Place(place));
+            this.header.appendChild(new PlaceView(place));
         });
     }
     
