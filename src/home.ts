@@ -116,7 +116,12 @@ class HomeView extends BaseComponent {
         for (let i = 0; i< this.devices.children.length; i++) {
             let placeName = this.devices.children[i].getAttribute('place');
             console.log(placeName, placeName?.indexOf(name));
-        //   if (el.indexOf(filter) < 0 ) {
+            let el = this.devices.children[i] as HTMLElement; 
+            if (placeName != undefined && placeName?.indexOf(name) < 0 ) {
+                el.style.display = "none";
+            } else {
+                el.style.display = "";
+            }
         }
     }
     
