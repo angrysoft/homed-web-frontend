@@ -105,6 +105,10 @@ class HomeView extends BaseComponent {
         this.header.addEventListener('click', (el)=>{
             console.log(el.target);
         });
+
+        document.addEventListener('change-place', (e)=>{
+            console.log(e["detail"]["name"]);
+        });
     }
 
     private setPlaceFilter(name:string) {
