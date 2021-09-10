@@ -1,7 +1,7 @@
 export { Device };
-import { DeviceModel } from "./devicesModel.js";
-import { DeviceView } from "./devicesView.js";
-import { TraitsFactory } from "./traits.js";
+import { DeviceModel } from "./DevicesModel.js";
+import { DeviceView } from "./DevicesView.js";
+import { TraitsFactory } from "./Traits.js";
 
 
 class Device {
