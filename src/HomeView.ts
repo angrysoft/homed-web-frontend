@@ -62,25 +62,27 @@ export class HomeView extends BaseComponent {
             background: black;
         }`);
 
-        this.header.addEventListener('click', (el) => {
-            let place = el.target as HTMLElement;
-            if (place.tagName.toLowerCase() != 'place-view') {
-                return;
-            }
-            this.setPlaceFilter(place.textContent);
+        this.header.addEventListener('click', (el)=>{
+            this.setPlaceFilter(el.target as HTMLElement); 
         });
 
     }
 
-    private setPlaceFilter(name: string | null) {
-        if (name === null) { return; }
+    private setPlaceFilter(place:HTMLElement | null) {
+        console.log(place, typeof(place));
+        if (place === null || place.tagName.toLowerCase() != 'place-view') {return;}
 
-        console.log(`change to ${name}`);
-        for (let i = 0; i < this.devices.children.length; i++) {
+        document.querySelectorAll('place-view.selected').forEach((sel)=> {
+            sel.classList.remove('selected');
+        });
+
+        place.classList.add('selected');
+        let name:string = place.innerText;
+
+        for (let i = 0; i< this.devices.children.length; i++) {
             let placeName = this.devices.children[i].getAttribute('place');
-            console.log(placeName, placeName?.indexOf(name));
-            let el = this.devices.children[i] as HTMLElement;
-            if (placeName != undefined && placeName?.indexOf(name) < 0) {
+            let el = this.devices.children[i] as HTMLElement; 
+            if (placeName != undefined && placeName?.indexOf(name) < 0 ) {
                 el.style.display = "none";
             } else {
                 el.style.display = "";
@@ -96,10 +98,11 @@ export class HomeView extends BaseComponent {
         this.devices.removeChild(devView);
     }
 
-    public addPlaces(places: Set<string>) {
-        places.forEach(place => {
+    public addPlaces(places:Set<string>) {
+        places.forEach(place=> {
             this.header.appendChild(new PlaceView(place));
         });
+        this.setPlaceFilter(this.header.children[0] as HTMLElement);
     }
 
     public render() {
