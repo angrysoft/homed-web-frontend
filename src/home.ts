@@ -112,7 +112,7 @@ class HomeView extends BaseComponent {
         console.log(place, typeof(place));
         if (place === null || place.tagName.toLowerCase() != 'place-view') {return;}
 
-        document.querySelectorAll('place-view.selected').forEach((sel)=>{
+        document.querySelectorAll('place-view.selected').forEach((sel)=> {
             sel.classList.remove('selected');
         });
 
@@ -121,7 +121,6 @@ class HomeView extends BaseComponent {
 
         for (let i = 0; i< this.devices.children.length; i++) {
             let placeName = this.devices.children[i].getAttribute('place');
-            console.log(placeName, placeName?.indexOf(name));
             let el = this.devices.children[i] as HTMLElement; 
             if (placeName != undefined && placeName?.indexOf(name) < 0 ) {
                 el.style.display = "none";
