@@ -102,7 +102,7 @@ class HomeView extends BaseComponent {
             background: black;
         }`);
 
-        this.header.addEventListener('click', async (el)=>{
+        this.header.addEventListener('click', (el)=>{
             this.setPlaceFilter(el.target as HTMLElement); 
         });
 
