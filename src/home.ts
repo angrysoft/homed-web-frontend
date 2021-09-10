@@ -103,12 +103,12 @@ class HomeView extends BaseComponent {
         }`);
 
         this.header.addEventListener('click', async (el)=>{
-            await this.setPlaceFilter(el.target as HTMLElement); 
+            this.setPlaceFilter(el.target as HTMLElement); 
         });
 
     }
 
-    private async setPlaceFilter(place:HTMLElement | null) {
+    private setPlaceFilter(place:HTMLElement | null) {
         if (place === null || place.tagName.toLowerCase() != 'place-view') {return;}
 
         document.querySelectorAll('place-view.selected').forEach((sel)=>{
@@ -205,7 +205,6 @@ class HomeModel {
         this.devices[dev.sid] = dev;
     }
 }
-
 
 
 window.onload = async () => {
