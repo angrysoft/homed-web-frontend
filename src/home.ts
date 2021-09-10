@@ -109,6 +109,7 @@ class HomeView extends BaseComponent {
     }
 
     private setPlaceFilter(place:HTMLElement | null) {
+        console.log(place, typeof(place));
         if (place === null || place.tagName.toLowerCase() != 'place-view') {return;}
 
         document.querySelectorAll('place-view.selected').forEach((sel)=>{
