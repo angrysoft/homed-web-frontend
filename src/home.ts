@@ -102,20 +102,22 @@ class HomeView extends BaseComponent {
             background: black;
         }`);
 
-        this.header.addEventListener('click', (el)=>{
-            let place = el.target as HTMLElement;
-            if (place.tagName.toLowerCase() != 'place-view') {
-                return;
-            }
-            this.setPlaceFilter(place.textContent); 
+        this.header.addEventListener('click', async (el)=>{
+            await this.setPlaceFilter(el.target as HTMLElement); 
         });
 
     }
 
-    private setPlaceFilter(name:string | null) {
-        if (name === null) {return;}
+    private async setPlaceFilter(place:HTMLElement | null) {
+        if (place === null || place.tagName.toLowerCase() != 'place-view') {return;}
 
-        console.log(`change to ${name}`);
+        document.querySelectorAll('place-view.selected').forEach((sel)=>{
+            sel.classList.remove('selected');
+        });
+
+        place.classList.add('selected');
+        let name:string = place.innerText;
+
         for (let i = 0; i< this.devices.children.length; i++) {
             let placeName = this.devices.children[i].getAttribute('place');
             console.log(placeName, placeName?.indexOf(name));
@@ -140,6 +142,7 @@ class HomeView extends BaseComponent {
         places.forEach(place=> {
             this.header.appendChild(new PlaceView(place));
         });
+        this.setPlaceFilter(places[0]);
     }
     
     public render() {
