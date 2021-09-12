@@ -79,9 +79,9 @@ export class HomeView extends BaseComponent {
         place.classList.add('selected');
         let name:string = place.innerText;
 
-        for (let i = 0; i< this.devices.children.length; i++) {
-            let placeName = this.devices.children[i].getAttribute('place');
-            let el = this.devices.children[i] as HTMLElement; 
+        for (let child of  this.devices.children) {
+            let placeName = child.getAttribute('place');
+            let el = child as HTMLElement; 
             if (placeName != undefined && placeName?.indexOf(name) < 0 ) {
                 el.style.display = "none";
             } else {

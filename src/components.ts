@@ -69,7 +69,6 @@ class Button extends BaseComponent {
 
         this.buttonElement = document.createElement("button");
         this.buttonName = document.createTextNode(name);
-        // this.buttonElement.innerText = name;
         this.buttonElement.appendChild(this.buttonName);
         this.root.appendChild(this.buttonElement);
     }
