@@ -36,15 +36,9 @@ export class HomeView extends BaseComponent {
             display: flex;
             gap: 0.5rem;
             overflow-y: auto;
-            flex-wrap: wrap;
-            justify-co
-            Salon
-            Łazienka
-            Kuchnia
-            tent: space-around;
             align-items: flex-start;
             border-top: 2px solid black;
-            padding-top: 1rem;
+            padding: 1rem;
         }`);
 
         this.sheet.insertRule(`header {
