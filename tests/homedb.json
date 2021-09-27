@@ -1,6 +1,6 @@
 {
     "rabbitmq": {
-        "host":"vps624310.ovh.net",
+        "host":"",
         "port": 5671,
         "ssl": true,
         "user": "homed",
