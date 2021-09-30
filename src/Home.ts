@@ -41,6 +41,13 @@ class HomeApp {
 }
     
 window.onload = async () => {
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/sw.js').then( (reg) => {
+            console.log('ServiceWorker: ', reg.scope);
+        }, (err)=> {
+            console.log('ServiceWorker Error', err);
+        });
+    }
     window.customElements.define('home-view', HomeView);
     let app = new HomeApp();
     await app.run();
