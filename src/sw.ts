@@ -1,10 +1,5 @@
 
-
 const HOME_CACHE_NAME = "home-cache-v1";
-
-
-
-
 
 class ServiceWorkerOne {
 
@@ -25,30 +20,32 @@ class ServiceWorkerOne {
     }
 
     public static onFetched = (event: any): void => {
-        event.respondWith(
-            caches.match(event.request).then((matchResponse) => {
-                return matchResponse || fetch(event.request).then((fetchResponse) => {
-                    return caches.open(HOME_CACHE_NAME).then((cache) => {
-                        cache.put(event.request, fetchResponse.clone());
-                        return fetchResponse;
-                    });
-                });
-            })
+        if (event.request.method != "GET") return;
+
+        event.respondWith(async () => {
+            const cache = await caches.open(HOME_CACHE_NAME);
+            const cachedResponse = await cache.match(event.request);
+            if (cachedResponse) {
+                event.waitUntil(cache.add(event.request));
+                return cachedResponse;
+            }
+            return fetch(event.request);
+        }
         );
     }
 
     /* public static onActivate(event: any): void {
-        event.waitUntil(
-            caches.keys().then(function(cacheNames) {
-              return Promise.all(
-                cacheNames.map(function(cacheName) {
-                  if (cacheAllowlist.indexOf(cacheName) === -1) {
-                    return caches.delete(cacheName);
-                  }
-                })
-              );
-            })
-          );
+        let cacheKeepList = ['v1'];
+    
+    event.waitUntil(
+        caches.keys().then( keyList => {
+            return Promise.all(keyList.map(function(key) {
+                if (cacheKeepList.indexOf(key) === -1) {
+                    return caches.delete(key);
+                }
+            }));
+        })
+    );
     } */
 }
 
