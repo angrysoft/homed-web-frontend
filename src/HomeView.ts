@@ -34,9 +34,11 @@ export class HomeView extends BaseComponent {
 
         this.sheet.insertRule(`section {
             display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            align-items: flex-start;
             gap: 0.5rem;
             overflow-y: auto;
-            align-items: flex-start;
             border-top: 2px solid black;
             padding: 1rem;
         }`);
