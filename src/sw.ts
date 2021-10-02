@@ -36,6 +36,20 @@ class ServiceWorkerOne {
             })
         );
     }
+
+    /* public static onActivate(event: any): void {
+        event.waitUntil(
+            caches.keys().then(function(cacheNames) {
+              return Promise.all(
+                cacheNames.map(function(cacheName) {
+                  if (cacheAllowlist.indexOf(cacheName) === -1) {
+                    return caches.delete(cacheName);
+                  }
+                })
+              );
+            })
+          );
+    } */
 }
 
 ServiceWorkerOne.run();

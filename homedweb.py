@@ -48,7 +48,7 @@ import asyncio
 
 
 
-def login_required(func:Callable[[Request], Response]) -> Coroutine[Any, Any, Response]:
+def login_required(func:Any) -> Any:
     @wraps(func)
     async def decorated_function(request: Request) -> Response:
         if request.user.is_authenticated:
@@ -59,7 +59,7 @@ def login_required(func:Callable[[Request], Response]) -> Coroutine[Any, Any, Re
 
 @login_required
 async def home(request: Request) -> Response:
-    homeid: str = request.path_params['homeid']
+    homeid: str = request.session['homeid']
     if homeid == 'favicon.ico':
         return PlainTextResponse(homeid)
     
@@ -97,7 +97,6 @@ async def signin(request: Request):
             request.session['picture'] = gs.picture
             request.session['name'] = gs.name
             request.session['homeid'] = db['residents'][gs.user_id]['homeid']
-            print('main', main_thread(), current_thread())
             dm.register_home(request.session['homeid'])
             
             return PlainTextResponse('ok')
@@ -106,7 +105,7 @@ async def signin(request: Request):
 
 @login_required
 async def sse(request: Request):
-    homeid: str = request.path_params['homeid']
+    homeid: str = request.session['homeid']
     async def messages(homeid:str):
         while True:
             disconnected = await request.is_disconnected()
@@ -144,10 +143,10 @@ logging.warning('app starts')
 
 
 routes: List[Any] = [
-    Route('/home/{homeid:str}', endpoint=home),
-    Route('/home/{homeid:str}/events', endpoint=sse),
-    Route('/home/{homeid:str}/devices/all', endpoint=get_all_devices),
-    Route('/home/{homeid:str}/devices/send', endpoint=send_command, methods=['POST']),
+    Route('/', endpoint=home),
+    Route('/events', endpoint=sse),
+    Route('/devices/all', endpoint=get_all_devices),
+    Route('/devices/send', endpoint=send_command, methods=['POST']),
     Route('/signin', endpoint=signin, methods=['GET', 'POST']),
     # Mount('/static', StaticFiles(directory='static'), name='static')
 ]
