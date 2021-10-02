@@ -23,6 +23,7 @@ install:
 	install -v -m 755 -g $(GRP) -o $(USR) homedweb.py /var/www/homedaemon/homedweb.py
 	install -v -m 755 -g $(GRP) -o $(USR) auth.py /var/www/homedaemon/auth.py
 	install -v -m 755 -g $(GRP) -o $(USR) devices.py /var/www/homedaemon/devices.py
+	install -v -m 755 -g $(GRP) -o $(USR) sw.js /var/www/homedaemon/sw.js
 	chown -R $(USR).$(GRP) $(DESTDIR)/var/www/homedaemon
 	chmod -R a+r $(DESTDIR)/var/www/homedaemon
 	chmod -R g+w $(DESTDIR)/var/www/homedaemon
