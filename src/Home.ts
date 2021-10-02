@@ -11,7 +11,7 @@ class HomeApp {
     constructor() {
         this.model = new HomeModel();
         this.view = new HomeView();
-        this.evSource = new EventSource(`/${this.model.getHomeId()}/events`);
+        this.evSource = new EventSource(`/events`);
         this.evSource.onmessage = async (event) => {
             if (event.data.startsWith('{')) {
                 await this.updateDeviceStatus(JSON.parse(event.data));
@@ -43,7 +43,7 @@ class HomeApp {
 window.onload = async () => {
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker
-        .register('/static/scripts/sw.js', {scope: "/"})
+        .register('/static/scripts/sw.js')
         .then( (reg) => {
             console.log('ServiceWorker: ', reg.scope);
         }, (err)=> {

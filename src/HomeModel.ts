@@ -3,15 +3,12 @@ import { LanguagesCodes } from "./DevicesModel.js";
 
 export class HomeModel {
     private places: Set<string> = new Set();
-    private homeid: string;
     private url: string;
     private data: Object[] = [];
     public devices: Object = {};
 
     constructor() {
-        this.homeid = document.location.pathname;
-        this.homeid = this.homeid.substr(1);
-        this.url = `${document.location.pathname}/devices/all`;
+        this.url = `${document.location.origin}/devices/all`;
     }
 
     public async getData() {
@@ -33,10 +30,6 @@ export class HomeModel {
 
     public getDevicesInfo() {
         return this.data;
-    }
-
-    public getHomeId(): string {
-        return this.homeid;
     }
 
     public getPlacesList(): Set<string> {
