@@ -149,7 +149,7 @@ routes: List[Any] = [
     Route('/home/{homeid:str}/devices/all', endpoint=get_all_devices),
     Route('/home/{homeid:str}/devices/send', endpoint=send_command, methods=['POST']),
     Route('/signin', endpoint=signin, methods=['GET', 'POST']),
-    Mount('/static', StaticFiles(directory='static'), name='static')
+    # Mount('/static', StaticFiles(directory='static'), name='static')
 ]
 
 if config.get('debug', False):
