@@ -5,7 +5,7 @@ class ServiceWorkerOne {
 
     public static run(): void {
         addEventListener('install', ServiceWorkerOne.onInstalled);
-        addEventListener('fetch', ServiceWorkerOne.onFetched);
+        // addEventListener('fetch', ServiceWorkerOne.onFetched);
     }
 
     public static onInstalled = (event: any): void => {

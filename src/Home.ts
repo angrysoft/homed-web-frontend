@@ -43,7 +43,7 @@ class HomeApp {
 window.onload = async () => {
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker
-        .register('/static/scripts/sw.js', {scope: "/static/scripts"})
+        .register('/static/scripts/sw.js', {scope: "/"})
         .then( (reg) => {
             console.log('ServiceWorker: ', reg.scope);
         }, (err)=> {
