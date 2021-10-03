@@ -14,7 +14,7 @@ self.addEventListener('install', (event) => {
 self.addEventListener('fetch', (event) => {
     if (event.request.method != "GET")
         return;
-    event.respondWith(async () => {
+    event.respondWith((async () => {
         const cache = await caches.open(HOME_CACHE_NAME);
         const cachedResponse = await cache.match(event.request);
         if (cachedResponse) {
@@ -22,5 +22,5 @@ self.addEventListener('fetch', (event) => {
             return cachedResponse;
         }
         return fetch(event.request);
-    });
+    })());
 });
