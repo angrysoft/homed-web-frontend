@@ -60,6 +60,7 @@ export class HomeView extends BaseComponent {
         }`);
 
         this.header.addEventListener('click', (el)=>{
+            console.log(el.target);
             this.setPlaceFilter(el.target as HTMLElement); 
         });
 
