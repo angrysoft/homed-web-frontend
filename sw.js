@@ -14,14 +14,11 @@ self.addEventListener('install', (event) => {
 self.addEventListener('fetch', (event) => {
     event.respondWith(
         (async () => {
-            if (event.request.method === 'GET') {
-                const cache = await caches.open(HOME_CACHE_NAME);
-                const cachedResponse = await cache.match(event.request);
-                if (cachedResponse) {
-                    return cachedResponse;
-                }
+            const cache = await caches.open(HOME_CACHE_NAME);
+            const cachedResponse = await cache.match(event.request);
+            if (cachedResponse) {
+                return cachedResponse || fetch(event.request);
             }
-            return fetch(event.request); 
         })()
     );
 });
