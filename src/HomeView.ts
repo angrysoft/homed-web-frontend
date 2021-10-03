@@ -37,6 +37,7 @@ export class HomeView extends BaseComponent {
             flex-wrap: wrap;
             justify-content: space-around;
             align-items: flex-start;
+            align-content: flex-start;
             gap: 0.5rem;
             overflow-y: auto;
             border-top: 2px solid black;
@@ -97,6 +98,7 @@ export class HomeView extends BaseComponent {
         places.forEach(place=> {
             this.header.appendChild(new PlaceView(place));
         });
+        console.log(this.header.children[0]);
         this.setPlaceFilter(this.header.children[0] as HTMLElement);
     }
 

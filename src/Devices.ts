@@ -35,7 +35,7 @@ class Device {
                     'args' : cmd.detail 
                 };
               
-                fetch(`${document.location.pathname}/devices/send`, { method: 'POST', body: JSON.stringify(event) });
+                fetch(`/devices/send`, { method: 'POST', body: JSON.stringify(event) });
             });
         }
     }
