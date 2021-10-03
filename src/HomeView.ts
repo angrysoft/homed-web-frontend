@@ -60,13 +60,13 @@ export class HomeView extends BaseComponent {
         }`);
 
         this.header.addEventListener('click', (el)=>{
-            console.log(el.target);
             this.setPlaceFilter(el.target as HTMLElement); 
         });
 
     }
 
     private setPlaceFilter(place:HTMLElement | null) {
+        console.log('setPlaceFilter', place);
         if (place === null || place.tagName.toLowerCase() != 'place-view') {return;}
 
         document.querySelectorAll('place-view.selected').forEach((sel)=> {

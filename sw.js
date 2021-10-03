@@ -12,15 +12,15 @@ self.addEventListener('install', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
-    if (event.request.method != "GET")
-        return;
-    event.respondWith((async () => {
-        const cache = await caches.open(HOME_CACHE_NAME);
-        const cachedResponse = await cache.match(event.request);
-        if (cachedResponse) {
-            event.waitUntil(cache.add(event.request));
-            return cachedResponse;
-        }
-        return fetch(event.request);
-    })());
+    event.respondWith(
+        (async () => {
+            const cache = await caches.open(HOME_CACHE_NAME);
+            const cachedResponse = await cache.match(event.request);
+            if (cachedResponse) {
+                event.waitUntil(cache.add(event.request));
+                return cachedResponse;
+            }
+            return fetch(event.request);
+        })()
+    );
 });
