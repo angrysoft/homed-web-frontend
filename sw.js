@@ -18,12 +18,10 @@ self.addEventListener('fetch', (event) => {
                 const cache = await caches.open(HOME_CACHE_NAME);
                 const cachedResponse = await cache.match(event.request);
                 if (cachedResponse) {
-                    event.waitUntil(cache.add(event.request));
                     return cachedResponse;
                 }
-                return fetch(event.request);
             }
-            return event.request; 
+            return fetch(event.request); 
         })()
     );
 });
