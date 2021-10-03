@@ -66,7 +66,6 @@ export class HomeView extends BaseComponent {
     }
 
     private setPlaceFilter(place:HTMLElement | null) {
-        console.log('setPlaceFilter', place);
         if (place === null || place.tagName.toLowerCase() != 'place-view') {return;}
 
         document.querySelectorAll('place-view.selected').forEach((sel)=> {
@@ -99,12 +98,11 @@ export class HomeView extends BaseComponent {
         places.forEach(place=> {
             this.header.appendChild(new PlaceView(place));
         });
-        console.log('aabbb', this.header.children[0]);
-        this.setPlaceFilter(this.header.children[0] as HTMLElement);
     }
-
+    
     public render() {
         this.root.appendChild(this.main);
         document.body.appendChild(this);
+        this.setPlaceFilter(this.header.children[0] as HTMLElement);
     }
 }
