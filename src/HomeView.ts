@@ -98,7 +98,7 @@ export class HomeView extends BaseComponent {
         places.forEach(place=> {
             this.header.appendChild(new PlaceView(place));
         });
-        console.log(this.header.children[0]);
+        console.log('aabbb', this.header.children[0]);
         this.setPlaceFilter(this.header.children[0] as HTMLElement);
     }
 
