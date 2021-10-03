@@ -4,6 +4,7 @@ const HOME_CACHE_NAME = "home-cache-v1";
 self.addEventListener('install', (event) => {
     event.waitUntil(caches.open(HOME_CACHE_NAME).then((cache) => {
         return cache.addAll([
+            '/',
             '/static/scripts/Home.js',
             '/static/devices.min.css'
         ]);
