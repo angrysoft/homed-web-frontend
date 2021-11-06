@@ -1,4 +1,4 @@
-import { Trait } from "./Traits";
+import { Trait } from "./Traits/Traits";
 
 export class DeviceModel {
     public info: Object;

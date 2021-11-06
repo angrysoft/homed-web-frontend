@@ -1,5 +1,5 @@
 import { BaseComponent, ModalBox } from "./components.js";
-import { Trait } from "./Traits.js";
+import { Trait } from "./Traits/Traits.js";
 
 export class DeviceView extends BaseComponent {
     private header:HTMLElement;
