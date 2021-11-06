@@ -1,5 +1,5 @@
 import { Button } from "../components.js";
-import { Trait } from "./Traits.js";
+import { Trait } from "./Trait";
 
 export class VolumeView extends Trait {
     private buttons: Object = { 'vol+': 'volume_up', 'mute': 'mute', 'vol-': 'volume_down' };

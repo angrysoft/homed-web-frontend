@@ -1,5 +1,5 @@
 import { RangeSet } from "../components.js";
-import { Trait } from "./Traits.js";
+import { Trait } from "./Trait";
 
 export class DimmerView extends Trait {
     private inputBright: RangeSet;

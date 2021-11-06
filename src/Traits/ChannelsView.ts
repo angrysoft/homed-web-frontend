@@ -1,5 +1,5 @@
 import { Button } from "../components.js";
-import { Trait } from "./Traits.js";
+import { Trait } from "./Trait";
 
 export class ChannelsView extends Trait {
     private buttons: Object = { 'ch+': 'channel_up', 'ch-': 'channel_down' };
