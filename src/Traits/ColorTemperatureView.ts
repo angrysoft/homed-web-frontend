@@ -1,5 +1,5 @@
 import { RangeSet } from "../components.js";
-import { Trait } from "./Trait";
+import { Trait } from "./Trait.js";
 
 export class ColorTemperatureView extends Trait {
     private inputCT: RangeSet;

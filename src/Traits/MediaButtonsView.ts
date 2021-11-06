@@ -1,5 +1,5 @@
 import { Button } from "../components.js";
-import { Trait } from "./Trait";
+import { Trait } from "./Trait.js";
 
 export class MediaButtonsView extends Trait {
     private buttons: Object = { ">": 'play', "||": 'pause', "[ ]": 'stop', ">>": 'rewind', "<<": 'forward' };

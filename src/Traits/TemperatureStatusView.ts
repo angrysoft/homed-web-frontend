@@ -1,4 +1,4 @@
-import { Trait } from "./Trait";
+import { Trait } from "./Trait.js";
 
 export class TemperatureStatusView extends Trait {
     private label: HTMLLabelElement;

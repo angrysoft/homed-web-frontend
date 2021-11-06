@@ -1,5 +1,5 @@
 import { Button } from "../components.js";
-import { Trait } from "./Trait";
+import { Trait } from "./Trait.js";
 
 export class ButtonExitView extends Trait {
     static attr: Array<string> = [];

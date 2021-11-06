@@ -1,5 +1,5 @@
 import { ButtonSmall } from "../components.js";
-import { Trait } from "./Trait";
+import { Trait } from "./Trait.js";
 
 export class OnOffView extends Trait {
     private button: ButtonSmall;

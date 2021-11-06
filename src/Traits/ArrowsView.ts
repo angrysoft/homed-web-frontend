@@ -1,5 +1,5 @@
 import { Button } from "../components.js";
-import { Trait } from "./Trait";
+import { Trait } from "./Trait.js";
 
 export class ArrowsView extends Trait {
     private buttons: Array<string> = ['up', 'left', 'ok', 'right', 'down'];
