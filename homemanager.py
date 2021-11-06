@@ -132,7 +132,7 @@ class HomeManager(Thread):
         print('homemanager started')
     
     def start(self):
-        self.channel.queue.declare(self.homeid)
+        self.channel.queue.declare(self.homeid, arguments= {'x-message-ttl': 2000})
         self.channel.queue.bind(queue=self.homeid, exchange='homedaemon', routing_key=f'homedaemon.{self.homeid}.reports')
         self.channel.basic.consume(callback=self.on_event, queue=self.homeid, no_ack=True)
     

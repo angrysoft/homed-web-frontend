@@ -26,6 +26,14 @@ self.addEventListener('fetch', event => {
     }());
   });
 
+  self.addEventListener('notificationclick', event => {
+    console.log('notification click');
+  });
+  
+  self.addEventListener('notificationclose', event => {  
+    console.log('notification close');
+  });
+
 /*   self.addEventListener('activate', (event) => {
     var cacheKeepList = ['v2'];
   
