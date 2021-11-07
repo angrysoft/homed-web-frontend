@@ -13,8 +13,9 @@ class BaseComponent extends HTMLElement {
 
     constructor() {
         super();
-        this.sheet = new CSSStyleSheet();
+        // this.sheet = new CSSStyleSheet();
         this.root = this.attachShadow({ mode: 'open'});
+        this.sheet = this.root.styleSheets[0];
     }
 
     public adoptedCallback() {
