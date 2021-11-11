@@ -1,5 +1,6 @@
-import { BaseComponent, ModalBox } from "./components.js";
-import { Trait } from "./Traits/Trait";
+import { ModalBox } from "../WebComponents/ModalBox.js";
+import { BaseComponent } from "../WebComponents/BaseComponent.js";
+import { Trait } from "../Traits/Trait.js";
 
 export class DeviceView extends BaseComponent {
     private header:HTMLElement;
@@ -17,7 +18,7 @@ export class DeviceView extends BaseComponent {
         this.traits = document.createElement("section");
         this.traitsView = new ModalBox();
 
-        this.sheet.insertRule(`:host {
+        this.cssSheet.insertRule(`:host {
             display: grid;
             grid-row-gap: 0.5rem;
             grid-template-columns: auto;
@@ -28,13 +29,13 @@ export class DeviceView extends BaseComponent {
             background: black;
         }`);
         
-        this.sheet.insertRule(`header {
+        this.cssSheet.insertRule(`header {
             display:grid;
             gap: 0.1rem;
             justify-content: center;
         }`);
         
-        this.sheet.insertRule(`section {
+        this.cssSheet.insertRule(`section {
             display:grid;
             justify-content: center;
             gap: 0.5rem;

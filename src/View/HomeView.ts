@@ -1,4 +1,4 @@
-import { BaseComponent } from "./components.js";
+import { BaseComponent } from "../WebComponents/BaseComponent.js";
 import { PlaceView } from "./PlaceView.js";
 
 export class HomeView extends BaseComponent {
@@ -22,7 +22,7 @@ export class HomeView extends BaseComponent {
         this.main.appendChild(this.devices);
         this.main.appendChild(this.footer);
 
-        this.sheet.insertRule(`main {
+        this.cssSheet.insertRule(`main {
             display: grid;
             grid-row-gap: 0.2rem;
             grid-template-columns: auto;
@@ -32,7 +32,7 @@ export class HomeView extends BaseComponent {
             align-content: center;
         }`);
 
-        this.sheet.insertRule(`section {
+        this.cssSheet.insertRule(`section {
             display: flex;
             flex-wrap: wrap;
             justify-content: space-around;
@@ -44,7 +44,7 @@ export class HomeView extends BaseComponent {
             padding: 1rem;
         }`);
 
-        this.sheet.insertRule(`header {
+        this.cssSheet.insertRule(`header {
             display: flex;
             padding: 2rem 0.5rem 1rem;
             overflow-x: auto;
@@ -52,7 +52,7 @@ export class HomeView extends BaseComponent {
             white-space: pre;
         }`);
 
-        this.sheet.insertRule(`footer {
+        this.cssSheet.insertRule(`footer {
             display: flex;
             justify-content: space-between; 
             padding: 1rem;
@@ -106,3 +106,5 @@ export class HomeView extends BaseComponent {
         this.setPlaceFilter(this.header.children[0] as HTMLElement);
     }
 }
+
+window.customElements.define('home-view', HomeView);

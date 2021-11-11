@@ -1,4 +1,4 @@
-import { ButtonSmall } from "../components.js";
+import { ButtonSmall } from "../WebComponents/ButtonSmall.js";
 import { Trait } from "./Trait.js";
 
 export class MultiSwitchView extends Trait {
@@ -12,7 +12,7 @@ export class MultiSwitchView extends Trait {
         this.statusList = MultiSwitchView.attr;
         this._sendCommands = true;
 
-        this.sheet.insertRule(`:host {
+        this.cssSheet.insertRule(`:host {
             display: grid;
             gap: 0.5rem;
             grid-auto-flow: column;

@@ -1,4 +1,4 @@
-import { Button } from "../components.js";
+import { Button } from "../WebComponents/Button.js";
 import { Trait } from "./Trait.js";
 
 export class ArrowsView extends Trait {
@@ -10,7 +10,7 @@ export class ArrowsView extends Trait {
         this.statusList = ArrowsView.attr;
         this._sendCommands = true;
 
-        this.sheet.insertRule(`:host {
+        this.cssSheet.insertRule(`:host {
             display: grid;
             gap: 0.5rem;
             grid-auto-flow: column;

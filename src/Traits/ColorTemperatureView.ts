@@ -1,4 +1,4 @@
-import { RangeSet } from "../components.js";
+import { RangeSet } from "../WebComponents/RangeSet.js";
 import { Trait } from "./Trait.js";
 
 export class ColorTemperatureView extends Trait {
@@ -9,7 +9,7 @@ export class ColorTemperatureView extends Trait {
         this._sendCommands = true;
         this.statusList = ['ct_pc'];
 
-        this.sheet.insertRule(`:host {
+        this.cssSheet.insertRule(`:host {
             display: grid;
             grid-template-columns: 1fr;
             gap: 1rem;

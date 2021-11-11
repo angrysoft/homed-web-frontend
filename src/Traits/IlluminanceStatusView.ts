@@ -10,14 +10,14 @@ export class IlluminanceStatusView extends Trait {
         this._showInMainView = true;
         this.statusList = IlluminanceStatusView.attr;
 
-        this.sheet.insertRule(`:host {
+        this.cssSheet.insertRule(`:host {
             display: grid;
             gap: 1rem;
             grid-template-columns: 1fr 2fr;
             justify-content: center;
         }`);
 
-        this.sheet.insertRule(`label {
+        this.cssSheet.insertRule(`label {
             color: var(--widget-color);
             font-weight: 600;
         }`);

@@ -1,6 +1,6 @@
 import { Device} from "./Devices.js";
-import { HomeModel } from "./HomeModel.js";
-import { HomeView } from "./HomeView.js";
+import { HomeModel } from "../Model/HomeModel.js";
+import { HomeView } from "../View/HomeView.js";
 
 class HomeApp {
     private model:HomeModel;
@@ -50,7 +50,6 @@ window.onload = async () => {
             console.log('ServiceWorker Error', err);
         });
     }
-    window.customElements.define('home-view', HomeView);
     let app = new HomeApp();
     await app.run();
 };

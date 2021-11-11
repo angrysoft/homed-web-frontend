@@ -1,5 +1,5 @@
-import { Device } from "./Devices.js";
-import { LanguagesCodes } from "./DevicesModel.js";
+import { Device } from "../Controller/Devices.js";
+import { LanguagesCodes } from "../Model/DevicesModel.js";
 
 export class HomeModel {
     private places: Set<string> = new Set();
