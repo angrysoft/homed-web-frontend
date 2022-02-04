@@ -68,4 +68,4 @@ export class Button extends BaseComponent {
     }
 }
 
-window.customElements.define('button-normal', Button);
+window.customElements.get('button-normal') || window.customElements.define('button-normal', Button);

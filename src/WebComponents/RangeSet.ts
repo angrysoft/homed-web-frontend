@@ -110,4 +110,4 @@ export class RangeSet extends BaseComponent {
     }
 }
 
-window.customElements.define('input-range', RangeSet);
+window.customElements.get("input-range") || window.customElements.define('input-range', RangeSet);

@@ -113,4 +113,4 @@ export class ModalBox extends BaseComponent {
     }
 }
 
-window.customElements.define('modal-box', ModalBox);
+window.customElements.get("modal-box") || window.customElements.define('modal-box', ModalBox);

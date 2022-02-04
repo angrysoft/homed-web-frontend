@@ -14,4 +14,4 @@ export class ButtonSmall extends Button {
 }
 
 
-window.customElements.define('button-small', ButtonSmall);
+window.customElements.get('button-small') || window.customElements.define('button-small', ButtonSmall);
