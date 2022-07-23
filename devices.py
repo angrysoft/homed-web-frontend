@@ -12,7 +12,7 @@ class HomeManager:
         self.connection:amqpstorm.Connection
         self.channel:amqpstorm.Channel
         self.connected = False
-        self.setuped:Set[str] = set()
+        self.registered_homes:Set[str] = set()
         self.retry = True
         self.loop = True
         self.event_handlers : Dict[str, EventHandler] = {}
@@ -47,25 +47,23 @@ class HomeManager:
     def run(self) -> NoReturn:
         self.connect()
         while True:
-            if self.setuped:
+            if self.registered_homes:
                 self.channel.start_consuming()
             sleep(2)
     
     def register_home(self, homeid:str):
-        if homeid in self.setuped:
+        if homeid in self.registered_homes:
             return
         queue_name = f'{homeid}_www'
         event_handler = EventHandler(homeid)
         
         self.channel = self.connection.channel()
         self.channel.exchange.declare(exchange='homedaemon', exchange_type='topic', auto_delete=False)
-        self.channel.queue.declare(queue=queue_name)
+        self.channel.queue.declare(queue=queue_name) #, arguments= {'x-message-ttl': 2000})
         self.channel.queue.bind(queue=queue_name, exchange='homedaemon', routing_key=f'homedaemon.{homeid}.reports')
         self.channel.basic.consume(callback=event_handler, queue=queue_name, no_ack=True, arguments={'homeid':homeid})
-        self.setuped.add(homeid)
-        # if not self.is_alive():
-        #     self.start()
-            
+        self.registered_homes.add(homeid)
+     
         if homeid not in self.event_handlers:
             self.event_handlers[homeid] = event_handler
     
@@ -82,14 +80,8 @@ class HomeManager:
     def publish_msg(self, msg:str, homeid:str) -> None:
         routing_key = f"homedaemon.{homeid}.in"
         
-        if self.connected and homeid in self.setuped:
+        if self.connected and homeid in self.registered_homes:
             properties = {'content_type': 'text/plain'}
-            
-            # try:
-            #     txt_msg:str = json.dumps(msg_data)
-            # except json.JSONDecodeError as err:
-            #     print(f'json {err} : {msg_data}')
-            #     return
             
             message: amqpstorm.Message = amqpstorm.Message.create(self.channel, msg, properties)
             message.publish(exchange='homedaemon', routing_key=routing_key)
@@ -109,7 +101,8 @@ class EventHandler:
     
     def __call__(self, msg_data:amqpstorm.Message) -> Any:
         self.queue.put(msg_data.body)
-  
+
+
 class EventQueue:
     def __init__(self) -> None:
         self.lock: RLock = RLock()
