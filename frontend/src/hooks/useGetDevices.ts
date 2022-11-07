@@ -30,13 +30,13 @@ const useGetDevices = () => {
         name: dev.name[lang],
         place: place,
       }
-      places.add(place);
+      place && places.add(place);
     });
     dispatch({type: "PLACES_LOADED", payload: Array.from(places)});
     setLoading(false);
   }, []);
 
-  return {data, loading}
+  return {loading}
 }
 
 export {useGetDevices};

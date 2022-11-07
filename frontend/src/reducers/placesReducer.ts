@@ -15,6 +15,7 @@ const placesReducer = (
       return {
         ...state,
         places: action.payload,
+        selected: action.payload[0],
       };
     }
     case "PLACE_SELECTED": {

@@ -8,7 +8,7 @@ interface IHomeProps {
 }
 
 const Home: React.FC<IHomeProps> = (props: IHomeProps) => {
-  const {data, loading} = useGetDevices();
+  const {loading} = useGetDevices();
   if (loading) {
     return <Loader />;
   }
