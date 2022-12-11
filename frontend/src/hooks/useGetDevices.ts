@@ -4,7 +4,7 @@ import { AppContext } from "../store";
 
 
 const useGetDevices = () => {
-  const {dispatch} = useContext(AppContext);
+  const {state, dispatch} = useContext(AppContext);
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const getLangCode = (langCode: string): string => {
@@ -33,6 +33,10 @@ const useGetDevices = () => {
       place && places.add(place);
     });
     dispatch({type: "PLACES_LOADED", payload: Array.from(places)});
+    const placeSelected = localStorage.getItem('placeSelected');
+    if (placeSelected) {
+      dispatch({type: "PLACE_SELECTED", payload: placeSelected})
+    }
     setLoading(false);
   }, []);
 

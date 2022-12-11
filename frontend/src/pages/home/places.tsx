@@ -18,8 +18,10 @@ const Places: React.FC<IPlacesProps> = (props: IPlacesProps) => {
       <Place
         key={index}
         name={name}
-        handelClick={() =>
-          dispatch({ type: "PLACE_SELECTED", payload: name })
+        handelClick={() => {
+          dispatch({ type: "PLACE_SELECTED", payload: name });
+          localStorage.setItem("placeSelected", name);
+        }
         }
         selected={name === state.places.selected}
       />
