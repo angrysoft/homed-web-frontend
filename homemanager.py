@@ -2,182 +2,142 @@
 from __future__ import annotations
 import json
 import os
-import amqpstorm
-import ssl
-from time import sleep
-from threading import Thread
 from typing import Dict, Any
 import logging
 from systemd.journal import JournalHandler
-from pycouchdb import Client, Database
 
-logger = logging.getLogger('homemanager')
+from pycouchdb import Client, Database
+import paho.mqtt.client as mqtt
+
+logger = logging.getLogger("homemanager")
 logger.addHandler(JournalHandler())
 logger.setLevel(logging.DEBUG)
+
 
 class JConfig:
     def __init__(self) -> None:
         self._config: Dict[str, Any] = {}
-    
-    def load_config_from_file(self, path:str):
+
+    def load_config_from_file(self, path: str):
         with open(path) as conf_file:
             self._config = json.load(conf_file)
-        
-    def get(self, key:str) -> Any:
+
+    def get(self, key: str, default: None | Any = None) -> Any:
         if key in self._config:
             return self._config[key]
         else:
-            return ''
-    
+            return default
+
+    def keys(self):
+        return self._config.keys()
+
     def __getitem__(self, key: str) -> Any:
         return self.get(key)
-    
+
     def __str__(self):
         return str(self._config)
-    
+
     def __contains__(self, item: str):
         return item in self._config
-    
 
-class MainWatcher:
-    def __init__(self, config: JConfig) -> None:
-        self.config = config['rabbitmq']
-        self.protocol = None
-        self.connected = False
-        self.retry = True
-        self.homes:Dict[str, HomeManager] = {}
-        self.db_connection:Client
-        self.connection:amqpstorm.Connection
-         
-        if 'couchdb' in config:
+
+class HomeManager:
+    def __init__(self, config: JConfig):
+        self.config: JConfig = config
+        self._connected = False
+        self._client: mqtt.Client = mqtt.Client()
+        self._client.on_connect = self._on_connect
+        self._client.on_message = self._on_message
+        self._client.on_disconnect = self._on_disconnect
+        if {"user", "password"}.issubset(self.config.get("mqtt", {}).keys()):
+            self._client.username_pw_set(
+                username=self.config["mqtt"]["user"],
+                password=self.config["mqtt"]["password"],
+            )
+        self._client.tls_set()
+        self._client.connect(
+            host=self.config.get("mqtt", {}).get("host", "localhost"),
+            port=self.config.get("mqtt", {}).get("port", 1883),
+            keepalive=self.config.get("mqtt", {}).get("keepalive", 60),
+        )
+
+        self.topics: Dict[str, Dict[str, str]] = {
+            f'homed/{c["id"]}/get': c for c in self.config["houses"]
+        }
+
+        self.db_connection: Client
+        if "couchdb" in config:
             self.db_connection = Client(
                 f"http://{config['couchdb']['user']}:{config['couchdb']['password']}@"
-                f"{config['couchdb']['url']}:{config['couchdb']['port']}")                                                       
+                f"{config['couchdb']['url']}:{config['couchdb']['port']}"
+            )
         else:
             self.db_connection = Client("http://localhost")
-            
-        print(f'main watcher, {self.db_connection}')
 
-    def connect(self):
-        while not self.connected and self.retry:
-            try:
-                context = ssl.create_default_context(cafile=self.config['cafile'])
-                context.load_cert_chain(certfile=self.config['certfile'],
-                                        keyfile=self.config['keyfile'],
-                                        password=self.config['password'])
-                self.ssl_options = {'context': context,
-                                    'check_hostname': True,
-                                    'server_hostname': self.config['host']}
-                
-                self.connection:amqpstorm.Connection = amqpstorm.Connection(hostname=self.config['host'],
-                                                                            username=self.config['user'],
-                                                                            password=self.config['user_password'],
-                                                                            port=self.config['port'],
-                                                                            ssl=self.config['ssl'],
-                                                                            ssl_options=self.ssl_options)
-                
-                
-                self.channel:amqpstorm.Channel = self.connection.channel()
-                self.channel.exchange.declare(exchange='homedaemon', exchange_type='topic', auto_delete=False)
-                self.channel.queue.declare(queue='main_queue')
-                self.channel.queue.bind(queue='main_queue', exchange='homedaemon', routing_key='homedaemon.main')
-                self.channel.basic.consume(queue='main_queue', callback=self.on_message, no_ack=True)
-                self.connected = True
-                self.channel.start_consuming()
-            except amqpstorm.AMQPConnectionError as err:
-                self.connected = False
-                print(err)
-                sleep(5)
-                print('Retray after 5s')
-            except KeyboardInterrupt:
-                self.stop()
-                
-    def stop(self):
-        for home_name, home in self.homes.items():
-            print(f'Stop {home_name}')
-            home.stop()
-        self.channel.close()
-    
-    
-    def on_message(self, msg_data:amqpstorm.Message):
-        try:
-            event = json.loads(msg_data.body)
-            cmd:str = event.get('cmd', '')
-            homeid:str = event.get('homeid', '')
-            if cmd == 'connect' or cmd == 'ping':
-                self.register_home(homeid)
-            else:
-                print(event)
-        except json.JSONDecodeError as err:
-                logger.error(f'json {err} : {msg_data}')
-    
-    def register_home(self, homeid:str):
-        if homeid in self.homes:
-            return
-        
-        if homeid not in self.db_connection:
-            self.db_connection.create(homeid)
-        
-        self.homes[homeid] = HomeManager(self.channel, homeid, self.db_connection.get_db(homeid))
-        self.homes[homeid].start()
-                
+    def _on_connect(
+        self, client: mqtt.Client, userdata: Any, flags: Any, rc: Any
+    ) -> None:
+        self._connected = True
+        client.subscribe(
+            [(f'homed/{c["id"]}/get', 1) for c in self.config["houses"]]
+        )
 
-class HomeManager(Thread):
-    def __init__(self, channel:  amqpstorm.Channel, homeid:str, db:Database) -> None:
-        super().__init__()
-        self.daemon = True
-        self.channel = channel
-        self.homeid = homeid
-        self.db: Database = db
-        print('homemanager started')
-    
-    def start(self):
-        self.channel.queue.declare(self.homeid, arguments= {'x-message-ttl': 2000})
-        self.channel.queue.bind(queue=self.homeid, exchange='homedaemon', routing_key=f'homedaemon.{self.homeid}.reports')
-        self.channel.basic.consume(callback=self.on_event, queue=self.homeid, no_ack=True)
-    
-    def stop(self):
-        self.channel.basic.consume.cancel()
-        self.channel.queue.unbind(queue=self.homeid, exchange='homedaemon', routing_key=f'homedaemon.{self.homeid}.reports')
-    
-    def on_event(self, msg_data: amqpstorm.Message):
-        actions:Dict[str, Any] = {
-            'report': self.update_device,
-            'init_device': self.init_device,
-            'del_device': self.del_device
-            }
+    def _on_message(self, client: mqtt.Client, userdata: Any, msg: mqtt.MQTTMessage):
+        homeid = self.topics.get(msg.topic, {})
+        actions: Dict[str, Any] = {
+            "report": self.update_device,
+            "init_device": self.init_device,
+            "del_device": self.del_device,
+        }
         try:
-            event = json.loads(msg_data.body)
-            cmd:str = event.pop('cmd', '')
-            print('cmd', event)
-            if event.get('sid'):
-                actions.get(cmd, self._command_not_found)(event)
+            event = json.loads(msg.payload)
+            cmd: str = event.pop("cmd", "")
+            print("cmd", event)
+            if event.get("sid"):
+                actions.get(cmd, self._command_not_found)(event, homeid["id"])
         except json.JSONDecodeError as err:
-                logger.error(f'json {err} : {msg_data.body}')
+            logger.error(f"json {err} : {msg.payload}")
         except AttributeError as err:
-                logger.error(f'AtrributeError {err} : {msg_data.body}')
-    
-    def update_device(self, event:Dict[str, Any]) -> None:
-        self.db[event['sid']] = event.get('data', {})
-    
-    def init_device(self, event:Dict[str, Any]) -> None:
-        if event['sid'] in self.db:
-            self.db.delete(event['sid'])
-        self.db[event['sid']] = event
-    
-    def del_device(self, event:Dict[str, Any]) -> None:
-        self.db.delete(event['sid'])
-    
-    def _command_not_found(self, data:Dict[str, Any]) -> None:
+            logger.error(f"AtrributeError {err} : {msg.payload}")
+
+    def _on_disconnect(self, client: mqtt.Client, userdata: Any, rc: Any):
+        self._connected = False
+        if rc != 0:
+            client.reconnect()
+
+    def publish_msg(self, payload: Dict[str, Any]) -> None:
+        if self._connected:
+            self._client.publish(
+                f'homed/{self.config["homed"]["id"]}/get', json.dumps(payload),
+                qos=1
+            )
+
+    def update_device(self, event: Dict[str, Any], homeid: str) -> None:
+        db = self.db_connection.get_db("homeid")
+        db[event["sid"]] = event.get("data", {})
+
+    def init_device(self, event: Dict[str, Any], homeid: str) -> None:
+        db = self.db_connection.get_db("homeid")
+        if event["sid"] in db:
+            db.delete(event["sid"])
+        db[event["sid"]] = event
+
+    def del_device(self, event: Dict[str, Any], homeid: str) -> None:
+        db = self.db_connection.get_db("homeid")
+        self.db.delete(event["sid"])
+
+    def _command_not_found(self, data: Dict[str, Any], homeid: str) -> None:
         pass
-    
-    def __del__(self):
-        self.channel.queue.unbind(self.homeid, 'homedaemon', routing_key=f'homedaemon.{self.homeid}.reports')
+
+    def run(self):
+        self._client.loop_forever()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
+    print(os.environ.get("CONF_FILE", "/etc/homedaemon/homemanager.json"))
     config = JConfig()
-    config.load_config_from_file(os.environ.get('CONF_FILE', '/etc/homedaemon/homed.json'))
-    watcher = MainWatcher(config)
-    watcher.connect()
-    
+    config.load_config_from_file(
+        os.environ.get("CONF_FILE", "/etc/homedaemon/homemanager.json")
+    )
+    hm = HomeManager(config)
+    hm.run()
