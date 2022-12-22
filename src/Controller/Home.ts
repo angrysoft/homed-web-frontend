@@ -13,11 +13,8 @@ class HomeApp {
         this.view = new HomeView();
         this.evSource = new EventSource(`/events`);
         this.evSource.onmessage = async (event) => {
-          console.log(event)
             if (event.data.startsWith('{')) {
-              console.log(event.data);
-              console.log(JSON.parse(event.data));
-                // await this.updateDeviceStatus(JSON.parse(event.data));
+                await this.updateDeviceStatus(JSON.parse(event.data));
             }
         }
     }
