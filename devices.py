@@ -54,7 +54,8 @@ class HomeManager:
 
         try:
             event = json.loads(msg.payload)
-            if event.get("sid"):
+            if event.get("sid") and event.get("cmd") == "report":
+                print("event", event)
                 self.home_queues[homeid].put(event)
         except json.JSONDecodeError as err:
             logger.error(f"json {err} : {msg.payload}")

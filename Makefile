@@ -24,7 +24,7 @@ install:
 	install -v -m 755 -g $(GRP) -o $(USR) auth.py /var/www/homedaemon/auth.py
 	install -v -m 755 -g $(GRP) -o $(USR) devices.py /var/www/homedaemon/devices.py
 	install -v -m 755 -g $(GRP) -o $(USR) sw.js /var/www/homedaemon/sw.js
-	chown -R $(USR).$(GRP) $(DESTDIR)/var/www/homedaemon
+	chown -R $(USR):$(GRP) $(DESTDIR)/var/www/homedaemon
 	chmod -R a+r $(DESTDIR)/var/www/homedaemon
 	chmod -R g+w $(DESTDIR)/var/www/homedaemon
 	install -v -m 655 homedweb.service -D $(DESTDIR)/usr/lib/systemd/system/homedweb.service
