@@ -1,13 +1,13 @@
 import json
-from typing import List, NoReturn, Set, Dict, Any
+from typing import List, Dict, Any
 from threading import RLock, Event
-import ssl
 import paho.mqtt.client as mqtt
+from pycouchdb import Client
 
 
 class HomeManager:
     def __init__(self, config: Dict[str, Any]):
-        self.registered_homes: Set[str] = set()
+        self.home_queues: Dict[str, EventQueue] = {}
         self.config: Dict[str, Any] = config
         self._connected = False
         self._client: mqtt.Client = mqtt.Client()
@@ -43,21 +43,19 @@ class HomeManager:
         self, client: mqtt.Client, userdata: Any, flags: Any, rc: Any
     ) -> None:
         self._connected = True
+        for q in self.config["houses"]:
+            if q["id"] not in self.home_queues:
+                self.home_queues[q["id"]] = EventQueue()
+
         client.subscribe([(f'homed/{c["id"]}/get', 1) for c in self.config["houses"]])
 
     def _on_message(self, client: mqtt.Client, userdata: Any, msg: mqtt.MQTTMessage):
-        homeid = self.topics.get(msg.topic, {})
-        actions: Dict[str, Any] = {
-            "report": self.update_device,
-            "init_device": self.init_device,
-            "del_device": self.del_device,
-        }
+        homeid = self.topics.get(msg.topic, {}).get("id")
+
         try:
             event = json.loads(msg.payload)
-            cmd: str = event.pop("cmd", "")
-            print("cmd", event)
             if event.get("sid"):
-                actions.get(cmd, self._command_not_found)(event, homeid["id"])
+                self.home_queues[homeid].put(event)
         except json.JSONDecodeError as err:
             logger.error(f"json {err} : {msg.payload}")
         except AttributeError as err:
@@ -68,44 +66,23 @@ class HomeManager:
         if rc != 0:
             client.reconnect()
 
-    def run(self):
-        self._client.loop_forever()
-
-    def register_home(self, homeid: str):
-        if homeid in self.registered_homes:
-            return
-        event_handler = EventHandler(homeid)
-        self._client.subscribe(f'homed/{"homeid"}/get', qos=1)
-
-        self.registered_homes.add(homeid)
-
-        if homeid not in self.event_handlers:
-            self.event_handlers[homeid] = event_handler
-
     def get_msg_from_queue(self, homeid: str):
-        if homeid in self.event_handlers:
+        if homeid in self.home_queues:
             self.set_block_state_msg_queue(homeid, False)
-            return self.event_handlers[homeid].queue.get()
+            return self.home_queues[homeid].get()
 
     def set_block_state_msg_queue(self, homeid: str, state: bool):
-
-        if homeid in self.event_handlers:
-            self.event_handlers[homeid].queue.block = state
+        if homeid in self.home_queues:
+            self.home_queues[homeid].block = state
 
     def publish_msg(self, payload: Dict[str, Any], homeid: str) -> None:
         if self._connected:
             self._client.publish(
-                f'homed/{self.config["homed"]["id"]}/get', json.dumps(payload), qos=1
+                f'homed/{self.config["homed"]["id"]}/set', json.dumps(payload), qos=1
             )
 
-
-class EventHandler:
-    def __init__(self, homeid: str) -> None:
-        self.homeid = homeid
-        self.queue = EventQueue()
-
-    def __call__(self, msg: mqtt.MQTTMessage) -> Any:
-        self.queue.put(msg.payload)
+    def run(self):
+        self._client.loop_forever()
 
 
 class EventQueue:
