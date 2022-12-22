@@ -30,11 +30,11 @@ class Device {
     public commandHandler(trait) {
         if (trait.sendCommands) {
             trait.addEventListener("send-command", (cmd:any) => {
-                console.log(cmd.detail);
-                let event:object = {
-                    'event': `execute.${this.model.sid}.${cmd.detail[0]}.${cmd.detail[1]}`,
-                    'args' : cmd.detail 
-                };
+              let event:object = {
+                'event': `execute.${this.model.sid}.${cmd.detail[0]}.${cmd.detail[1]}`,
+                'args' : cmd.detail 
+              };
+              console.log(event);
               
                 fetch(`${document.location.origin}/devices/send`, { method: 'POST', body: JSON.stringify(event) });
             });

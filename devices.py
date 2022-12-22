@@ -77,9 +77,7 @@ class HomeManager:
 
     def publish_msg(self, payload: Dict[str, Any], homeid: str) -> None:
         if self._connected:
-            self._client.publish(
-                f'homed/{homeid}/set', json.dumps(payload), qos=1
-            )
+            self._client.publish(f"homed/{homeid}/set", json.dumps(payload), qos=1)
 
     def run(self):
         self._client.loop_forever()
