@@ -1,8 +1,8 @@
 import json
 from typing import List, NoReturn, Set, Dict, Any
 from threading import RLock, Event
-import ssl
 import paho.mqtt.client as mqtt
+from pycouchdb import Client
 
 
 class HomeManager:
