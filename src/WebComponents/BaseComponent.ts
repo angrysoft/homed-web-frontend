@@ -8,11 +8,11 @@ export class BaseComponent extends HTMLElement {
         super();
         this.root = this.attachShadow({ mode: 'open' });
         // only chrom support CSSStyleSheet constructor
-        // this.cssSheet = new CSSStyleSheet();
+        this.cssSheet = new CSSStyleSheet();
         this.cssStyle = document.createElement("style");
         this.root.appendChild(this.cssStyle);
         this.cssStyle.textContent = "";
-        this.cssSheet = this.cssStyle.sheet as CSSStyleSheet;
+        // this.cssSheet = this.cssStyle.sheet as CSSStyleSheet;
     }
 
     public adoptedCallback() {
