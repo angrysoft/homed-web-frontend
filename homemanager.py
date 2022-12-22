@@ -125,6 +125,7 @@ class HomeManager:
         if event["sid"] in db:
             db.delete(event["sid"])
         db[event["sid"]] = event
+        print("init dev", event)
 
     def del_device(self, event: Dict[str, Any], homeid: str) -> None:
         db = self.db_connection.get_db(homeid)
