@@ -89,6 +89,8 @@ class HomeManager:
             "init_device": self.init_device,
             "del_device": self.del_device,
         }
+        if homeid not in self.db_connection:
+            self.db_connection.create(homeid)
         try:
             event = json.loads(msg.payload)
             cmd: str = event.pop("cmd", "")
