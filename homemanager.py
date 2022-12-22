@@ -78,23 +78,27 @@ class HomeManager:
         self, client: mqtt.Client, userdata: Any, flags: Any, rc: Any
     ) -> None:
         self._connected = True
-        client.subscribe(
-            [(f'homed/{c["id"]}/get', 1) for c in self.config["houses"]]
-        )
+        for house in self.config["houses"]:
+            if house["id"] not in self.db_connection:
+                self.db_connection.create(house["id"])
+
+        client.subscribe([(f'homed/{c["id"]}/get', 1) for c in self.config["houses"]])
 
     def _on_message(self, client: mqtt.Client, userdata: Any, msg: mqtt.MQTTMessage):
-        homeid = self.topics.get(msg.topic, {})
+        homeid = self.topics.get(msg.topic, {}).get("id")
+
         actions: Dict[str, Any] = {
             "report": self.update_device,
             "init_device": self.init_device,
             "del_device": self.del_device,
         }
+
         try:
             event = json.loads(msg.payload)
             cmd: str = event.pop("cmd", "")
             print("cmd", event)
             if event.get("sid"):
-                actions.get(cmd, self._command_not_found)(event, homeid["id"])
+                actions.get(cmd, self._command_not_found)(event, homeid)
         except json.JSONDecodeError as err:
             logger.error(f"json {err} : {msg.payload}")
         except AttributeError as err:
@@ -108,22 +112,21 @@ class HomeManager:
     def publish_msg(self, payload: Dict[str, Any]) -> None:
         if self._connected:
             self._client.publish(
-                f'homed/{self.config["homed"]["id"]}/get', json.dumps(payload),
-                qos=1
+                f'homed/{self.config["homed"]["id"]}/get', json.dumps(payload), qos=1
             )
 
     def update_device(self, event: Dict[str, Any], homeid: str) -> None:
-        db = self.db_connection.get_db("homeid")
+        db = self.db_connection.get_db(homeid)
         db[event["sid"]] = event.get("data", {})
 
     def init_device(self, event: Dict[str, Any], homeid: str) -> None:
-        db = self.db_connection.get_db("homeid")
+        db = self.db_connection.get_db(homeid)
         if event["sid"] in db:
             db.delete(event["sid"])
         db[event["sid"]] = event
 
     def del_device(self, event: Dict[str, Any], homeid: str) -> None:
-        db = self.db_connection.get_db("homeid")
+        db = self.db_connection.get_db(homeid)
         self.db.delete(event["sid"])
 
     def _command_not_found(self, data: Dict[str, Any], homeid: str) -> None:
@@ -134,7 +137,6 @@ class HomeManager:
 
 
 if __name__ == "__main__":
-    print(os.environ.get("CONF_FILE", "/etc/homedaemon/homemanager.json"))
     config = JConfig()
     config.load_config_from_file(
         os.environ.get("CONF_FILE", "/etc/homedaemon/homemanager.json")
