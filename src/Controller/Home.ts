@@ -15,7 +15,8 @@ class HomeApp {
         this.evSource.onmessage = async (event) => {
           console.log(event)
             if (event.data.startsWith('{')) {
-                await this.updateDeviceStatus(JSON.parse(event.data));
+              console.log(event.data)
+                // await this.updateDeviceStatus(JSON.parse(event.data));
             }
         }
     }
