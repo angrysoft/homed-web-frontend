@@ -85,7 +85,7 @@ class HomeManager:
         client.subscribe([(f'homed/{c["id"]}/get', 1) for c in self.config["houses"]])
 
     def _on_message(self, client: mqtt.Client, userdata: Any, msg: mqtt.MQTTMessage):
-        homeid = self.topics.get(msg.topic, {}).get("id")
+        homeid = self.topics.get(msg.topic, {}).get("id", "")
 
         actions: Dict[str, Any] = {
             "report": self.update_device,
@@ -95,10 +95,11 @@ class HomeManager:
 
         try:
             event = json.loads(msg.payload)
-            cmd: str = event.pop("cmd", "")
-            print("cmd", event)
+            print(event)
             if event.get("sid"):
-                actions.get(cmd, self._command_not_found)(event, homeid)
+                actions.get(event.get("cmd", ""), self._command_not_found)(
+                    event, homeid
+                )
         except json.JSONDecodeError as err:
             logger.error(f"json {err} : {msg.payload}")
         except AttributeError as err:
