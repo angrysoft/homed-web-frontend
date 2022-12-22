@@ -47,7 +47,7 @@ class HomeManager:
             if q["id"] not in self.home_queues:
                 self.home_queues[q["id"]] = EventQueue()
 
-        client.subscribe([(f'homed/{c["id"]}/get', 1) for c in self.config["houses"]])
+        client.subscribe([(f'homed/{c["id"]}/get', 0) for c in self.config["houses"]])
 
     def _on_message(self, client: mqtt.Client, userdata: Any, msg: mqtt.MQTTMessage):
         homeid = self.topics.get(msg.topic, {}).get("id")
