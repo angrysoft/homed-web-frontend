@@ -102,7 +102,6 @@ async def signin(request: Request):
             request.session["picture"] = gs.picture
             request.session["name"] = gs.name
             request.session["homeid"] = db["residents"][gs.user_id]["homeid"]
-            dm.register_home(request.session["homeid"])
 
             return PlainTextResponse("ok")
             # return RedirectResponse(url=request.url.path, status_code=303)
