@@ -83,7 +83,9 @@ class HomeManager:
         )
 
     def _on_message(self, client: mqtt.Client, userdata: Any, msg: mqtt.MQTTMessage):
-        homeid = self.topics.get(msg.topic, {})
+        homeid = self.topics.get(msg.topic, {}).get("id")
+        if not homeid:
+            return
         actions: Dict[str, Any] = {
             "report": self.update_device,
             "init_device": self.init_device,
@@ -96,7 +98,7 @@ class HomeManager:
             cmd: str = event.pop("cmd", "")
             print("cmd", event)
             if event.get("sid"):
-                actions.get(cmd, self._command_not_found)(event, homeid["id"])
+                actions.get(cmd, self._command_not_found)(event, homeid)
         except json.JSONDecodeError as err:
             logger.error(f"json {err} : {msg.payload}")
         except AttributeError as err:
