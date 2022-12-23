@@ -39,9 +39,11 @@ const Places: React.FC<IPlacesProps> = (props: IPlacesProps) => {
 };
 
 const Place: React.FC<IPlaceProps> = (props: IPlaceProps) => {
-  let classes: string = "border-primary py-1 px-2 transition-all delay-150 whitespace-nowrap";
+  let classes: string = "border-b-4 py-1 px-2 transition-all delay-150 whitespace-nowrap text-center";
   if (props.selected) {
-    classes = `${classes} font-bold border-b-4`;
+    classes += " border-primary";
+  } else {
+    classes += " border-surface";
   }
 
   return (

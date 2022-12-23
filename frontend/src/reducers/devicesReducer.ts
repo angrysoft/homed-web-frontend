@@ -1,9 +1,9 @@
 import { Action } from ".";
 
-interface Device {
+interface DeviceInfo {
   traits: Array<string>;
-  name: object;
-  place: object;
+  name: string;
+  place: string;
   model: string;
   sid: string;
   [key:string]: any;
@@ -11,7 +11,7 @@ interface Device {
 
 
 type devicesState = {
-  [key:string]: Device;
+  [key:string]: DeviceInfo;
 }
 
 
@@ -40,5 +40,5 @@ const devicesReducer = (
 };
 
 export {devicesReducer};
-export type {Device, devicesState};
+export type {DeviceInfo, devicesState};
 export type devicesReducerType = typeof devicesReducer;

@@ -56,8 +56,7 @@ module.exports = {
         },
   
         gridTemplateColumns: {
-          "contacts": "repeat(auto-fit,minmax(22rem,1fr))",
-          "jobs": "repeat(auto-fit, minmax(25rem, 35rem))",
+          "devices": "repeat(auto-fit, minmax(25rem, 35rem))",
         },
   
         keyframes: {

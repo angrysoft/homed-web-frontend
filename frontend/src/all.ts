@@ -20,6 +20,7 @@ export const allDevices: Array<{[key:string]: any}> = [
             "toggle",
             "set_ct_pc"
         ],
+        "icon": "light",
         "power": "off",
         "bright": 1,
         "ct_pc": 1,
@@ -58,6 +59,7 @@ export const allDevices: Array<{[key:string]: any}> = [
             "toggle",
             "set_ct_pc"
         ],
+        "icon": "light",
         "power": "off",
         "bright": "1",
         "ct_pc": "0",
@@ -327,6 +329,7 @@ export const allDevices: Array<{[key:string]: any}> = [
             "en": "Outside",
             "pl": "Na zewnątrz"
         },
+        "icon": "thermometer",
         "model": "weather.v1",
         "voltage": 2925,
         "linkquality": 120,
@@ -457,7 +460,7 @@ export const allDevices: Array<{[key:string]: any}> = [
         "_id": "0x00158d00029b1929",
         "_rev": "630016-29c72b76c7b322aaec3b26a310d6ab99",
         "traits": [
-            "MultiSwitch"
+            "DoubleSwitch"
         ],
         "commands": [
             "on",
@@ -524,7 +527,7 @@ export const allDevices: Array<{[key:string]: any}> = [
         "_id": "0x00158d0002a16338",
         "_rev": "1023670-43c4b74d846acb040c4d8bfdbe768804",
         "traits": [
-            "MultiSwitch"
+            "DoubleSwitch"
         ],
         "commands": [
             "off",
@@ -565,12 +568,13 @@ export const allDevices: Array<{[key:string]: any}> = [
         "_id": "0x00158d0002a18c2b",
         "_rev": "1365476-a306bf62e702e8c598ca60fcde83dc58",
         "traits": [
-            "MultiSwitch"
+            "DoubleSwitch"
         ],
         "commands": [
             "off",
             "on"
         ],
+        "icon": "lightbulb",
         "switches": "['left', 'right']",
         "sid": "0x00158d0002a18c2b",
         "name": {
@@ -632,7 +636,7 @@ export const allDevices: Array<{[key:string]: any}> = [
         "_id": "0x00158d0002abac97",
         "_rev": "2946097-21cf7bc61a6981fea5285e7b820e79da",
         "traits": [
-            "MultiSwitch"
+            "DoubleSwitch"
         ],
         "commands": [
             "off",
@@ -699,7 +703,7 @@ export const allDevices: Array<{[key:string]: any}> = [
         "_id": "0x00158d0002bffe5a",
         "_rev": "711477-58e15157d8b050fe0f19bdd3fae62377",
         "traits": [
-            "MultiSwitch"
+            "DoubleSwitch"
         ],
         "commands": [
             "off",
@@ -985,7 +989,7 @@ export const allDevices: Array<{[key:string]: any}> = [
         "power": "off",
         "sid": "1000b6e1c8",
         "name": {
-            "en": "Tarass Lamp",
+            "en": "Taras Lamp",
             "pl": "Lampa Tarasowa"
         },
         "place": {
@@ -1020,7 +1024,8 @@ export const allDevices: Array<{[key:string]: any}> = [
             "set_bright",
             "set_scene"
         ],
-        "power": "off",
+        "icon": "light",
+        "power": "on",
         "bright": 1,
         "ct_pc": 1,
         "scene": "1",

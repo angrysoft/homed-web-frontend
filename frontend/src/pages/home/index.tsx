@@ -1,5 +1,6 @@
 import React from "react";
 import Loader from "../../components/Loader";
+import {Devices} from "../../devices/Devices";
 import { useGetDevices } from "../../hooks/useGetDevices";
 import { Places } from "./places";
 
@@ -16,6 +17,7 @@ const Home: React.FC<IHomeProps> = (props: IHomeProps) => {
   return (
     <div className="grid content-baseline bg-background h-screen text-onBackground">
       <Places />
+      <Devices />
     </div>
   );
 };
