@@ -1,6 +1,8 @@
-import React, { Suspense } from "react";
+import React, { lazy, Suspense } from "react";
 import { Route, Routes } from "react-router-dom";
-import { Home } from "./pages/home";
+import Loader from "./components/Loader";
+
+const Home = lazy(() => import("./pages/home"));
 
 function App() {
   return (
@@ -8,11 +10,14 @@ function App() {
       <Route
         path="/"
         element={
-          <Suspense>
+          <Suspense fallback={<Loader />}>
             <Home />
           </Suspense>
         }
       ></Route>
+      <Route
+        path="/"
+      />
     </Routes>
   );
 }
