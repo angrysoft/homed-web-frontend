@@ -120,6 +120,7 @@ async def sse(request: Request):
                 break
             ret = dm.get_msg_from_queue(homeid)
             if ret:
+                print(ret)
                 yield {"data": ret}
             else:
                 await asyncio.sleep(0.5)
