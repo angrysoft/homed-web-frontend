@@ -104,7 +104,9 @@ class EventQueue:
             return
 
         with self.lock:
-            self._queue.insert(0, item)
+            if isinstance(item, bytes):
+                item = item.decode()
+            self._queue.insert(0, f"{item}\n\n")
 
     def get(self) -> str | bytes:
         ret: str | bytes = ""
