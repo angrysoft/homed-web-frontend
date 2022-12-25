@@ -97,6 +97,7 @@ class EventQueue:
     @block.setter
     def block(self, state: bool):
         self._block = state
+        self._queue.clear()
 
     def put(self, item: str | bytes) -> None:
         if self._block:

@@ -15,7 +15,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 from __future__ import annotations
-from threading import Thread, current_thread, main_thread
+from threading import Thread
 
 __author__ = "Sebastian Zwierzchowski"
 __copyright__ = "Copyright 2019 - 2021 Sebastian Zwierzchowski"
@@ -120,7 +120,6 @@ async def sse(request: Request):
                 break
             ret = dm.get_msg_from_queue(homeid)
             if ret:
-                print("yield", ret)
                 yield {"data": ret}
             else:
                 await asyncio.sleep(0.5)
