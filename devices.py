@@ -54,17 +54,22 @@ class HomeManager:
 
         try:
             event = json.loads(msg.payload)
-            if event.get("sid") and event.get("cmd") == "report":
+            if (
+                event.get("sid")
+                and event.get("cmd") == "report"
+                and homeid in self.home_queues
+            ):
                 self.home_queues[homeid].put(json.dumps(event))
         except json.JSONDecodeError as err:
-            logger.error(f"json {err} : {msg.payload}")
+            print(f"json {err} : {msg.payload}")
         except AttributeError as err:
-            logger.error(f"AtrributeError {err} : {msg.payload}")
+            print(f"AttributeError {err} : {msg.payload}")
 
     def _on_disconnect(self, client: mqtt.Client, userdata: Any, rc: Any):
         self._connected = False
-        if rc != 0:
-            client.reconnect()
+        # loop_forever is responsible for reconnect
+        # if rc != 0:
+        #     client.reconnect()
 
     def get_msg_from_queue(self, homeid: str):
         if homeid in self.home_queues:
@@ -86,7 +91,7 @@ class HomeManager:
 class EventQueue:
     def __init__(self) -> None:
         self.lock: RLock = RLock()
-        self._queue: List[str | bytes] = []
+        self._queue: List[str] = []
         self._event = Event()
         self._block = False
 
@@ -108,8 +113,8 @@ class EventQueue:
                 item = item.decode()
             self._queue.insert(0, f"{item}\n\n")
 
-    def get(self) -> str | bytes:
-        ret: str | bytes = ""
+    def get(self) -> str:
+        ret: str = ""
         with self.lock:
             if self._queue:
                 ret = self._queue.pop()

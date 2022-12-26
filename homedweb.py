@@ -47,7 +47,7 @@ from sse_starlette.sse import EventSourceResponse
 from pycouchdb import Client
 from auth import AuthBackend, GoogleSignIn
 from devices import HomeManager
-from typing import Callable, Dict, Any, List, Coroutine
+from typing import Dict, Any, List
 from functools import wraps
 import asyncio
 
@@ -114,13 +114,11 @@ async def sse(request: Request):
 
     async def messages(homeid: str):
         while True:
-            disconnected = await request.is_disconnected()
-            if disconnected:
+            if await request.is_disconnected():
                 dm.set_block_state_msg_queue(homeid, True)
                 break
             ret = dm.get_msg_from_queue(homeid)
             if ret:
-                print(ret)
                 yield {"data": ret}
             else:
                 await asyncio.sleep(0.5)
@@ -162,7 +160,6 @@ routes: List[Any] = [
     Route("/devices/all", endpoint=get_all_devices),
     Route("/devices/send", endpoint=send_command, methods=["POST"]),
     Route("/signin", endpoint=signin, methods=["GET", "POST"]),
-    # Mount('/static', StaticFiles(directory='static'), name='static')
 ]
 
 if config.get("debug", False):
@@ -180,8 +177,6 @@ app = Starlette(
     routes=routes,
     debug=True,
     middleware=middleware,
-    # on_startup=[dm.start],
-    # on_shutdown=[dm_worker.join]
 )
 
 if __name__ == "__main__":

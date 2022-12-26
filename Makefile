@@ -10,6 +10,7 @@ PREFIX = /usr
 all: buildjs
 
 buildjs:
+	rm -rf static/scripts
 	tsc -b src
 
 stylescss: $(path)/styles.scss
