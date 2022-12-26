@@ -104,7 +104,6 @@ async def signin(request: Request):
             request.session["homeid"] = db["residents"][gs.user_id]["homeid"]
 
             return PlainTextResponse("ok")
-            # return RedirectResponse(url=request.url.path, status_code=303)
         return PlainTextResponse("Unknown User")
 
 
@@ -114,9 +113,11 @@ async def sse(request: Request):
 
     async def messages(homeid: str):
         while True:
-            if await request.is_disconnected():
-                dm.set_block_state_msg_queue(homeid, True)
+            disconnected: bool = await request.is_disconnected()
+            dm.set_block_state_msg_queue(homeid, disconnected)
+            if disconnected:
                 break
+
             ret = dm.get_msg_from_queue(homeid)
             if ret:
                 yield {"data": ret}
