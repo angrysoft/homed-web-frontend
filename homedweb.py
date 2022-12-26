@@ -111,13 +111,11 @@ async def sse(request: Request):
 
     async def messages(homeid: str):
         while True:
-            print("request", await request.is_disconnected())
-            # disconnected: bool = await request.is_disconnected()
-            # dm.set_block_state_msg_queue(homeid, disconnected)
-            # if disconnected:
-            #     break
-            yield {"data": "wtf"}
-            
+            disconnected: bool = await request.is_disconnected()
+            dm.set_block_state_msg_queue(homeid, disconnected)
+            if disconnected:
+                break
+
             ret = dm.get_msg_from_queue(homeid)
             if ret:
                 yield {"data": ret}
