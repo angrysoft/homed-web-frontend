@@ -116,7 +116,8 @@ async def sse(request: Request):
             # dm.set_block_state_msg_queue(homeid, disconnected)
             # if disconnected:
             #     break
-
+            yield {"data": "wtf"}
+            
             ret = dm.get_msg_from_queue(homeid)
             if ret:
                 yield {"data": ret}
