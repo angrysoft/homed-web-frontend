@@ -28,9 +28,8 @@ import logging
 import uvicorn
 from os import urandom
 from starlette.applications import Starlette
-from starlette.routing import Route, Mount
+from starlette.routing import Route
 from starlette.requests import Request
-from starlette.staticfiles import StaticFiles
 from starlette.responses import (
     JSONResponse,
     PlainTextResponse,
@@ -42,7 +41,6 @@ from starlette.responses import Response
 from starlette.middleware import Middleware
 from starlette.middleware.sessions import SessionMiddleware
 from starlette.middleware.authentication import AuthenticationMiddleware
-from starlette.background import BackgroundTask
 from sse_starlette.sse import EventSourceResponse
 from pycouchdb import Client
 from auth import AuthBackend, GoogleSignIn
@@ -113,10 +111,11 @@ async def sse(request: Request):
 
     async def messages(homeid: str):
         while True:
-            disconnected: bool = await request.is_disconnected()
-            dm.set_block_state_msg_queue(homeid, disconnected)
-            if disconnected:
-                break
+            print("request", await request.is_disconnected())
+            # disconnected: bool = await request.is_disconnected()
+            # dm.set_block_state_msg_queue(homeid, disconnected)
+            # if disconnected:
+            #     break
 
             ret = dm.get_msg_from_queue(homeid)
             if ret:
