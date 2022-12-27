@@ -108,12 +108,16 @@ async def signin(request: Request):
 @login_required
 async def sse(request: Request):
     homeid: str = request.session["homeid"]
+    dm = HomeManager(config)
+    dm_worker = Thread(target=dm.run, name="DeicesMSG")
+    dm_worker.setDaemon(True)
+    dm_worker.start()
 
     async def messages(homeid: str):
         while True:
             disconnected: bool = await request.is_disconnected()
-            dm.set_block_state_msg_queue(homeid, disconnected)
             if disconnected:
+                dm.stop()
                 break
 
             ret = dm.get_msg_from_queue(homeid)
@@ -137,10 +141,8 @@ with open(conf_file) as jfile:
 db: Client = Client(
     f"http://{config['couchdb']['user']}:{config['couchdb']['password']}@localhost"
 )
-dm = HomeManager(config)
-dm_worker = Thread(target=dm.run, name="DeicesMSG")
-dm_worker.setDaemon(True)
-dm_worker.start()
+
+
 templates = Jinja2Templates(directory="templates")
 
 

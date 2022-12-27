@@ -84,6 +84,9 @@ class HomeManager:
         if self._connected:
             self._client.publish(f"homed/{homeid}/set", payload, qos=1)
 
+    def stop(self):
+        self._client.disconnect()
+
     def run(self):
         self._client.loop_forever()
 
