@@ -45,7 +45,7 @@ from sse_starlette.sse import EventSourceResponse
 from pycouchdb import Client
 from auth import AuthBackend, GoogleSignIn
 from devices import HomeManager
-from typing import Dict, Any, List
+from typing import Callable, Dict, Any, List
 from functools import wraps
 import asyncio
 
@@ -80,7 +80,8 @@ async def get_all_devices(request: Request) -> Response:
 @login_required
 async def send_command(request: Request):
     cmd: bytes = await request.body()
-    dm.publish_msg(cmd.decode(), request.session["homeid"])
+    if request.session["homeid"] in handlers:
+        handlers[request.session["homeid"]](cmd.decode(), request.session["homeid"])
     return PlainTextResponse("ok")
 
 
@@ -112,12 +113,14 @@ async def sse(request: Request):
     dm_worker = Thread(target=dm.run, name="DeicesMSG")
     dm_worker.setDaemon(True)
     dm_worker.start()
+    handlers[homeid] = dm.publish_msg
 
     async def messages(homeid: str):
         while True:
             disconnected: bool = await request.is_disconnected()
             if disconnected:
                 dm.stop()
+                del handlers[homeid]
                 break
 
             ret = dm.get_msg_from_queue(homeid)
@@ -142,6 +145,7 @@ db: Client = Client(
     f"http://{config['couchdb']['user']}:{config['couchdb']['password']}@localhost"
 )
 
+handlers = {}
 
 templates = Jinja2Templates(directory="templates")
 
