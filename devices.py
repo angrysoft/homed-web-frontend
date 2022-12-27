@@ -6,8 +6,9 @@ from pycouchdb import Client
 
 
 class HomeManager:
-    def __init__(self, config: Dict[str, Any]):
-        self.home_queues: Dict[str, EventQueue] = {}
+    def __init__(self, homeid: str, config: Dict[str, Any]):
+        self.home_queue: EventQueue = EventQueue()
+        self.homeid = homeid
         self.config: Dict[str, Any] = config
         self._connected = False
         self._client: mqtt.Client = mqtt.Client()
@@ -26,10 +27,6 @@ class HomeManager:
             keepalive=self.config.get("mqtt", {}).get("keepalive", 60),
         )
 
-        self.topics: Dict[str, Dict[str, str]] = {
-            f'homed/{c["id"]}/get': c for c in self.config["houses"]
-        }
-
         self.db_connection: Client
         if "couchdb" in config:
             self.db_connection = Client(
@@ -43,23 +40,13 @@ class HomeManager:
         self, client: mqtt.Client, userdata: Any, flags: Any, rc: Any
     ) -> None:
         self._connected = True
-        for q in self.config["houses"]:
-            if q["id"] not in self.home_queues:
-                self.home_queues[q["id"]] = EventQueue()
-
-        client.subscribe([(f'homed/{c["id"]}/get', 0) for c in self.config["houses"]])
+        client.subscribe(f"homed/{self.homeid}/get")
 
     def _on_message(self, client: mqtt.Client, userdata: Any, msg: mqtt.MQTTMessage):
-        homeid = self.topics.get(msg.topic, {}).get("id")
-
         try:
             event = json.loads(msg.payload)
-            if (
-                event.get("sid")
-                and event.get("cmd") == "report"
-                and homeid in self.home_queues
-            ):
-                self.home_queues[homeid].put(json.dumps(event))
+            if event.get("sid") and event.get("cmd") == "report":
+                self.home_queue.put(json.dumps(event))
         except json.JSONDecodeError as err:
             print(f"json {err} : {msg.payload}")
         except AttributeError as err:
@@ -67,25 +54,17 @@ class HomeManager:
 
     def _on_disconnect(self, client: mqtt.Client, userdata: Any, rc: Any):
         self._connected = False
-        # loop_forever is responsible for reconnect
-        # if rc != 0:
-        #     client.reconnect()
 
-    def get_msg_from_queue(self, homeid: str):
-        if homeid in self.home_queues:
-            self.set_block_state_msg_queue(homeid, False)
-            return self.home_queues[homeid].get()
+    def get_msg_from_queue(self):
+        return self.home_queue.get()
 
-    def set_block_state_msg_queue(self, homeid: str, state: bool):
-        if homeid in self.home_queues:
-            self.home_queues[homeid].block = state
-
-    def publish_msg(self, payload: str, homeid: str) -> None:
+    def publish_msg(self, payload: str) -> None:
         if self._connected:
-            self._client.publish(f"homed/{homeid}/set", payload, qos=1)
+            self._client.publish(f"homed/{self.homeid}/set", payload, qos=1)
 
     def stop(self):
         self._client.disconnect()
+        self.home_queue.clear()
 
     def run(self):
         self._client.loop_forever()
@@ -96,21 +75,8 @@ class EventQueue:
         self.lock: RLock = RLock()
         self._queue: List[str] = []
         self._event = Event()
-        self._block = False
-
-    @property
-    def block(self) -> bool:
-        return self._block
-
-    @block.setter
-    def block(self, state: bool):
-        self._block = state
-        if state:
-            self._queue.clear()
 
     def put(self, item: str | bytes) -> None:
-        if self._block:
-            return
 
         with self.lock:
             if isinstance(item, bytes):
@@ -124,6 +90,5 @@ class EventQueue:
                 ret = self._queue.pop()
         return ret
 
-    def is_empty(self) -> bool:
-        with self.lock:
-            return len(self._queue) == 0
+    def clear(self):
+        self._queue.clear()

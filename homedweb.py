@@ -109,7 +109,7 @@ async def signin(request: Request):
 @login_required
 async def sse(request: Request):
     homeid: str = request.session["homeid"]
-    dm = HomeManager(config)
+    dm = HomeManager(homeid, config)
     dm_worker = Thread(target=dm.run, name="DeicesMSG")
     dm_worker.setDaemon(True)
     dm_worker.start()
@@ -117,13 +117,12 @@ async def sse(request: Request):
 
     async def messages(homeid: str):
         while True:
-            disconnected: bool = await request.is_disconnected()
-            if disconnected:
+            if await request.is_disconnected():
                 dm.stop()
                 del handlers[homeid]
                 break
 
-            ret = dm.get_msg_from_queue(homeid)
+            ret = dm.get_msg_from_queue()
             if ret:
                 yield {"data": ret}
             else:
