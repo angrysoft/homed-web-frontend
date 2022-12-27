@@ -1,6 +1,7 @@
 import React, { SyntheticEvent } from "react";
+import { useNavigate } from "react-router-dom";
 import { DeviceInfo } from "../reducers/devicesReducer";
-import { DevIcon } from "./DevIcon";
+import { MaterialSymbols } from "../components/MaterialSymbols";
 import { Contact } from "./Traits/Contact";
 import { DoubleSwitch } from "./Traits/DoubleSwitch";
 import { HumidityStatus } from "./Traits/HumidityStatus";
@@ -13,6 +14,8 @@ interface IDeviceProps {
 }
 
 const Device: React.FC<IDeviceProps> = (props: IDeviceProps) => {
+  const navigate = useNavigate();
+
   const mainTraitsList: Array<string> = [
     "OnOff",
     "DoubleSwitch",
@@ -21,10 +24,6 @@ const Device: React.FC<IDeviceProps> = (props: IDeviceProps) => {
     "Contact",
     "MotionStatus",
   ];
-
-  const handleClick = (ev: SyntheticEvent) => {
-    console.log("decs of dev: ", props.info.sid);
-  };
 
   const mainTraits = () => {
     return props.info.traits.map((traitName) => {
@@ -95,10 +94,10 @@ const Device: React.FC<IDeviceProps> = (props: IDeviceProps) => {
     <div className="p-1 bg-surface rounded grid grid-cols-5 gap-x-05">
       <div
         className="grid grid-cols-3 col-span-3"
-        onClick={(ev) => handleClick(ev)}
+        onClick={() => navigate(`/dev/${props.info.sid}`)}
       >
-        <div className="grid col-span-1">
-          <DevIcon name={props.info.icon || "sensors"} />
+        <div className="grid col-span-1 text-secondary">
+          <MaterialSymbols name={props.info.icon || "sensors"} />
         </div>
         <div className="col-span-2">{props.info.name}</div>
       </div>
