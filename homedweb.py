@@ -81,7 +81,7 @@ async def get_all_devices(request: Request) -> Response:
 async def send_command(request: Request):
     cmd: bytes = await request.body()
     if request.session["homeid"] in handlers:
-        handlers[request.session["homeid"]](cmd.decode(), request.session["homeid"])
+        handlers[request.session["homeid"]](cmd.decode())
     return PlainTextResponse("ok")
 
 
