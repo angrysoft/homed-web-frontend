@@ -1026,7 +1026,7 @@ export const allDevices: Array<{[key:string]: any}> = [
         ],
         "icon": "light",
         "power": "on",
-        "bright": 1,
+        "bright": 10,
         "ct_pc": 1,
         "scene": "1",
         "sid": "235444403",

@@ -8,7 +8,7 @@ interface IMaterialSymbolsProps {
 
 const MaterialSymbols:React.FC<IMaterialSymbolsProps> = (props:IMaterialSymbolsProps) => {
   return (
-    <span className='material-symbols-outlined'>
+    <span className='material-symbols-outlined select-none'>
       {props.name}
     </span>
   );

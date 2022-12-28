@@ -130,8 +130,28 @@ a {
     font-size: 1.5rem;
   }
 
-  input[type=range]::-moz-range-thumb,
-  input[type=range]::-webkit-slider-thumb {
-    height: 3rem;
-    background-color: red !important;
+  input[type="range"]::-moz-range-thumb {
+    -webkit-appearance: none;
+    height: 2rem;
+    width: 2rem;
+    appearance: none;
+    cursor: ew-resize;
+    background: transparent;
+    border-radius: 25%;
+    border-color: #1cd9c5;
+    border-style: solid;
+    border-width: 0.4rem;
   }
+
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    height: 2rem;
+    width: 2rem;
+    appearance: none;
+    cursor: ew-resize;
+    background: transparent;
+    border-radius: 25%;
+    border-color: #1cd9c5;
+    border-style: solid;
+    border-width: 0.3rem;
+}

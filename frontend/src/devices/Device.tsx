@@ -3,10 +3,10 @@ import { useNavigate } from "react-router-dom";
 import { DeviceInfo } from "../reducers/devicesReducer";
 import { MaterialSymbols } from "../components/MaterialSymbols";
 import { Contact } from "./Traits/Contact";
-import { DoubleSwitch } from "./Traits/DoubleSwitch";
+import { DoubleSwitchMain } from "./Traits/DoubleSwitchMain";
 import { HumidityStatus } from "./Traits/HumidityStatus";
 import { MotionStatus } from "./Traits/MotionStatus";
-import { OnOff } from "./Traits/OnOff";
+import { OnOffMain } from "./Traits/OnOffMain";
 import { TemperatureStatus } from "./Traits/TemperatureStatus";
 
 interface IDeviceProps {
@@ -31,7 +31,7 @@ const Device: React.FC<IDeviceProps> = (props: IDeviceProps) => {
         switch (traitName) {
           case "OnOff": {
             return (
-              <OnOff
+              <OnOffMain
                 sid={props.info.sid}
                 power={props.info.power}
                 key={traitName}
@@ -40,7 +40,7 @@ const Device: React.FC<IDeviceProps> = (props: IDeviceProps) => {
           }
           case "DoubleSwitch": {
             return (
-              <DoubleSwitch
+              <DoubleSwitchMain
                 sid={props.info.sid}
                 left={props.info.left}
                 right={props.info.right}
@@ -93,10 +93,10 @@ const Device: React.FC<IDeviceProps> = (props: IDeviceProps) => {
   return (
     <div className="p-1 bg-surface rounded grid grid-cols-5 gap-x-05">
       <div
-        className="grid grid-cols-3 col-span-3"
+        className="grid grid-cols-3 col-span-3 items-center"
         onClick={() => navigate(`/dev/${props.info.sid}`)}
       >
-        <div className="grid col-span-1 text-secondary">
+        <div className="grid col-span-1 items-center text-secondary">
           <MaterialSymbols name={props.info.icon || "sensors"} />
         </div>
         <div className="col-span-2">{props.info.name}</div>

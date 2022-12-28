@@ -1,54 +1,63 @@
-import React, { useContext } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { MaterialSymbols } from '../../components/MaterialSymbols';
-import { Dimmer } from '../../devices/Traits/Dimmer';
-import { OnOff } from '../../devices/Traits/OnOff';
-import { DeviceInfo } from '../../reducers/devicesReducer';
-import { AppContext } from '../../store';
+import React, { useContext } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { MaterialSymbols } from "../../components/MaterialSymbols";
+import { ColorTemperature } from "../../devices/Traits/ColorTemperature";
+import { Dimmer } from "../../devices/Traits/Dimmer";
+import { DoubleSwitch } from "../../devices/Traits/DoubleSwitch";
+import { OnOff } from "../../devices/Traits/OnOff";
+import { Rgb } from "../../devices/Traits/Rgb";
+import { DeviceInfo } from "../../reducers/devicesReducer";
+import { AppContext } from "../../store";
 
+interface IDeviceDetailsProps {}
 
-interface IDeviceDetailsProps {
-
-}
-
-
-const DeviceDetails:React.FC<IDeviceDetailsProps> = (props:IDeviceDetailsProps) => {
+const DeviceDetails: React.FC<IDeviceDetailsProps> = (
+  props: IDeviceDetailsProps,
+) => {
   const navigate = useNavigate();
-  const {sid} = useParams();
-  const {state} = useContext(AppContext);
-  const devInfo: DeviceInfo = state.devices[sid|| ""];
+  const { sid } = useParams();
+  const { state } = useContext(AppContext);
+  const devInfo: DeviceInfo = state.devices[sid || ""];
 
   const traits = () => {
     return devInfo.traits.map((traitName) => {
       switch (traitName) {
         case "OnOff": {
           return (
-            <OnOff
-              sid={devInfo.sid}
-              power={devInfo.power}
-              key={traitName}
-            />
+            <OnOff sid={devInfo.sid} power={devInfo.power} key={traitName} />
           );
         }
 
         case "Dimmer": {
           return (
-            <Dimmer
+            <Dimmer sid={devInfo.sid} key={traitName} bright={devInfo.bright} />
+          );
+        }
+
+        case "ColorTemperature": {
+          return (
+            <ColorTemperature
               sid={devInfo.sid}
+              key={traitName}
+              ct={devInfo.ct_pc}
+            />
+          );
+        }
+
+        case "Rgb": {
+          return <Rgb sid={devInfo.sid} key={traitName} rgb={devInfo.rgb} />;
+        }
+
+        case "DoubleSwitch": {
+          return (
+            <DoubleSwitch
+              sid={devInfo.sid}
+              left={devInfo.left}
+              right={devInfo.right}
               key={traitName}
             />
           );
         }
-        // case "DoubleSwitch": {
-        //   return (
-        //     <DoubleSwitch
-        //       sid={props.info.sid}
-        //       left={props.info.left}
-        //       right={props.info.right}
-        //       key={traitName}
-        //     />
-        //   );
-        // }
         // case "TemperatureStatus": {
         //   return (
         //     <TemperatureStatus
@@ -86,23 +95,29 @@ const DeviceDetails:React.FC<IDeviceDetailsProps> = (props:IDeviceDetailsProps) 
         //   );
         // }
         default:
-          return <div key={traitName} className='text-onSurface'>{traitName}</div>
+          return (
+            <div key={traitName} className="text-onSurface">
+              {traitName}
+            </div>
+          );
       }
-      return null;
     });
   };
 
   return (
-    <div className='h-screen w-screen bg-background'>
-      <header className='bg-surface p-1 grid grid-cols-4'>
-        <div className='grid content-center text-onSurface' onClick={() => navigate("/")}>
-          <MaterialSymbols name='arrow_back' />
+    <div className="h-screen w-screen bg-background">
+      <header className="bg-surface p-1 grid grid-cols-4">
+        <div
+          className="grid content-center text-onSurface"
+          onClick={() => navigate("/")}
+        >
+          <MaterialSymbols name="arrow_back" />
         </div>
-        <span className='col-span-2 text-onSurface text-center text-xl'>{devInfo.name}</span>
+        <span className="col-span-2 text-onSurface text-center text-xl">
+          {devInfo.name}
+        </span>
       </header>
-      <section className='p-1 grid gap-1'>
-        {traits()}
-      </section>
+      <section className="p-1 grid gap-1">{traits()}</section>
     </div>
   );
 };
