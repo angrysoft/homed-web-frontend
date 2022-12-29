@@ -28,9 +28,10 @@ const devicesReducer = (
     }
     
     case "UPDATE_DEVICE": {
+      const sid = action.payload.sid as string;
       return {
         ...state,
-        ...action.payload,
+        [sid]: {...action.payload.data},
       };
     }
 

@@ -1,7 +1,8 @@
-import React, { lazy, Suspense } from "react";
+import React, { lazy, Suspense, useContext } from "react";
 import { Route, Routes } from "react-router-dom";
 import Loader from "./components/Loader";
 import { useGetDevices } from "./hooks/useGetDevices";
+import { AppContext } from "./store";
 
 const Home = lazy(() => import("./pages/home"));
 const DeviceDetails = lazy(() => import("./pages/device"));
