@@ -1,4 +1,4 @@
-import { ButtonSmall } from "../WebComponents/ButtonSmall.js";
+import { ButtonSmall } from "../components.js";
 import { Trait } from "./Trait.js";
 export class OnOffView extends Trait {
     constructor() {
@@ -6,7 +6,7 @@ export class OnOffView extends Trait {
         this._showInMainView = true;
         this.statusList = OnOffView.attr;
         this._sendCommands = true;
-        this.cssSheet.insertRule(`:host {
+        this.sheet.insertRule(`:host {
             display: grid;
             justify-content: center;
         }`);

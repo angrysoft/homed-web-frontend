@@ -1,4 +1,4 @@
-import { BaseComponent } from "../WebComponents/BaseComponent.js";
+import { BaseComponent } from "../components.js";
 export declare class Trait extends BaseComponent {
     protected _sendCommands: boolean;
     protected statusList: Array<string>;

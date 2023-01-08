@@ -1,4 +1,4 @@
-import { BaseComponent } from "../WebComponents/BaseComponent.js";
+import { BaseComponent } from "../components.js";
 export class Trait extends BaseComponent {
     constructor() {
         super();

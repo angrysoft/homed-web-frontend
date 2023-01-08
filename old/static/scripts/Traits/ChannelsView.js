@@ -1,4 +1,4 @@
-import { Button } from "../WebComponents/Button.js";
+import { Button } from "../components.js";
 import { Trait } from "./Trait.js";
 export class ChannelsView extends Trait {
     constructor() {
@@ -6,7 +6,7 @@ export class ChannelsView extends Trait {
         this.buttons = { 'ch+': 'channel_up', 'ch-': 'channel_down' };
         this.statusList = ChannelsView.attr;
         this._sendCommands = true;
-        this.cssSheet.insertRule(`:host {
+        this.sheet.insertRule(`:host {
             display: grid;
             gap: 0.5rem;
             grid-auto-flow: column;

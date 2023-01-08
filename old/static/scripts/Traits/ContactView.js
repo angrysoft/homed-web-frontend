@@ -4,13 +4,13 @@ export class ContactView extends Trait {
         super();
         this._showInMainView = true;
         this.statusList = ContactView.attr;
-        this.cssSheet.insertRule(`:host {
+        this.sheet.insertRule(`:host {
             display: grid;
             gap: 1rem;
             grid-template-columns: 1fr 2fr;
             justify-content: center;
         }`);
-        this.cssSheet.insertRule(`label {
+        this.sheet.insertRule(`label {
             color: var(--widget-color);
             font-weight: 600;
         }`);

@@ -4,11 +4,11 @@ export class RgbView extends Trait {
         super();
         this._sendCommands = true;
         this.statusList = ['rgb'];
-        this.cssSheet.insertRule(`input[type=color] {
+        this.sheet.insertRule(`input[type=color] {
             width:100%;
             min-height: 4rem;
         }`);
-        this.cssSheet.insertRule(`:host {
+        this.sheet.insertRule(`:host {
             display: grid;
             grid-template-columns: 0.8fr;
             gap: 1rem;

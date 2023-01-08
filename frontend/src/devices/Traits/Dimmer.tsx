@@ -12,7 +12,7 @@ const Dimmer: React.FC<IDimmerProps> = (props: IDimmerProps) => {
   const inBright = useRef<HTMLInputElement>(null);
 
   const handleChange = useCallback(() => {
-    send(props.sid, "bright", inBright.current?.value);
+    send(props.sid, "set_bright", inBright.current?.value);
   }, [inBright, props.sid, send]);
 
   useEffect(() => {

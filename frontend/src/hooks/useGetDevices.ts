@@ -17,13 +17,6 @@ const useGetDevices = () => {
     return codes[langCode] || "en";
   }
 
-  const evSource = new EventSource(`/events`);
-  evSource.onmessage = async (event) => {
-    if (event.data.startsWith('{')) {
-      dispatch({type:"UPDATE_DEVICE", payload: JSON.parse(event.data)});
-    }
-  }
-
   useEffect(() => {
     const result:{[key:string]: any} = {};
     const places: Set<string> = new Set();

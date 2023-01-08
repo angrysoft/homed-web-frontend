@@ -1,11 +1,11 @@
-import { Button } from "../WebComponents/Button.js";
+import { Button } from "../components.js";
 import { Trait } from "./Trait.js";
 export class ButtonExitView extends Trait {
     constructor() {
         super();
         this.statusList = ButtonExitView.attr;
         this._sendCommands = true;
-        this.cssSheet.insertRule(`:host {
+        this.sheet.insertRule(`:host {
             display: grid;
             gap: 0.5rem;
             grid-auto-flow: column;

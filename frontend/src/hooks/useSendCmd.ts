@@ -1,11 +1,16 @@
+import { useCallback } from "react";
 
 const useSendCmd = () => {
-  const send = (sid:string, cmd:string, args: any) => {
-    console.log(`execute.${sid}.${cmd}.${args.toString()}`, args)
+  const send = useCallback((sid:string, cmd:string, args: any) => {
+    const event = {
+      'event': `execute.${sid}.${cmd}.${args.toString()}`,
+      'args' : [args.toString(), cmd] 
+    };
+    console.log(event)
     const fetchOptions: any = {
       method:  "POST",
       cache: "no-cache",
-      body: `execute.${sid}.${cmd}.${args.toString()}`,
+      body: JSON.stringify(event),
       headers: {
         'Content-Type': 'text/plain'
       },
@@ -16,7 +21,7 @@ const useSendCmd = () => {
           console.error("Response error: ", response.status);
         };
     });
-  }
+  }, []);
 
   return send;
 }

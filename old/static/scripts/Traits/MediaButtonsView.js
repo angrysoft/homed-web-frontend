@@ -1,4 +1,4 @@
-import { Button } from "../WebComponents/Button.js";
+import { Button } from "../components.js";
 import { Trait } from "./Trait.js";
 export class MediaButtonsView extends Trait {
     constructor() {
@@ -6,7 +6,7 @@ export class MediaButtonsView extends Trait {
         this.buttons = { ">": 'play', "||": 'pause', "[ ]": 'stop', ">>": 'rewind', "<<": 'forward' };
         this.statusList = MediaButtonsView.attr;
         this._sendCommands = true;
-        this.cssSheet.insertRule(`:host {
+        this.sheet.insertRule(`:host {
             display: grid;
             gap: 0.5rem;
             grid-auto-flow: column;

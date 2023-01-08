@@ -5,7 +5,6 @@ class BaseComponent extends HTMLElement {
         this.html = '';
         this.sheet = new CSSStyleSheet();
         this.root = this.attachShadow({ mode: 'open' });
-        console.log(this.root.styleSheets);
     }
     adoptedCallback() {
         console.log('I am adopted!');
