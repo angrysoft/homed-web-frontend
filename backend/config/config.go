@@ -2,7 +2,7 @@ package config
 
 import (
 	"encoding/json"
-	"io/ioutil"
+	"io"
 	"log"
 	"os"
 )
@@ -18,7 +18,7 @@ type mqttBroker struct {
 type house struct {
 	Id     string `json:"id"`
 	Name   string `json:"name"`
-	HomeId string `json:"homeid"`
+	Users  []string `json:"users"`
 }
 
 type Config struct {
@@ -33,7 +33,7 @@ func LoadFromFile(fileName string) Config {
 		log.Fatal(err)
 	}
 	defer jsonFile.Close()
-	byteValue, _ := ioutil.ReadAll(jsonFile)
+	byteValue, _ := io.ReadAll(jsonFile)
 	json.Unmarshal(byteValue, &result)
 	
 	return result

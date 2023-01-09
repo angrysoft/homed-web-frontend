@@ -2,16 +2,15 @@ package main
 
 import (
 	// "encoding/json"
-	"context"
 	"fmt"
 	"io"
 	"log"
 	"net/http"
 
 	MQTT "github.com/eclipse/paho.mqtt.golang"
-	"google.golang.org/api/idtoken"
 
 	// session "github.com/go-session/session/v3"
+	"homedaemon.angrysoft.ovh/web/auth"
 	"homedaemon.angrysoft.ovh/web/config"
 	"homedaemon.angrysoft.ovh/web/mqtt"
 )
@@ -87,29 +86,30 @@ func frontend() http.HandlerFunc {
 	}
 }
 
-func auth(w http.ResponseWriter, r *http.Request) {
-	switch r.Method {
-	case "GET":
-		fmt.Println("Singin get")
-	case "POST":
-		err := r.ParseForm()
-		if err != nil {
-			log.Fatal(err)
-		}
-		csrf_token_cookie, cookiErr := r.Cookie("g_csrf_token")
-		csrf_token_body := r.PostForm.Get("g_csrf_token")
+func signin(conf *config.Config) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case "GET":
+			fmt.Println("Singin get")
+		case "POST":
+			err := r.ParseForm()
+			if err != nil {
+				log.Fatal(err)
+			}
+			csrf_token_cookie, cookiErr := r.Cookie("g_csrf_token")
+			csrf_token_body := r.PostForm.Get("g_csrf_token")
 
-		if cookiErr != nil || csrf_token_cookie.Value != csrf_token_body {
-			log.Print("Failed to verify double submit cookie.")
-			w.WriteHeader(http.StatusBadRequest)
-		}
-		ctx := context.Background()
-		payload, err := idtoken.Validate(ctx, r.PostForm.Get("credential"), "877412399754-shou706hpt8q4llqenm6p93vthr4q28o.apps.googleusercontent.com")
-		if err != nil {
-			log.Print(err)
-			w.WriteHeader(http.StatusForbidden)
-		}
-		if payload.Issuer != "" {
+			if cookiErr != nil || csrf_token_cookie.Value != csrf_token_body {
+				log.Print("Failed to verify double submit cookie.")
+				w.WriteHeader(http.StatusBadRequest)
+			}
+
+			authErr := auth.Authenticate(r.PostForm.Get("credential"), conf)
+			if authErr != nil {
+				log.Print(authErr)
+				w.WriteHeader(http.StatusForbidden)
+			}
+
 			http.Redirect(w, r, "/", http.StatusPermanentRedirect)
 		}
 	}
@@ -122,7 +122,7 @@ func main() {
 
 	http.HandleFunc("/devices", devices(mqttHandlers))
 	http.HandleFunc("/events", sse(&conf, mqttHandlers))
-	http.HandleFunc("/auth", auth)
+	http.HandleFunc("/auth", signin(&conf))
 	http.HandleFunc("/", frontend())
 	log.Fatal(http.ListenAndServe(":8000", nil))
 }
