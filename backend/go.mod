@@ -7,6 +7,7 @@ replace homedaemon.angrysoft.ovh/web/config => ./config
 replace homedaemon.angrysoft.ovh/web/mqtt => ./mqtt
 
 require (
+	github.com/alexedwards/scs/v2 v2.5.0
 	github.com/eclipse/paho.mqtt.golang v1.4.2
 	homedaemon.angrysoft.ovh/web/auth v0.0.0-00010101000000-000000000000
 	homedaemon.angrysoft.ovh/web/config v0.0.0-00010101000000-000000000000

@@ -8,8 +8,6 @@ import (
 	"net/http"
 
 	MQTT "github.com/eclipse/paho.mqtt.golang"
-
-	// session "github.com/go-session/session/v3"
 	"homedaemon.angrysoft.ovh/web/auth"
 	"homedaemon.angrysoft.ovh/web/config"
 	"homedaemon.angrysoft.ovh/web/mqtt"
@@ -82,6 +80,9 @@ func sse(conf *config.Config, mqttHandlers map[string]func(string)) http.Handler
 func frontend() http.HandlerFunc {
 	index := http.FileServer(http.Dir("../frontend/build"))
 	return func(w http.ResponseWriter, r *http.Request) {
+		for _, cookie := range r.Cookies() {
+			fmt.Println(cookie.Name)
+		}
 		index.ServeHTTP(w, r)
 	}
 }
@@ -104,22 +105,21 @@ func signin(conf *config.Config) http.HandlerFunc {
 				w.WriteHeader(http.StatusBadRequest)
 			}
 
-			authErr := auth.Authenticate(r.PostForm.Get("credential"), conf)
+			user, authErr := auth.Authenticate(r.PostForm.Get("credential"), conf)
 			if authErr != nil {
 				log.Print(authErr)
 				w.WriteHeader(http.StatusForbidden)
 			}
-
+			fmt.Println(user)
 			http.Redirect(w, r, "/", http.StatusPermanentRedirect)
 		}
 	}
 }
 
 func main() {
-	var mqttHandlers map[string]func(string)
-	mqttHandlers = make(map[string]func(string))
+	mqttHandlers := make(map[string]func(string))
 	conf := config.LoadFromFile("/home/seba/workspace/homedaemon-web/homemanager.json")
-
+	
 	http.HandleFunc("/devices", devices(mqttHandlers))
 	http.HandleFunc("/events", sse(&conf, mqttHandlers))
 	http.HandleFunc("/auth", signin(&conf))
