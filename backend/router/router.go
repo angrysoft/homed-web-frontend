@@ -13,7 +13,7 @@ type Route struct {
 	Handler http.HandlerFunc
 }
 
-func CreateRouter() *Router {
+func New() *Router {
 	return &Router{
 		routes: make(map[string]*Route),
 	}

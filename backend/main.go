@@ -83,20 +83,27 @@ func sse(conf *config.Config, mqttHandlers map[string]func(string)) http.Handler
 	}
 }
 
+// func frontend() http.HandlerFunc {
+// 	index := http.FileServer(http.Dir("../frontend/build"))
+
+// 	return func(w http.ResponseWriter, r *http.Request) {
+// 		fmt.Println("path", r.URL.Path)
+// 		session, _ := store.Get(r, cookieName)
+
+// 		// Check if user is authenticated
+// 		fmt.Println("wtf: ", session.Values["authenticated"])
+// 		if auth, ok := session.Values["authenticated"].(bool); !ok || !auth {
+// 			// http.Error(w, "Forbidden", http.StatusForbidden)
+// 			// return
+// 			// http.Redirect(w, r, "/login", http.StatusPermanentRedirect)
+
+//			}
+//			index.ServeHTTP(w, r)
+//		}
+//	}
 func frontend() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		fmt.Println("path", r.URL.Path)
-		session, _ := store.Get(r, cookieName)
-
-		// Check if user is authenticated
-		fmt.Println("wtf: ", session.Values["authenticated"])
-		if auth, ok := session.Values["authenticated"].(bool); !ok || !auth {
-			// http.Error(w, "Forbidden", http.StatusForbidden)
-			// return
-			// http.Redirect(w, r, "/login", http.StatusPermanentRedirect)
-
-		}
-		index.ServeHTTP(w, r)
+		http.FileServer(http.Dir("../frontend/build/")).ServeHTTP(w, r)
 	}
 }
 
@@ -147,7 +154,7 @@ func main() {
 	mqttHandlers := make(map[string]func(string))
 	conf := config.LoadFromFile("/home/seba/workspace/homedaemon-web/homemanager.json")
 	user := &auth.User{}
-	r := router.CreateRouter()
+	r := router.New()
 	r.AddRoute("/", frontend())
 	r.AddRoute("/auth", signin(&conf, user))
 	r.AddRoute("/events", sse(&conf, mqttHandlers))
