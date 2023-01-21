@@ -12,6 +12,7 @@ import (
 	"homedaemon.angrysoft.ovh/web/auth"
 	"homedaemon.angrysoft.ovh/web/config"
 	"homedaemon.angrysoft.ovh/web/mqtt"
+	"homedaemon.angrysoft.ovh/web/router"
 )
 
 var (
@@ -29,7 +30,7 @@ func devices(mqttHandlers map[string]func(string)) http.HandlerFunc {
 		switch r.Method {
 		case "GET":
 			// mqttHandlers[homeid](string('{"":""}'))
-			fmt.Println("refresh device list")
+			fmt.Fprint(w, "refresh device list")
 		case "POST":
 			defer r.Body.Close()
 			msg, err := io.ReadAll(r.Body)
@@ -83,7 +84,6 @@ func sse(conf *config.Config, mqttHandlers map[string]func(string)) http.Handler
 }
 
 func frontend() http.HandlerFunc {
-	index := http.FileServer(http.Dir("../frontend/build"))
 	return func(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("path", r.URL.Path)
 		session, _ := store.Get(r, cookieName)
@@ -100,7 +100,7 @@ func frontend() http.HandlerFunc {
 	}
 }
 
-func signin(conf *config.Config) http.HandlerFunc {
+func signin(conf *config.Config, user *auth.User) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
 		case "GET":
@@ -119,9 +119,9 @@ func signin(conf *config.Config) http.HandlerFunc {
 				w.WriteHeader(http.StatusBadRequest)
 			}
 
-			user, authErr := auth.Authenticate(r.PostForm.Get("credential"), conf)
-			if authErr != nil {
-				log.Print(authErr)
+			err = user.Authenticate(r.PostForm.Get("credential"), conf)
+			if err != nil {
+				log.Print(err)
 				w.WriteHeader(http.StatusForbidden)
 			}
 			session.Values["authenticated"] = user.IsAuthenticated()
@@ -146,11 +146,12 @@ func logout(w http.ResponseWriter, r *http.Request) {
 func main() {
 	mqttHandlers := make(map[string]func(string))
 	conf := config.LoadFromFile("/home/seba/workspace/homedaemon-web/homemanager.json")
-	http.HandleFunc("/", frontend())
-	http.HandleFunc("/logout", logout)
-	http.HandleFunc("/devices", devices(mqttHandlers))
-	http.HandleFunc("/events", sse(&conf, mqttHandlers))
-	http.HandleFunc("/auth", signin(&conf))
-	http.HandleFunc("/login", frontend())
-	log.Fatal(http.ListenAndServe(":8000", nil))
+	user := &auth.User{}
+	r := router.CreateRouter()
+	r.AddRoute("/", frontend())
+	r.AddRoute("/auth", signin(&conf, user))
+	r.AddRoute("/events", sse(&conf, mqttHandlers))
+	r.AddRoute("/devices", devices(mqttHandlers))
+
+	log.Fatal(http.ListenAndServe(":8000", r))
 }

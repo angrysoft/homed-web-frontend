@@ -19,28 +19,26 @@ func (u User) IsAuthenticated() bool {
 	return u.authenticated
 }
 
-func Authenticate(credentials string, conf *config.Config) (User, error) {
+func (u *User) Authenticate(credentials string, conf *config.Config) error {
 	ctx := context.Background()
-	user := User{}
-	payload, err := idtoken.Validate(ctx, credentials, "877412399754-shou706hpt8q4llqenm6p93vthr4q28o.apps.googleusercontent.com")
+	payload, err := idtoken.Validate(ctx, credentials, conf.GoogleId)
 	if err != nil {
-		return user, err
+		return err
 	}
 
 	if payload.Issuer != "accounts.google.com" && payload.Issuer != "https://accounts.google.com" {
-		return user, errors.New("wrong issuer")
+		return errors.New("wrong issuer")
 	}
 
 	homeid, err := containsUserSub(conf, payload.Claims["sub"].(string))
 	if err != nil {
-		return user, err
+		return err
 	}
-	
-	user.authenticated = true
-	user.Homeid = homeid
-	user.Name = payload.Claims["name"].(string)
-	user.Picture = payload.Claims["picture"].(string)
-	return user, nil
+	u.Homeid = homeid
+	u.Name = payload.Claims["name"].(string)
+	u.Picture = payload.Claims["picture"].(string)
+	u.authenticated = true
+	return nil
 }
 
 func containsUserSub(conf *config.Config, sub string) (string, error) {

@@ -24,6 +24,7 @@ type house struct {
 type Config struct {
 	Mqtt mqttBroker `json:"mqtt"`
 	Houses []house `json:"houses"`
+	GoogleId string `json:"googleid"`
 }
 
 func LoadFromFile(fileName string) Config {

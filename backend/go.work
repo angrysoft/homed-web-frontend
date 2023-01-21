@@ -1,0 +1,8 @@
+go 1.19
+
+use (
+	./auth
+	./config
+	./mqtt
+	./router
+)
