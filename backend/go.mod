@@ -7,8 +7,8 @@ replace homedaemon.angrysoft.ovh/web/config => ./config
 replace homedaemon.angrysoft.ovh/web/mqtt => ./mqtt
 
 require (
-	github.com/alexedwards/scs/v2 v2.5.0
 	github.com/eclipse/paho.mqtt.golang v1.4.2
+	github.com/gorilla/sessions v1.2.1
 	homedaemon.angrysoft.ovh/web/auth v0.0.0-00010101000000-000000000000
 	homedaemon.angrysoft.ovh/web/config v0.0.0-00010101000000-000000000000
 	homedaemon.angrysoft.ovh/web/mqtt v0.0.0-00010101000000-000000000000
@@ -20,6 +20,7 @@ require (
 	github.com/golang/groupcache v0.0.0-20200121045136-8c9f03a8e57e // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/googleapis/enterprise-certificate-proxy v0.2.1 // indirect
+	github.com/gorilla/securecookie v1.1.1 // indirect
 	github.com/gorilla/websocket v1.4.2 // indirect
 	go.opencensus.io v0.24.0 // indirect
 	golang.org/x/net v0.0.0-20221014081412-f15817d10f9b // indirect

@@ -9,16 +9,15 @@ import (
 )
 
 type User struct {
-	Homeid string
-	Name string
-	Picture string
+	Homeid        string
+	Name          string
+	Picture       string
 	authenticated bool
 }
 
 func (u User) IsAuthenticated() bool {
 	return u.authenticated
 }
-
 
 func Authenticate(credentials string, conf *config.Config) (User, error) {
 	ctx := context.Background()
@@ -36,9 +35,11 @@ func Authenticate(credentials string, conf *config.Config) (User, error) {
 	if err != nil {
 		return user, err
 	}
-		user.Homeid = homeid
-		user.Name = payload.Claims["name"].(string)
-		user.Picture = payload.Claims["picture"].(string)
+	
+	user.authenticated = true
+	user.Homeid = homeid
+	user.Name = payload.Claims["name"].(string)
+	user.Picture = payload.Claims["picture"].(string)
 	return user, nil
 }
 
@@ -46,7 +47,7 @@ func containsUserSub(conf *config.Config, sub string) (string, error) {
 	var homeid string = ""
 
 	for _, house := range conf.Houses {
-		
+
 		for _, user := range house.Users {
 			if user == sub {
 				return house.Id, nil
