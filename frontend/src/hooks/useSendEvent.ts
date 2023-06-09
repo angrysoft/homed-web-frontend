@@ -1,15 +1,13 @@
 import { useCallback } from "react";
 
-const useSendCmd = () => {
-  const send = useCallback((sid:string, cmd:string, value: any) => {
-    const event = {
-      'event': `execute`,
-      'sid': sid,
-      'payload' : {
-        name:cmd,
-        value: value
-      } 
-    };
+interface IEvent {
+  event: string,
+  sid: string,
+  payload: {[key:string]: string}
+}
+
+const useSendEvent = () => {
+  const send = useCallback((event: IEvent) => {
     console.log(event)
     const fetchOptions: any = {
       method:  "POST",
@@ -30,4 +28,4 @@ const useSendCmd = () => {
   return send;
 }
 
-export {useSendCmd}
+export {useSendEvent}

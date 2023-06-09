@@ -1,5 +1,4 @@
 import { useContext, useEffect, useState } from "react";
-import {allDevices} from "../all";
 import { AppContext } from "../store";
 
 
@@ -23,6 +22,11 @@ const useGetDevices = () => {
     const lang = getLangCode(navigator.language);
 
     setLoading(true);
+    let allDevices: Array<{[key:string]: any}> = [];
+    const deviceInfoList: string | null = localStorage.getItem("allDevices");
+    if (deviceInfoList != null && deviceInfoList.length > 0)
+      allDevices = JSON.parse(deviceInfoList);
+
     allDevices.forEach((dev) => {
       const place = dev.place[lang]
       result[dev.sid] = {
@@ -32,7 +36,9 @@ const useGetDevices = () => {
       }
       place && places.add(place);
     });
-    dispatch({type: "ALL_DEVICES_LOADED", payload: result})
+
+    // localStorage.setItem("allDevices", JSON.stringify(allDevices));
+    dispatch({type: "ALL_DEVICES_LOADED", payload: result});
     dispatch({type: "PLACES_LOADED", payload: Array.from(places)});
     const placeSelected = localStorage.getItem('placeSelected');
     if (placeSelected) {

@@ -31,7 +31,7 @@ const devicesReducer = (
       const sid = action.payload.sid as string;
       return {
         ...state,
-        [sid]: {...state[sid], ...action.payload.data},
+        [sid]: {...state[sid], ...action.payload.payload},
       };
     }
 

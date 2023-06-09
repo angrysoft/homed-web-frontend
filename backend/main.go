@@ -43,6 +43,7 @@ func sse(conf *config.Config, mqttHandlers map[string]func(string)) http.Handler
 		eventCh := make(chan []byte)
 
 		var f MQTT.MessageHandler = func(client MQTT.Client, msg MQTT.Message) {
+			fmt.Println(string(msg.Payload()));
 			eventCh <- msg.Payload()
 		}
 		homeid := "e935ce0b-5c5f-47e1-9c7e-7b52afbfa96a"

@@ -14,7 +14,6 @@ type BrokerClient struct {
 
 func NewClient(conf *config.Config, homeid string, handler MQTT.MessageHandler) BrokerClient {
 	opts := MQTT.NewClientOptions().AddBroker(fmt.Sprintf("ssl://%s:%d", conf.Mqtt.Host, conf.Mqtt.Port))
-	// opts.SetClientID("go-simple")
 	opts.SetUsername(conf.Mqtt.User).SetPassword(conf.Mqtt.Password)
 	opts.SetTLSConfig(&tls.Config{})
 	opts.SetDefaultPublishHandler(handler)
