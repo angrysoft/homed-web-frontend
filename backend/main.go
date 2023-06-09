@@ -8,18 +8,23 @@ import (
 	"net/http"
 
 	MQTT "github.com/eclipse/paho.mqtt.golang"
+	"github.com/gorilla/sessions"
 	"homedaemon.angrysoft.ovh/web/auth"
 	"homedaemon.angrysoft.ovh/web/config"
 	"homedaemon.angrysoft.ovh/web/mqtt"
 	"homedaemon.angrysoft.ovh/web/router"
 )
 
+var (
+	// key must be 16, 24 or 32 bytes long (AES-128, AES-192 or AES-256)
+	key   = []byte("^w-lbb-&8zf3lueqiy=57dii-r%i8du*&^=!d#vs#&%_m5wqhi")
+	store = sessions.NewCookieStore(key)
+)
+
+const cookieName = "goSessionId"
+
 func devices(mqttHandlers map[string]func(string)) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		if r.URL.Path != "/devices" {
-			http.Error(w, "404 not found.", http.StatusNotFound)
-			return
-		}
 		homeid := "e935ce0b-5c5f-47e1-9c7e-7b52afbfa96a"
 
 		switch r.Method {
@@ -79,9 +84,27 @@ func sse(conf *config.Config, mqttHandlers map[string]func(string)) http.Handler
 	}
 }
 
+// func frontend() http.HandlerFunc {
+// 	index := http.FileServer(http.Dir("../frontend/build"))
+
+// 	return func(w http.ResponseWriter, r *http.Request) {
+// 		fmt.Println("path", r.URL.Path)
+// 		session, _ := store.Get(r, cookieName)
+
+// 		// Check if user is authenticated
+// 		fmt.Println("wtf: ", session.Values["authenticated"])
+// 		if auth, ok := session.Values["authenticated"].(bool); !ok || !auth {
+// 			// http.Error(w, "Forbidden", http.StatusForbidden)
+// 			// return
+// 			// http.Redirect(w, r, "/login", http.StatusPermanentRedirect)
+
+//			}
+//			index.ServeHTTP(w, r)
+//		}
+//	}
 func frontend() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		http.FileServer(http.Dir("../frontend/build")).ServeHTTP(w, r)
+		http.FileServer(http.Dir("../frontend/build/")).ServeHTTP(w, r)
 	}
 }
 
@@ -91,6 +114,7 @@ func signin(conf *config.Config, user *auth.User) http.HandlerFunc {
 		case "GET":
 			fmt.Println("Singin get")
 		case "POST":
+			session, _ := store.Get(r, cookieName)
 			err := r.ParseForm()
 			if err != nil {
 				log.Fatal(err)
@@ -108,17 +132,30 @@ func signin(conf *config.Config, user *auth.User) http.HandlerFunc {
 				log.Print(err)
 				w.WriteHeader(http.StatusForbidden)
 			}
-			fmt.Println(user)
+			session.Values["authenticated"] = user.IsAuthenticated()
+			session.Values["name"] = user.Name
+			session.Values["homeid"] = user.Homeid
+			session.Values["picture"] = user.Picture
+			session.Save(r, w)
 			http.Redirect(w, r, "/", http.StatusPermanentRedirect)
 		}
 	}
+}
+
+func logout(w http.ResponseWriter, r *http.Request) {
+	session, _ := store.Get(r, cookieName)
+	fmt.Println("Logout", session.Values)
+	// Revoke users authentication
+	session.Values["authenticated"] = false
+	session.Save(r, w)
+	http.Redirect(w, r, "/", http.StatusPermanentRedirect)
 }
 
 func main() {
 	mqttHandlers := make(map[string]func(string))
 	conf := config.LoadFromFile("/home/seba/workspace/homedaemon-web/homemanager.json")
 	user := &auth.User{}
-	r := router.CreateRouter()
+	r := router.New()
 	r.AddRoute("/", frontend())
 	r.AddRoute("/auth", signin(&conf, user))
 	r.AddRoute("/events", sse(&conf, mqttHandlers))
