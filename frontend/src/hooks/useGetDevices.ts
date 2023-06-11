@@ -1,10 +1,9 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect } from "react";
 import { AppContext } from "../store";
 
 
 const useGetDevices = () => {
-  const {dispatch} = useContext(AppContext);
-  const [loading, setLoading] = useState<boolean>(false);
+  const {state, dispatch} = useContext(AppContext);
   const getLangCode = (langCode: string): string => {
     const codes: {[key:string]: string} = {
       "pl-PL": "pl",
@@ -21,13 +20,12 @@ const useGetDevices = () => {
     const places: Set<string> = new Set();
     const lang = getLangCode(navigator.language);
 
-    setLoading(true);
-    let allDevices: Array<{[key:string]: any}> = [];
-    const deviceInfoList: string | null = localStorage.getItem("allDevices");
-    if (deviceInfoList != null && deviceInfoList.length > 0)
-      allDevices = JSON.parse(deviceInfoList);
-
-    allDevices.forEach((dev) => {
+    if (state.main.deviceList.length === 0)
+      return;
+    dispatch({type: "LOADING_TRUE"});
+    state.main.deviceList.forEach((dev) => {
+      if (!dev.traits || dev.traits.length === 0)
+        return;
       const place = dev.place[lang]
       result[dev.sid] = {
         ...dev,
@@ -36,18 +34,18 @@ const useGetDevices = () => {
       }
       place && places.add(place);
     });
-
-    // localStorage.setItem("allDevices", JSON.stringify(allDevices));
+    console.log(result)
+    dispatch({type:"REFRESH_NEEDED_FALSE"});
     dispatch({type: "ALL_DEVICES_LOADED", payload: result});
     dispatch({type: "PLACES_LOADED", payload: Array.from(places)});
     const placeSelected = localStorage.getItem('placeSelected');
     if (placeSelected) {
       dispatch({type: "PLACE_SELECTED", payload: placeSelected})
     }
-    setLoading(false);
-  }, [dispatch]);
+    dispatch({type: "LOADING_FALSE"});
 
-  return {loading}
+  }, [dispatch, state.main.deviceList]);
+
 }
 
 export {useGetDevices};

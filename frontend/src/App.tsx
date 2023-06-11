@@ -1,19 +1,22 @@
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useContext } from "react";
 import { Route, Routes } from "react-router-dom";
-import Loader from "./components/Loader";
+import MainLoader from "./components/MainLoader";
+import { useEvents } from "./hooks/useEvents";
 import { useGetDevices } from "./hooks/useGetDevices";
 import { Login } from "./pages/Login";
-import { useEvents } from "./hooks/useEvents";
+import { AppContext } from "./store";
 
 const Home = lazy(() => import("./pages/home"));
 const DeviceDetails = lazy(() => import("./pages/device"));
 
 function App() {
-  useEvents();
+  const { state } = useContext(AppContext);
 
-  const { loading } = useGetDevices();
-  if (loading) {
-    return <Loader />;
+  useEvents();
+  useGetDevices();
+
+  if (state.main.loading) {
+    return <MainLoader />;
   }
 
   return (
@@ -21,7 +24,7 @@ function App() {
       <Route
         path="/"
         element={
-          <Suspense fallback={<Loader />}>
+          <Suspense fallback={<MainLoader />}>
             <Home />
           </Suspense>
         }
@@ -29,7 +32,7 @@ function App() {
       <Route
         path="/dev/:sid"
         element={
-          <Suspense fallback={<Loader />}>
+          <Suspense fallback={<MainLoader />}>
             <DeviceDetails />
           </Suspense>
         }
@@ -37,7 +40,7 @@ function App() {
       <Route
         path="/login"
         element={
-          <Suspense fallback={<Loader />}>
+          <Suspense fallback={<MainLoader />}>
             <Login />
           </Suspense>
         }

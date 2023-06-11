@@ -15,6 +15,10 @@ const initialState: RootState = {
     selected: "",
     places: [],
   },
+  main: {
+    loading: true,
+    deviceList: [],
+  },
 };
 
 interface IProviderProps {

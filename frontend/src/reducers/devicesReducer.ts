@@ -9,11 +9,9 @@ interface DeviceInfo {
   [key:string]: any;
 }
 
-
 type devicesState = {
   [key:string]: DeviceInfo;
 }
-
 
 const devicesReducer = (
   state: devicesState,

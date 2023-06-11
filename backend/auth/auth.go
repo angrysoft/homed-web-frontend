@@ -9,7 +9,7 @@ import (
 )
 
 type User struct {
-	Homeid        string
+	HomeId        string
 	Name          string
 	Picture       string
 	authenticated bool
@@ -34,7 +34,7 @@ func (u *User) Authenticate(credentials string, conf *config.Config) error {
 	if err != nil {
 		return err
 	}
-	u.Homeid = homeid
+	u.HomeId = homeid
 	u.Name = payload.Claims["name"].(string)
 	u.Picture = payload.Claims["picture"].(string)
 	u.authenticated = true

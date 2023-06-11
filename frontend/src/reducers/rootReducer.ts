@@ -2,15 +2,17 @@ import {userReducer, userState} from "./userReducer";
 import { Action } from ".";
 import { devicesReducer, devicesState } from "./devicesReducer";
 import { placesReducer, placesState } from "./placesReducer";
+import { mainReducer, mainState } from "./mainReducer";
 
 
 type RootState = {
   users: userState,
   devices: devicesState,
   places: placesState,
+  main: mainState,
 }
 
-type State = userState | devicesState | placesState;
+type State = userState | devicesState | placesState | mainState;
 
 
 const combineReducers = () => {
@@ -20,6 +22,7 @@ const combineReducers = () => {
       users: userReducer(state["users"], action),
       devices: devicesReducer(state["devices"], action),
       places: placesReducer(state["places"], action),
+      main: mainReducer(state["main"], action),
     };
   };
 };

@@ -42,8 +42,8 @@ const Device: React.FC<IDeviceProps> = (props: IDeviceProps) => {
             return (
               <DoubleSwitchMain
                 sid={props.info.sid}
-                left={props.info.left}
-                right={props.info.right}
+                left={props.info.state_left}
+                right={props.info.state_right}
                 key={traitName}
               />
             );

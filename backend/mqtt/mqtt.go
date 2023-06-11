@@ -2,7 +2,9 @@ package mqtt
 
 import (
 	"crypto/tls"
+	"encoding/json"
 	"fmt"
+
 	MQTT "github.com/eclipse/paho.mqtt.golang"
 	"homedaemon.angrysoft.ovh/web/config"
 )
@@ -17,7 +19,24 @@ func NewClient(conf *config.Config, homeid string, handler MQTT.MessageHandler) 
 	opts.SetUsername(conf.Mqtt.User).SetPassword(conf.Mqtt.Password)
 	opts.SetTLSConfig(&tls.Config{})
 	opts.SetDefaultPublishHandler(handler)
+	onConnMsg, _ := json.Marshal(map[string]any{
+		"event": "request",
+		"sid": "deviceManager",
+		"payload": map[string]string{
+			"name": "devices",
+			"value": "list",
+		},
+	})
 
+	var onConnect MQTT.OnConnectHandler = func(client MQTT.Client) {
+		client.Publish(
+			fmt.Sprintf("homed/%s/set", homeid),
+			0,
+			false,
+			string(onConnMsg),
+		)
+	}
+	opts.OnConnect = onConnect
 	c := MQTT.NewClient(opts)
 	if token := c.Connect(); token.Wait() && token.Error() != nil {
 		fmt.Println("From Connect")
@@ -41,8 +60,8 @@ func (b *BrokerClient) Close() {
 }
 
 func (b *BrokerClient) Send(msg string) {
-    token := b.client.Publish(fmt.Sprintf("homed/%s/set", b.homeid), 0, false, msg)
-	go func(){
+	token := b.client.Publish(fmt.Sprintf("homed/%s/set", b.homeid), 0, false, msg)
+	go func() {
 		token.Wait()
 		if token.Error() != nil {
 			fmt.Println(token.Error())

@@ -6,6 +6,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"sync"
 
 	MQTT "github.com/eclipse/paho.mqtt.golang"
 	"github.com/gorilla/sessions"
@@ -21,39 +22,83 @@ var (
 	store = sessions.NewCookieStore(key)
 )
 
+type MqttHandlers struct {
+	handlers map[string]func(string)
+	mu       sync.Mutex
+}
+
+func (m *MqttHandlers) add(homeId string, f func(string)) {
+	m.mu.Lock()
+	m.handlers[homeId] = f
+	m.mu.Unlock()
+	fmt.Println("Add ", homeId, m.handlers)
+}
+
+func (m *MqttHandlers) del(homeId string) {
+	m.mu.Lock()
+	delete(m.handlers, homeId)
+	m.mu.Unlock()
+	fmt.Println("Del ", homeId, m.handlers)
+
+}
+
+func (m *MqttHandlers) has(homeId string) bool {
+	m.mu.Lock()
+	_, ok := m.handlers[homeId]
+	m.mu.Unlock()
+	return ok
+}
+
+func (m *MqttHandlers) call(homeId, msg string) {
+	log.Println("Call", m.handlers)
+	m.mu.Lock()
+	handler, ok := m.handlers[homeId]
+	m.mu.Unlock()
+	if ok {
+		handler(msg)
+	}
+}
+
 const cookieName = "goSessionId"
 
-func devices(mqttHandlers map[string]func(string)) http.HandlerFunc {
+func devices(mqttHandlers *MqttHandlers) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		homeid := "e935ce0b-5c5f-47e1-9c7e-7b52afbfa96a"
+		homeId := "e935ce0b-5c5f-47e1-9c7e-7b52afbfa96a"
 
 		switch r.Method {
 		case "GET":
-			// mqttHandlers[homeid](string('{"":""}'))
-			fmt.Fprint(w, "refresh device list")
+			log.Println("refresh device list")
+			mqttHandlers.call(homeId, "{\"event\": \"request\", \"sid\": \"homeManager\", payload: {\"name\": \"devices\" \"value\": \"list\"}}")
+			fmt.Fprint(w, "ok")
 		case "POST":
 			defer r.Body.Close()
 			msg, err := io.ReadAll(r.Body)
 			if err != nil {
 				log.Fatal(err)
 			}
-			mqttHandlers[homeid](string(msg))
+			mqttHandlers.call(homeId, string(msg))
 			fmt.Fprint(w, "ok")
 		}
 	}
 }
 
-func sse(conf *config.Config, mqttHandlers map[string]func(string)) http.HandlerFunc {
+func sse(conf *config.Config, mqttHandlers *MqttHandlers) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		homeId := "e935ce0b-5c5f-47e1-9c7e-7b52afbfa96a"
+		if mqttHandlers.has(homeId) {
+			fmt.Println("o mam")
+		}
 		eventCh := make(chan []byte)
 
 		var f MQTT.MessageHandler = func(client MQTT.Client, msg MQTT.Message) {
-			fmt.Println(string(msg.Payload()));
+			log.Println(string(msg.Payload()))
 			eventCh <- msg.Payload()
 		}
-		homeid := "e935ce0b-5c5f-47e1-9c7e-7b52afbfa96a"
-		client := mqtt.NewClient(conf, homeid, f)
-		mqttHandlers[homeid] = client.Send
+
+		
+		client := mqtt.NewClient(conf, homeId, f)
+		mqttHandlers.add(homeId, client.Send)
+
 		w.Header().Set("Content-Type", "text/event-stream")
 		// w.Header().Set("Cache-Control", "no-cache")
 		w.Header().Set("Cache-Control", "no-transform")
@@ -65,8 +110,8 @@ func sse(conf *config.Config, mqttHandlers map[string]func(string)) http.Handler
 				close(eventCh)
 				eventCh = nil
 			}
-			delete(mqttHandlers, homeid)
 			client.Close()
+			mqttHandlers.del(homeId)
 			log.Printf("client connection is closed")
 		}()
 
@@ -134,7 +179,7 @@ func signin(conf *config.Config, user *auth.User) http.HandlerFunc {
 			}
 			session.Values["authenticated"] = user.IsAuthenticated()
 			session.Values["name"] = user.Name
-			session.Values["homeid"] = user.Homeid
+			session.Values["homeId"] = user.HomeId
 			session.Values["picture"] = user.Picture
 			session.Save(r, w)
 			http.Redirect(w, r, "/", http.StatusPermanentRedirect)
@@ -152,14 +197,17 @@ func logout(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	mqttHandlers := make(map[string]func(string))
+	mqttHandlers := MqttHandlers{
+		handlers: make(map[string]func(string)),
+	}
+
 	conf := config.LoadFromFile("/home/seba/workspace/homedaemon-web/homemanager.json")
 	user := &auth.User{}
 	r := router.New()
 	r.AddRoute("/", frontend())
 	r.AddRoute("/auth", signin(&conf, user))
-	r.AddRoute("/events", sse(&conf, mqttHandlers))
-	r.AddRoute("/devices", devices(mqttHandlers))
+	r.AddRoute("/events", sse(&conf, &mqttHandlers))
+	r.AddRoute("/devices", devices(&mqttHandlers))
 
 	log.Fatal(http.ListenAndServe(":8000", r))
 }
