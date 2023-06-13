@@ -39,7 +39,7 @@ const DeviceDetails: React.FC<IDeviceDetailsProps> = (
             <ColorTemperature
               sid={devInfo.sid}
               key={traitName}
-              ct={devInfo.ct_pc}
+              ct={devInfo.ct}
             />
           );
         }

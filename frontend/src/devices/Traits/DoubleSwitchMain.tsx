@@ -16,16 +16,12 @@ const DoubleSwitchMain: React.FC<IDoubleSwitchMainProps> = (
     <div className="grid grid-flow-col justify-end gap-x-2">
       <div
         onClick={() =>
-          send(
-            props.sid,
-            "left",
-            (props.left || "").toLowerCase() === "on" ? "off" : "on",
-          )
+          send(props.sid, "left", !(props.left.toLowerCase() === "on"))
         }
       >
         <TraitIcon
           name="power_rounded"
-          status={(props.left || "").toLowerCase() === "on" ? true : false}
+          status={(props.left || "").toLowerCase() === "on"}
         />
       </div>
       <div
@@ -33,13 +29,13 @@ const DoubleSwitchMain: React.FC<IDoubleSwitchMainProps> = (
           send(
             props.sid,
             "right",
-            (props.right || "").toLowerCase() === "on" ? "off" : "on",
+            !(props.right.toLowerCase() === "on"),
           )
         }
       >
         <TraitIcon
           name="power_rounded"
-          status={(props.right || "").toLowerCase() === "on" ? true : false}
+          status={(props.right || "").toLowerCase() === "on"}
         />
       </div>
     </div>

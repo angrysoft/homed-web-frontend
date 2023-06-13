@@ -30,11 +30,11 @@ const Rgb: React.FC<IRgbProps> = (props: IRgbProps) => {
   };
 
   const hexToRgbInt = (hexColor: string) => {
-    return parseInt(hexColor.substr(1), 16).toString();
+    return parseInt(hexColor.substr(1), 16);
   };
 
   const handleChange = useCallback(() => {
-    send(props.sid, "set_color", hexToRgbInt(inColor.current?.value || "#fff"));
+    send(props.sid, "setColor", hexToRgbInt(inColor.current?.value || "#fff"));
   }, [inColor, props.sid, send]);
 
   useEffect(() => {

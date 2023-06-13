@@ -14,7 +14,7 @@ const ColorTemperature: React.FC<IColorTemperatureProps> = (
   const inCt = useRef<HTMLInputElement>(null);
 
   const handleChange = useCallback(() => {
-    send(props.sid, "set_ct_pc", inCt.current?.value);
+    send(props.sid, "setCtPc", Number(inCt.current?.value));
   }, [inCt, props.sid, send]);
 
   useEffect(() => {

@@ -24,10 +24,10 @@ const DoubleSwitch: React.FC<IDoubleSwitchProps> = (
             send(
               props.sid,
               "left",
-              props.left.toLowerCase() === "on" ? "off" : "on",
+              !(props.left.toLowerCase() === "on"),
             )
           }
-          status={props.left.toLowerCase() === "on" ? true : false}
+          status={props.left.toLowerCase() === "on"}
         />
 
         <PowerButton
@@ -35,10 +35,10 @@ const DoubleSwitch: React.FC<IDoubleSwitchProps> = (
             send(
               props.sid,
               "right",
-              props.right.toLowerCase() === "on" ? "off" : "on",
+              !(props.right.toLowerCase() === "on"),
             )
           }
-          status={props.right.toLowerCase() === "on" ? true : false}
+          status={props.right.toLowerCase() === "on"}
         />
       </div>
     </div>

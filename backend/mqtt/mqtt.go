@@ -29,6 +29,7 @@ func NewClient(conf *config.Config, homeid string, handler MQTT.MessageHandler) 
 	})
 
 	var onConnect MQTT.OnConnectHandler = func(client MQTT.Client) {
+		fmt.Println("send request")
 		client.Publish(
 			fmt.Sprintf("homed/%s/set", homeid),
 			0,

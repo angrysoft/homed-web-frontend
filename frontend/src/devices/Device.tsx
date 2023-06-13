@@ -33,7 +33,7 @@ const Device: React.FC<IDeviceProps> = (props: IDeviceProps) => {
             return (
               <OnOffMain
                 sid={props.info.sid}
-                power={props.info.power}
+                power={props.info.state}
                 key={traitName}
               />
             );
