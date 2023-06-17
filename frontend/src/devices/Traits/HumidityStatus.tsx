@@ -12,9 +12,10 @@ const HumidityStatus:React.FC<IHumidityStatusProps> = (props:IHumidityStatusProp
 
   return (
     <div className='grid justify-end'>
-      <div className='grid grid-flow-col items-center text-secondary'>
+      <div className='grid grid-flow-col items-center text-secondary grid-cols-3 justify-items-center'>
         <TraitIcon name='humidity_percentage' />
-        <span>{Math.round(props.humidity)} %</span>
+        <span>{Math.round(props.humidity)}</span>
+        <span> %</span>
       </div>
     </div>
   );

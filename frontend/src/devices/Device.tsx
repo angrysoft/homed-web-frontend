@@ -16,18 +16,8 @@ interface IDeviceProps {
 const Device: React.FC<IDeviceProps> = (props: IDeviceProps) => {
   const navigate = useNavigate();
 
-  const mainTraitsList: Array<string> = [
-    "OnOff",
-    "DoubleSwitch",
-    "TemperatureStatus",
-    "HumidityStatus",
-    "Contact",
-    "MotionStatus",
-  ];
-
   const mainTraits = () => {
     return props.info.traits.map((traitName) => {
-      if (mainTraitsList.includes(traitName)) {
         switch (traitName) {
           case "OnOff": {
             return (
@@ -48,7 +38,7 @@ const Device: React.FC<IDeviceProps> = (props: IDeviceProps) => {
               />
             );
           }
-          case "TemperatureStatus": {
+          case "Temperature": {
             return (
               <TemperatureStatus
                 sid={props.info.sid}
@@ -57,7 +47,7 @@ const Device: React.FC<IDeviceProps> = (props: IDeviceProps) => {
               />
             );
           }
-          case "HumidityStatus": {
+          case "Humidity": {
             return (
               <HumidityStatus
                 sid={props.info.sid}
@@ -75,7 +65,7 @@ const Device: React.FC<IDeviceProps> = (props: IDeviceProps) => {
               />
             );
           }
-          case "MotionStatus": {
+          case "Motion": {
             return (
               <MotionStatus
                 sid={props.info.sid}
@@ -84,10 +74,10 @@ const Device: React.FC<IDeviceProps> = (props: IDeviceProps) => {
               />
             );
           }
+          default:
+            return <></>;
         }
-      }
-      return null;
-    });
+      });
   };
 
   return (
@@ -101,7 +91,7 @@ const Device: React.FC<IDeviceProps> = (props: IDeviceProps) => {
         </div>
         <div className="col-span-2">{props.info.name}</div>
       </div>
-      <div className="col-span-2 grid">{mainTraits() || <></>}</div>
+      <div className="col-span-2 grid">{mainTraits()}</div>
     </div>
   );
 };

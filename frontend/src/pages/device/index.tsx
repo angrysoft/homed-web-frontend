@@ -24,7 +24,7 @@ const DeviceDetails: React.FC<IDeviceDetailsProps> = (
       switch (traitName) {
         case "OnOff": {
           return (
-            <OnOff sid={devInfo.sid} power={devInfo.power} key={traitName} />
+            <OnOff sid={devInfo.sid} power={devInfo.state} key={traitName} />
           );
         }
 

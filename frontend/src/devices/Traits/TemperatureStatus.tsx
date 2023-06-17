@@ -12,9 +12,10 @@ const TemperatureStatus:React.FC<ITemperatureStatusProps> = (props:ITemperatureS
 
   return (
     <div className='grid justify-end'>
-      <div className='grid grid-flow-col items-center text-secondary'>
+      <div className='grid grid-flow-col grid-cols-3 justify-items-center items-center text-secondary'>
         <TraitIcon name='thermometer' />
-        <span>{Math.round(props.temperature)} &#8451;</span>
+        <span>{Math.round(props.temperature)}</span>
+        <span>&#8451;</span>
       </div>
     </div>
   );

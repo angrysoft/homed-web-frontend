@@ -19,7 +19,7 @@ const OnOff: React.FC<IOnOffProps> = (props: IOnOffProps) => {
           handleClick={() =>
             send(props.sid, props.power === "on" ? "off" : "on", null)
           }
-          status={props.power === "on" ? true : false}
+          status={props.power === "on"}
         />
       </div>
     </div>

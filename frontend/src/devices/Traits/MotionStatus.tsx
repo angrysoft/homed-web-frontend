@@ -13,12 +13,7 @@ const MotionStatus:React.FC<IMotionStatusProps> = (props:IMotionStatusProps) => 
   return (
     <div className='grid justify-end'>
       <div className='text-secondary'>
-        {
-          props.occupancy ? 
-          <TraitIcon name='sensor_occupied'/>
-          :
-          <TraitIcon name='motion_sensor_active'/>
-        }
+          <TraitIcon name={props.occupancy ? 'sensor_occupied': 'motion_sensor_active'} status={props.occupancy}/>
       </div>
     </div>
   );

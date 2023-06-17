@@ -13,12 +13,7 @@ const Contact:React.FC<IContactProps> = (props:IContactProps) => {
   return (
     <div className='grid justify-end'>
       <div className='text-secondary'>
-        {
-          props.contact ? 
-          <TraitIcon name='door_front'/>
-          :
-          <TraitIcon name='door_open'/>
-        }
+          <TraitIcon name={props.contact ? 'door_front' : 'door_open'} status={!props.contact}/>
       </div>
     </div>
   );
