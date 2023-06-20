@@ -1,0 +1,8 @@
+11/07/2021 19:37:50 Started server process [6796]
+11/07/2021 19:37:50 Waiting for application startup.
+11/07/2021 19:37:50 Application startup complete.
+11/07/2021 19:37:50 Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+11/07/2021 20:14:46 Shutting down
+11/07/2021 20:14:46 Waiting for application shutdown.
+11/07/2021 20:14:46 Application shutdown complete.
+11/07/2021 20:14:46 Finished server process [6796]
