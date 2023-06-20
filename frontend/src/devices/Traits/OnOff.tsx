@@ -12,7 +12,6 @@ const OnOff: React.FC<IOnOffProps> = (props: IOnOffProps) => {
   const send = useSendCmd();
 
   return (
-    <div className="grid bg-surface p-1 w-full rounded-xl">
       <div className="grid grid-cols-5 items-center text-secondary">
         <MaterialSymbols name="bolt" />
         <PowerButton
@@ -22,7 +21,6 @@ const OnOff: React.FC<IOnOffProps> = (props: IOnOffProps) => {
           status={props.power === "on"}
         />
       </div>
-    </div>
   );
 };
 

@@ -2,7 +2,6 @@ import React from "react";
 import { MaterialSymbols } from "../../components/MaterialSymbols";
 import { useSendCmd } from "../../hooks/useSendCmd";
 import { PowerButton } from "./elements/PowerButton";
-import { TraitIcon } from "./TraitIcon";
 
 interface IDoubleSwitchProps {
   sid: string;
@@ -21,22 +20,14 @@ const DoubleSwitch: React.FC<IDoubleSwitchProps> = (
         <MaterialSymbols name="bolt" />
         <PowerButton
           handleClick={() =>
-            send(
-              props.sid,
-              "left",
-              !(props.left.toLowerCase() === "on"),
-            )
+            send(props.sid, "left", !(props.left.toLowerCase() === "on"))
           }
           status={props.left.toLowerCase() === "on"}
         />
 
         <PowerButton
           handleClick={() =>
-            send(
-              props.sid,
-              "right",
-              !(props.right.toLowerCase() === "on"),
-            )
+            send(props.sid, "right", !(props.right.toLowerCase() === "on"))
           }
           status={props.right.toLowerCase() === "on"}
         />

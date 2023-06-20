@@ -17,7 +17,8 @@ const Device: React.FC<IDeviceProps> = (props: IDeviceProps) => {
   const navigate = useNavigate();
 
   const mainTraits = () => {
-    return props.info.traits.map((traitName) => {
+    return props.info.traits
+      .map((traitName) => {
         switch (traitName) {
           case "OnOff": {
             return (
@@ -74,9 +75,8 @@ const Device: React.FC<IDeviceProps> = (props: IDeviceProps) => {
               />
             );
           }
-          default:
-            return <></>;
         }
+        return null;
       });
   };
 

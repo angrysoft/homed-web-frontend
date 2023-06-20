@@ -6,8 +6,10 @@ import { Dimmer } from "../../devices/Traits/Dimmer";
 import { DoubleSwitch } from "../../devices/Traits/DoubleSwitch";
 import { OnOff } from "../../devices/Traits/OnOff";
 import { Rgb } from "../../devices/Traits/Rgb";
+import { TemperatureStatus } from "../../devices/Traits/TemperatureStatus";
 import { DeviceInfo } from "../../reducers/devicesReducer";
 import { AppContext } from "../../store";
+import { HumidityStatus } from "../../devices/Traits/HumidityStatus";
 
 interface IDeviceDetailsProps {}
 
@@ -21,35 +23,40 @@ const DeviceDetails: React.FC<IDeviceDetailsProps> = (
 
   const traits = () => {
     return devInfo.traits.map((traitName) => {
+      let el = <>{traitName}</>;
       switch (traitName) {
         case "OnOff": {
-          return (
+          el = (
             <OnOff sid={devInfo.sid} power={devInfo.state} key={traitName} />
           );
+          break;
         }
 
         case "Dimmer": {
-          return (
+          el = (
             <Dimmer sid={devInfo.sid} key={traitName} bright={devInfo.bright} />
           );
+          break;
         }
 
         case "ColorTemperature": {
-          return (
+          el = (
             <ColorTemperature
               sid={devInfo.sid}
               key={traitName}
               ct={devInfo.ct}
             />
           );
+          break;
         }
 
         case "Rgb": {
-          return <Rgb sid={devInfo.sid} key={traitName} rgb={devInfo.rgb} />;
+          el = <Rgb sid={devInfo.sid} key={traitName} rgb={devInfo.rgb} />;
+          break;
         }
 
         case "DoubleSwitch": {
-          return (
+          el = (
             <DoubleSwitch
               sid={devInfo.sid}
               left={devInfo.state_left}
@@ -57,25 +64,28 @@ const DeviceDetails: React.FC<IDeviceDetailsProps> = (
               key={traitName}
             />
           );
+          break;
         }
-        // case "TemperatureStatus": {
-        //   return (
-        //     <TemperatureStatus
-        //       sid={props.info.sid}
-        //       key={traitName}
-        //       temperature={props.info.temperature}
-        //     />
-        //   );
-        // }
-        // case "HumidityStatus": {
-        //   return (
-        //     <HumidityStatus
-        //       sid={props.info.sid}
-        //       key={traitName}
-        //       humidity={props.info.humidity}
-        //     />
-        //   );
-        // }
+        case "Temperature": {
+          el = (
+            <TemperatureStatus
+              sid={devInfo.sid}
+              key={traitName}
+              temperature={devInfo.temperature}
+            />
+          );
+          break;
+        }
+        case "HumidityStatus": {
+          el = (
+            <HumidityStatus
+              sid={devInfo.sid}
+              key={traitName}
+              humidity={devInfo.humidity}
+            />
+          );
+          break;
+        }
         // case "Contact": {
         //   return (
         //     <Contact
@@ -94,13 +104,12 @@ const DeviceDetails: React.FC<IDeviceDetailsProps> = (
         //     />
         //   );
         // }
-        default:
-          return (
-            <div key={traitName} className="text-onSurface">
-              {traitName}
-            </div>
-          );
       }
+      return (
+        <div key={traitName} className="text-onSurface bg-surface p-1 rounded">
+          {el}
+        </div>
+      );
     });
   };
 

@@ -1,6 +1,6 @@
 import React from "react";
 import { useSendCmd } from "../../hooks/useSendCmd";
-import { TraitIcon } from "./TraitIcon";
+import PowerButtonSmall from "./elements/PowerButtonSmall";
 
 interface IDoubleSwitchMainProps {
   sid: string;
@@ -14,30 +14,18 @@ const DoubleSwitchMain: React.FC<IDoubleSwitchMainProps> = (
   const send = useSendCmd();
   return (
     <div className="grid grid-flow-col justify-end gap-x-2">
-      <div
-        onClick={() =>
+      <PowerButtonSmall
+        handleClick={() =>
           send(props.sid, "left", !(props.left.toLowerCase() === "on"))
         }
-      >
-        <TraitIcon
-          name="power_rounded"
-          status={(props.left || "").toLowerCase() === "on"}
-        />
-      </div>
-      <div
-        onClick={() =>
-          send(
-            props.sid,
-            "right",
-            !(props.right.toLowerCase() === "on"),
-          )
+        status={(props.left || "").toLowerCase() === "on"}
+      />
+      <PowerButtonSmall
+        handleClick={() =>
+          send(props.sid, "right", !(props.right.toLowerCase() === "on"))
         }
-      >
-        <TraitIcon
-          name="power_rounded"
-          status={(props.right || "").toLowerCase() === "on"}
-        />
-      </div>
+        status={(props.right || "").toLowerCase() === "on"}
+      />
     </div>
   );
 };

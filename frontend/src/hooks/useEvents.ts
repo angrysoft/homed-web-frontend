@@ -11,6 +11,7 @@ const useEvents = () => {
     evSource.onmessage = async (event) => {
       if (!event.data.startsWith('{'))
         return;
+      console.log(event.data);
       const eventData = JSON.parse(event.data);
       switch(eventData.sid) {
         case "deviceManager": {
