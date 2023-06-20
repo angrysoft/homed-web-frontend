@@ -34,7 +34,6 @@ const useGetDevices = () => {
       }
       place && places.add(place);
     });
-    console.log(result)
     dispatch({type:"REFRESH_NEEDED_FALSE"});
     dispatch({type: "ALL_DEVICES_LOADED", payload: result});
     dispatch({type: "PLACES_LOADED", payload: Array.from(places)});

@@ -26,18 +26,16 @@ const ColorTemperature: React.FC<IColorTemperatureProps> = (
   }, [props.ct]);
 
   return (
-    <div className="grid bg-surface p-1 w-full rounded-xl">
-      <div className="grid grid-cols-5 items-center text-secondary">
-        <MaterialSymbols name="wb_iridescent" />
-        <input
-          type="range"
-          className="col-span-4 w-full p-0 rounded-xl appearance-none cursor-pointer bg-gradient-to-r from-orange-500 via-yellow-500 to-yellow-50 border-primary border-2"
-          step="1"
-          min="1"
-          max="100"
-          ref={inCt}
-        />
-      </div>
+    <div className="grid grid-cols-5 items-center text-secondary">
+      <MaterialSymbols name="wb_iridescent" />
+      <input
+        type="range"
+        className="col-span-4 w-full p-0 rounded-xl appearance-none cursor-pointer bg-gradient-to-r from-orange-500 via-yellow-500 to-yellow-50 border-primary border-2"
+        step="1"
+        min="1"
+        max="100"
+        ref={inCt}
+      />
     </div>
   );
 };

@@ -1,5 +1,4 @@
 import React from "react";
-import { MaterialSymbols } from "../../components/MaterialSymbols";
 import { useSendCmd } from "../../hooks/useSendCmd";
 import { PowerButton } from "./elements/PowerButton";
 
@@ -12,8 +11,7 @@ const OnOff: React.FC<IOnOffProps> = (props: IOnOffProps) => {
   const send = useSendCmd();
 
   return (
-      <div className="grid grid-cols-5 items-center text-secondary">
-        <MaterialSymbols name="bolt" />
+      <div className="grid grid-cols-2 text-secondary">
         <PowerButton
           handleClick={() =>
             send(props.sid, props.power === "on" ? "off" : "on", null)

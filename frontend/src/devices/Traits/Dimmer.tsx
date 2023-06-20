@@ -24,18 +24,16 @@ const Dimmer: React.FC<IDimmerProps> = (props: IDimmerProps) => {
   }, [props.bright]);
 
   return (
-    <div className="grid bg-surface p-1 w-full rounded-xl">
-      <div className="grid grid-cols-5 items-center text-secondary">
-        <MaterialSymbols name="light_mode" />
-        <input
-          type="range"
-          className="col-span-4 w-full p-0 rounded-xl appearance-none cursor-pointer bg-gradient-to-r from-black to-white border-primary border-2"
-          step="1"
-          min="1"
-          max="100"
-          ref={inBright}
-        />
-      </div>
+    <div className="grid grid-cols-5 items-center text-secondary">
+      <MaterialSymbols name="light_mode" />
+      <input
+        type="range"
+        className="col-span-4 w-full p-0 rounded-xl appearance-none cursor-pointer bg-gradient-to-r from-black to-white border-primary border-2"
+        step="1"
+        min="1"
+        max="100"
+        ref={inBright}
+      />
     </div>
   );
 };

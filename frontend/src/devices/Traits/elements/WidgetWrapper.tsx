@@ -6,7 +6,7 @@ interface IWidgetWrapperProps {
 
 const WidgetWrapper: React.FunctionComponent<IWidgetWrapperProps> = (props) => {
   return (
-    <div className='grid justify-end text-onSurface dupa'>{props.children}</div>
+    <div className='grid justify-end text-onSurface'>{props.children}</div>
   );
 };
 

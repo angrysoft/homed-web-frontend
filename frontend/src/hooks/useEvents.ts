@@ -11,14 +11,14 @@ const useEvents = () => {
     evSource.onmessage = async (event) => {
       if (!event.data.startsWith('{'))
         return;
-      console.log(event.data);
-      const eventData = JSON.parse(event.data);
-      switch(eventData.sid) {
-        case "deviceManager": {
-          dispatch({type:"REFRESH_NEEDED_TRUE", payload: eventData.payload.deviceList|| []});
-          break;
-        }
-        default: {
+        const eventData = JSON.parse(event.data);
+        switch(eventData.sid) {
+          case "deviceManager": {
+            dispatch({type:"REFRESH_NEEDED_TRUE", payload: eventData.payload.deviceList|| []});
+            break;
+          }
+          default: {
+          console.log(event.data);
           dispatch({type:"UPDATE_DEVICE", payload: eventData});
           break;
         }

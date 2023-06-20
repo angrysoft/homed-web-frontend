@@ -10,7 +10,6 @@ const useSendCmd = () => {
         value: value
       } 
     };
-    console.log(event)
     const fetchOptions: any = {
       method:  "POST",
       cache: "no-cache",

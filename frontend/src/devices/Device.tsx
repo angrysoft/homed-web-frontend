@@ -1,13 +1,9 @@
-import React, { SyntheticEvent } from "react";
+import React from "react";
 import { useNavigate } from "react-router-dom";
 import { DeviceInfo } from "../reducers/devicesReducer";
 import { MaterialSymbols } from "../components/MaterialSymbols";
-import { Contact } from "./Traits/Contact";
-import { DoubleSwitchMain } from "./Traits/DoubleSwitchMain";
-import { HumidityStatus } from "./Traits/HumidityStatus";
-import { MotionStatus } from "./Traits/MotionStatus";
-import { OnOffMain } from "./Traits/OnOffMain";
-import { TemperatureStatus } from "./Traits/TemperatureStatus";
+import { TraitsFactory } from "./TraitsFactory";
+import WidgetWrapper from "./Traits/elements/WidgetWrapper";
 
 interface IDeviceProps {
   info: DeviceInfo;
@@ -15,71 +11,6 @@ interface IDeviceProps {
 
 const Device: React.FC<IDeviceProps> = (props: IDeviceProps) => {
   const navigate = useNavigate();
-
-  const mainTraits = () => {
-    return props.info.traits
-      .map((traitName) => {
-        switch (traitName) {
-          case "OnOff": {
-            return (
-              <OnOffMain
-                sid={props.info.sid}
-                power={props.info.state}
-                key={traitName}
-              />
-            );
-          }
-          case "DoubleSwitch": {
-            return (
-              <DoubleSwitchMain
-                sid={props.info.sid}
-                left={props.info.state_left}
-                right={props.info.state_right}
-                key={traitName}
-              />
-            );
-          }
-          case "Temperature": {
-            return (
-              <TemperatureStatus
-                sid={props.info.sid}
-                key={traitName}
-                temperature={props.info.temperature}
-              />
-            );
-          }
-          case "Humidity": {
-            return (
-              <HumidityStatus
-                sid={props.info.sid}
-                key={traitName}
-                humidity={props.info.humidity}
-              />
-            );
-          }
-          case "Contact": {
-            return (
-              <Contact
-                sid={props.info.sid}
-                key={traitName}
-                contact={props.info.contact}
-              />
-            );
-          }
-          case "Motion": {
-            return (
-              <MotionStatus
-                sid={props.info.sid}
-                key={traitName}
-                occupancy={props.info.occupancy}
-              />
-            );
-          }
-        }
-        return null;
-      });
-  };
-
   return (
     <div className="p-1 bg-surface rounded grid grid-cols-5 gap-x-05">
       <div
@@ -91,7 +22,13 @@ const Device: React.FC<IDeviceProps> = (props: IDeviceProps) => {
         </div>
         <div className="col-span-2">{props.info.name}</div>
       </div>
-      <div className="col-span-2 grid">{mainTraits()}</div>
+      <div className="grid col-span-2">
+        {props.info.traits.map((traitName) => (
+          <WidgetWrapper key={traitName}>
+            <TraitsFactory trait={traitName} info={props.info} main />
+          </WidgetWrapper>
+        ))}
+      </div>
     </div>
   );
 };

@@ -8,7 +8,7 @@ interface ITraitIconProps {
 
 
 const TraitIcon:React.FC<ITraitIconProps> = (props:ITraitIconProps) => {
-  let classes = 'material-symbols-outlined';
+  let classes = 'material-symbols-outlined leading-none';
   if (props.status) {
     classes += " text-primary";
   }

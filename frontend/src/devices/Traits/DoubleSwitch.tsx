@@ -15,23 +15,20 @@ const DoubleSwitch: React.FC<IDoubleSwitchProps> = (
   const send = useSendCmd();
 
   return (
-    <div className="grid bg-surface p-1 w-full rounded-xl">
-      <div className="grid gap-1 grid-cols-5 items-center text-secondary">
-        <MaterialSymbols name="bolt" />
-        <PowerButton
-          handleClick={() =>
-            send(props.sid, "left", !(props.left.toLowerCase() === "on"))
-          }
-          status={props.left.toLowerCase() === "on"}
-        />
+    <div className="grid grid-flow-col gap-1 items-center text-secondary">
+      <PowerButton
+        handleClick={() =>
+          send(props.sid, "left", !(props.left.toLowerCase() === "on"))
+        }
+        status={props.left.toLowerCase() === "on"}
+      />
 
-        <PowerButton
-          handleClick={() =>
-            send(props.sid, "right", !(props.right.toLowerCase() === "on"))
-          }
-          status={props.right.toLowerCase() === "on"}
-        />
-      </div>
+      <PowerButton
+        handleClick={() =>
+          send(props.sid, "right", !(props.right.toLowerCase() === "on"))
+        }
+        status={props.right.toLowerCase() === "on"}
+      />
     </div>
   );
 };

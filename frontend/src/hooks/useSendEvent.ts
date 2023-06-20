@@ -8,7 +8,6 @@ interface IEvent {
 
 const useSendEvent = () => {
   const send = useCallback((event: IEvent) => {
-    console.log(event)
     const fetchOptions: any = {
       method:  "POST",
       cache: "no-cache",
