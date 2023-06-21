@@ -17,6 +17,7 @@ const Dimmer: React.FC<IDimmerProps> = (props: IDimmerProps) => {
 
   useEffect(() => {
     inBright.current?.addEventListener("change", handleChange);
+    return inBright.current?.removeEventListener("change", handleChange);
   }, [inBright, handleChange]);
 
   useEffect(() => {
