@@ -18,6 +18,7 @@ const useSendCmd = () => {
         'Content-Type': 'text/plain'
       },
     };
+    console.log(sid, cmd,value)
     
     fetch("/devices", fetchOptions).then((response) => {
       if (!response.ok) {
