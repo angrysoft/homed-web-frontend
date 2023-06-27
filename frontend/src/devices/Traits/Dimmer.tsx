@@ -13,11 +13,11 @@ const Dimmer: React.FC<IDimmerProps> = (props: IDimmerProps) => {
 
   const handleChange = useCallback(() => {
     send(props.sid, "setBright", Number(inBright.current?.value));
-  }, [inBright, props.sid]);
+  }, [props.sid, send]);
 
   useEffect(() => {
     inBright.current?.addEventListener("change", handleChange);
-  }, [inBright, handleChange ,]);
+  }, [inBright, handleChange]);
 
   useEffect(() => {
     if (inBright.current) inBright.current.value = props.bright.toString();
