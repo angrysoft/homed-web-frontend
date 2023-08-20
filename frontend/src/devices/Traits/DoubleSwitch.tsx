@@ -1,5 +1,4 @@
 import React from "react";
-import { MaterialSymbols } from "../../components/MaterialSymbols";
 import { useSendCmd } from "../../hooks/useSendCmd";
 import { PowerButton } from "./elements/PowerButton";
 
