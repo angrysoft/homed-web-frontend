@@ -1,0 +1,167 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    :root {
+        --color-primary: 187 135 250;
+        --color-secondary: 28 217 197;
+        --color-background: 18 18 18;
+        --color-surface: 30 30 30;
+        --color-onBackground: 216 216 216;
+        --color-onPrimary: 222 222 222;
+        --color-onSecondary: 222 222 222;
+        --color-onSurface: 225 225 225;
+    }
+
+    html {
+        font-family: 'Mali', 'Pangolin', cursive;
+        @apply text-base;
+    }
+
+    p {
+        @apply mt-1 mb-1;
+    }
+
+    a { 
+        text-decoration: none;
+        color: inherit;
+    }
+
+    h1 {
+        font-size: 2rem;
+    }
+    h2 {
+        font-size: 1.5rem;
+    }
+    h3 {
+        font-size: 1.3rem;
+    }
+    h4 {
+        font-size: 1.2rem;
+    }
+    h5 {
+        font-size: 0.9rem;
+    }
+    h6 {
+        font-size: 0.8rem;
+    }
+
+    ul {
+        @apply list-disc px-2 my-1;
+    }
+
+    input,
+    textarea {
+        @apply border border-black p-03;
+    }
+
+    p {
+        word-break: break-word;
+    }
+
+    table,
+    th,
+    td {
+        @apply border border-spacing-0 border-black border-collapse text-center whitespace-nowrap
+    }
+    th {
+        @apply min-w-[6.5rem]
+    }
+}
+
+@layer components {
+    .transition-height {
+        transition: height 1s;
+    }
+
+    .animated {
+        @apply overflow-hidden invisible relative;
+    }
+}
+
+@layer utilities {
+    /* Hide scrollbar for Chrome, Safari and Opera */
+    .no-scrollbar::-webkit-scrollbar {
+        display: none;
+    }
+
+    /* Hide scrollbar for IE, Edge and Firefox */
+    .no-scrollbar {
+        -ms-overflow-style: none;  /* IE and Edge */
+        scrollbar-width: none;  /* Firefox */
+    }
+    .a-delay-none {
+        animation-delay: 0;
+    }
+
+    .a-delay-1 {
+        animation-delay: 1s;
+    }
+    .a-delay-2 {
+        animation-delay: 2s;
+    }
+    .a-delay-3 {
+        animation-delay: 3s;
+    }
+    .a-delay-4 {
+        animation-delay: 4s;
+    }
+}
+
+a {
+    color: black;
+    text-decoration: none;
+}
+
+
+.material-icons {
+    vertical-align: middle;
+  }
+  
+  span.material-icons,
+  span {
+      line-height: 2rem;
+  }
+  
+  span.material-icons {
+      margin-right: 0.5rem;
+  }
+
+/* .material-symbols-outlined {
+  font-variation-settings:
+  'FILL' 0,
+  'wght' 400,
+  'GRAD' 0,
+  'opsz' 48
+} */
+
+.material-symbols-outlined {
+    font-size: 1.5rem;
+  }
+
+  input[type="range"]::-moz-range-thumb {
+    -webkit-appearance: none;
+    height: 2rem;
+    width: 2rem;
+    appearance: none;
+    cursor: ew-resize;
+    background: transparent;
+    border-radius: 25%;
+    border-color: #1cd9c5;
+    border-style: solid;
+    border-width: 0.4rem;
+  }
+
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    height: 2rem;
+    width: 2rem;
+    appearance: none;
+    cursor: ew-resize;
+    background: transparent;
+    border-radius: 25%;
+    border-color: #1cd9c5;
+    border-style: solid;
+    border-width: 0.3rem;
+}
