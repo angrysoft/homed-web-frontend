@@ -202,7 +202,8 @@ public class MqttV5Connection extends Thread implements MqttCallback {
         this.onMsgHandler = onMsgHandler;
     }
 
-    public void addSeeEmiter(SseEmitter emitter) {
+    public void addSseEmiter(SseEmitter emitter) {
+        System.err.println("set this sheet");
         this.sseEmitter = emitter;
     }
 
@@ -288,5 +289,9 @@ public class MqttV5Connection extends Thread implements MqttCallback {
         if (client != null && client.isConnected())
             return true;
         return false;
+    }
+
+    public SseEmitter getSseEmitter() {
+        return this.sseEmitter;
     }
 }
