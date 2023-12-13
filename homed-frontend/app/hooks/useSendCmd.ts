@@ -21,7 +21,7 @@ const useSendCmd = () => {
     };
     console.log(sid, cmd,value)
     
-    fetch("http://localhost:8000/devices", fetchOptions).then((response) => {
+    fetch("http://localhost:8080/devices", fetchOptions).then((response) => {
       if (!response.ok) {
           console.error("Response error: ", response.status);
           //no-cors  state 0

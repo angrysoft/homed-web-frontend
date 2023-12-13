@@ -7,8 +7,9 @@ const useEvents = () => {
 
   useEffect(() => {
     console.log("init event source");
-    const evSource = new EventSource(`http://localhost:8000/events`);
+    const evSource = new EventSource("http://localhost:8080/devices/events");
     evSource.onmessage = async (event) => {
+      console.log(event);
       if (!event.data.startsWith("{")) return;
       const eventData = JSON.parse(event.data);
       switch (eventData.sid) {

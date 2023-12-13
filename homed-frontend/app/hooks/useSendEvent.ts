@@ -17,7 +17,7 @@ const useSendEvent = () => {
       },
     };
     
-    fetch("/devices", fetchOptions).then((response) => {
+    fetch("http://localhost:8080/devices", fetchOptions).then((response) => {
       if (!response.ok) {
           console.error("Response error: ", response.status);
         };
