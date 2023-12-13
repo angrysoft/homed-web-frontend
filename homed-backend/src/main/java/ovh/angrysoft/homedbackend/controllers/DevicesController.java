@@ -2,8 +2,8 @@ package ovh.angrysoft.homedbackend.controllers;
 
 import java.io.IOException;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -46,17 +46,26 @@ public class DevicesController {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        String topic = String.format("homed/%s/get", "e935ce0b-5c5f-47e1-9c7e-7b52afbfa96a");
-        mqttConn.addTopic(topic);
-        mqttConn.addSseEmiter(sseEmitter);
+        
         System.out.println(String.format("%s - %s", mqttConn.getTopics(), mqttConn.getSseEmitter()));
         return new Device("Halina", "Roboroc 300");
     }
 
+    @CrossOrigin
     @GetMapping(path = "/events", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public SseEmitter events() {
-        SseEmitter emitter = new SseEmitter();
+        System.out.println("init events");
+        SseEmitter emitter = new SseEmitter(Long.MAX_VALUE);
+        try {
+            emitter.send("start emitter");
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
         this.sseEmitter = emitter;
+        String topic = String.format("homed/%s/get", "e935ce0b-5c5f-47e1-9c7e-7b52afbfa96a");
+        mqttConn.addTopic(topic);
+        mqttConn.addSseEmiter(sseEmitter);
         return emitter;
     }
 
