@@ -1,5 +1,5 @@
 import React from "react";
-import { DeviceInfo } from "../reducers/devicesReducer";
+import { DeviceInfo } from "../../reducers/devicesReducer";
 import { Contact } from "./Traits/Contact";
 import { DoubleSwitch } from "./Traits/DoubleSwitch";
 import { HumidityStatus } from "./Traits/HumidityStatus";
@@ -16,7 +16,6 @@ interface ITraitsFactoryProps {
   info: DeviceInfo;
   main: boolean;
   wrapped?: boolean;
-  children?: JSX.Element | JSX.Element[];
 }
 
 const mainTraits = [
@@ -95,7 +94,12 @@ const TraitsFactory: React.FC<ITraitsFactoryProps> = (
     }
 
     case "ColorTemperature": {
-      trait = <ColorTemperature sid={props.info.sid} ct={props.info.ct} />;
+      let pc = props.info.ct;
+      if (props.info.minCt && props.info.maxCt) {
+        pc = Math.ceil((Number(props.info.ct) - Number(props.info.minCt)) / (Number(props.info.maxCt) - Number(props.info.minCt)) * 100);
+        console.log("PC", pc);
+      }
+      trait = <ColorTemperature sid={props.info.sid} ct={pc} />;
       break;
     }
 

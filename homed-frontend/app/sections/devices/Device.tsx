@@ -1,3 +1,4 @@
+'use client'
 import React from "react";
 import { DeviceInfo } from "../../reducers/devicesReducer";
 import { MaterialSymbols } from "../../components/MaterialSymbols";

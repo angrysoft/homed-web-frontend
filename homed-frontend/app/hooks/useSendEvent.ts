@@ -11,6 +11,7 @@ const useSendEvent = () => {
     const fetchOptions: any = {
       method:  "POST",
       cache: "no-cache",
+      mode: "no-cors",
       body: JSON.stringify(event),
       headers: {
         'Content-Type': 'text/plain'

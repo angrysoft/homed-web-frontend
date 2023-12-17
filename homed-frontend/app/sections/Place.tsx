@@ -1,6 +1,6 @@
 interface IPlaceProps {
   name: string;
-  handelClick: CallableFunction;
+  onClick: () => void;
   selected?: boolean;
 }
 
@@ -16,11 +16,7 @@ const Place: React.FC<IPlaceProps> = (props: IPlaceProps) => {
   }
 
   return (
-    <div
-      id={props.name}
-      className={classes}
-      onClick={() => props.handelClick()}
-    >
+    <div id={props.name} className={classes} onClick={() => props.onClick()}>
       {props.name}
     </div>
   );

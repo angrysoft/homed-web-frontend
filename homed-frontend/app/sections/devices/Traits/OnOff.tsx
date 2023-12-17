@@ -9,14 +9,15 @@ interface IOnOffProps {
 
 const OnOff: React.FC<IOnOffProps> = (props: IOnOffProps) => {
   const send = useSendCmd();
+  const status = props.power.toLowerCase();
 
   return (
       <div className="grid grid-cols-2 text-secondary">
         <PowerButton
           handleClick={() =>
-            send(props.sid, props.power === "on" ? "off" : "on", null)
+            send(props.sid, status === "on" ? "off" : "on", null)
           }
-          status={props.power === "on"}
+          status={status === "on"}
         />
       </div>
   );

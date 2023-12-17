@@ -1,4 +1,4 @@
-"use client";
+'use client'
 import React, { useContext } from "react";
 import { MaterialSymbols } from "../../components/MaterialSymbols";
 import { TraitsFactory } from "../../sections/devices/TraitsFactory";
@@ -11,10 +11,8 @@ interface IDeviceDetailsProps {
 }
 
 const DeviceDetails = ({ params }: { params: { sid: string } }) => {
-  console.log(params.sid);
   const { state } = useContext(AppContext);
   const devInfo: DeviceInfo = state.devices[params.sid];
-  console.log(state)
   return (
     <div className="h-screen w-screen bg-background">
       <header className="bg-surface p-1 grid grid-cols-4">

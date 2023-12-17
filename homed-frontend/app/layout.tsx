@@ -3,6 +3,7 @@ import { Roboto } from "next/font/google";
 import "./globals.css";
 import "./globalicons.css";
 import { Provider } from "./store";
+import { EventsWrapper } from "./sections/EventsWrapper";
 
 const roboto = Roboto({
   weight: ["100", "300", "400", "500", "700", "900"],
@@ -22,7 +23,10 @@ export default function RootLayout({
   return (
     <html lang="pl" className={roboto.className}>
       <body className="relative p-0 m-0 grid text-base overflow-hidden bg-background text-onBackground">
-        <Provider>{children}</Provider>
+        <Provider>
+          <EventsWrapper />
+          {children}
+        </Provider>
       </body>
     </html>
   );

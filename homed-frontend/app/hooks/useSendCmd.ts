@@ -23,8 +23,9 @@ const useSendCmd = () => {
     
     fetch("http://localhost:8080/devices", fetchOptions).then((response) => {
       if (!response.ok) {
-          console.error("Response error: ", response.status);
-          //no-cors  state 0
+        //no-cors  state 0
+          if (response.status !== 0)
+            console.error("Response error: ", response.status);
         };
     });
   }, []);

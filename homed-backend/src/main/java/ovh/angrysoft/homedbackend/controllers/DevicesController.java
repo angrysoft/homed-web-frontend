@@ -2,6 +2,7 @@ package ovh.angrysoft.homedbackend.controllers;
 
 import java.io.IOException;
 
+import org.eclipse.paho.mqttv5.common.MqttException;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -70,15 +71,27 @@ public class DevicesController {
     }
 
     @GetMapping("/refresh")
-    public String refreshDevicesList(@RequestParam String param) {
-        System.out.println("refresh");
+    public String refreshDevicesList() {
+        System.out.println("refreshing");
+        String topic = String.format("homed/%s/set", "e935ce0b-5c5f-47e1-9c7e-7b52afbfa96a");
+        try {
+            mqttConn.publishMessage("{\"event\": \"request\", \"sid\": \"homeManager\", \"payload\": {\"name\": \"devices\" \"value\": \"list\"}}".getBytes(), 0, false, topic);
+        } catch (MqttException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
         return "ok";
     }
 
     @PostMapping()
     public String sendAction(@RequestBody String action) {
-        // TODO: process POST request
-        System.out.println(action);
+        String topic = String.format("homed/%s/set", "e935ce0b-5c5f-47e1-9c7e-7b52afbfa96a");
+        try {
+            mqttConn.publishMessage(action.getBytes(), 0, false, topic);
+        } catch (MqttException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
         return "ok";
     }
 

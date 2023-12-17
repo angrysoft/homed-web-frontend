@@ -203,7 +203,6 @@ public class MqttV5Connection extends Thread implements MqttCallback {
     }
 
     public void addSseEmiter(SseEmitter emitter) {
-        System.err.println("set this sheet");
         this.sseEmitter = emitter;
     }
 

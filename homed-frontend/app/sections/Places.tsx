@@ -1,23 +1,25 @@
-import { useContext } from "react";
-import { AppContext } from "../store";
 import { Place } from "./Place";
 
 interface IPlacesProps {
-  children?: React.ReactNode;
+  onChange: (placeName: string) => void;
+  items: string[];
+  selected: string;
 }
 
 const Places: React.FC<IPlacesProps> = (props: IPlacesProps) => {
-  const { state, dispatch } = useContext(AppContext);
+  const handleChange = (placeName: string) => {
+    localStorage.setItem("placeSelected", placeName);
+    props.onChange(placeName);
+  };
 
-  const placeElements = state.places.places.map((name, index) => (
+  const placeElements = props.items.map((name) => (
     <Place
-      key={index}
+      key={name}
       name={name}
-      handelClick={() => {
-        dispatch({ type: "PLACE_SELECTED", payload: name });
-        localStorage.setItem("placeSelected", name);
+      onClick={() => {
+        handleChange(name);
       }}
-      selected={name === state.places.selected}
+      selected={name === props.selected}
     />
   ));
 
