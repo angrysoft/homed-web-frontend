@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback } from "react";
 
 type ButtonOutlineProps = {
   id?: string;
@@ -8,9 +8,10 @@ type ButtonOutlineProps = {
 };
 
 const Button = (props: ButtonOutlineProps) => {
-  const handleClick = useCallback(() => (
-    props.handleClick && props.handleClick()
-  ), [props.handleClick]);
+  const callback = props.handleClick;
+  const handleClick = useCallback(() => {
+    if (callback) callback();
+  }, [callback]);
 
   return (
     <button

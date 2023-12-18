@@ -1,18 +1,24 @@
-'use client'
-import React, { useContext } from "react";
-import { MaterialSymbols } from "../../components/MaterialSymbols";
-import { TraitsFactory } from "../../sections/devices/TraitsFactory";
-import { DeviceInfo } from "../../reducers/devicesReducer";
-import { AppContext } from "../../store";
+"use client";
 import Link from "next/link";
+import { useContext } from "react";
+import { MaterialSymbols } from "../../components/MaterialSymbols";
+import { DeviceContext } from "../../context/deviceContext";
+import { TraitsFactory } from "../../sections/devices/TraitsFactory";
+import { DeviceInfo } from "../../context/DeviceInfo";
 
 interface IDeviceDetailsProps {
   sid: string;
 }
 
 const DeviceDetails = ({ params }: { params: { sid: string } }) => {
-  const { state } = useContext(AppContext);
-  const devInfo: DeviceInfo = state.devices[params.sid];
+  const state = useContext(DeviceContext);
+  const devInfo: DeviceInfo = state?.devices[params.sid] ?? {
+    traits: [],
+    name: "",
+    place: "",
+    model: "",
+    sid: "",
+  };
   return (
     <div className="h-screen w-screen bg-background">
       <header className="bg-surface p-1 grid grid-cols-4">

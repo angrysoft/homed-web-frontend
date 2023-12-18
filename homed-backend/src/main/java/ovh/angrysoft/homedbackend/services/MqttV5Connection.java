@@ -5,9 +5,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.BiConsumer;
+import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.logging.ConsoleHandler;
 
 import org.eclipse.paho.mqttv5.client.IMqttToken;
 import org.eclipse.paho.mqttv5.client.MqttAsyncClient;
@@ -19,15 +19,16 @@ import org.eclipse.paho.mqttv5.common.MqttException;
 import org.eclipse.paho.mqttv5.common.MqttMessage;
 import org.eclipse.paho.mqttv5.common.MqttPersistenceException;
 import org.eclipse.paho.mqttv5.common.packet.MqttProperties;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+/* 
+MQTT broker URI to connect to. Defaults to tcp://iot.eclipse.org:1883. Use
+ws:// for Websockets, wss:// for secure Websockets and ssl:// for TLS
+encrypted TCP connections."); 
+*/
 @Service
 public class MqttV5Connection extends Thread implements MqttCallback {
-    // MQTT broker URI to connect to. Defaults to tcp://iot.eclipse.org:1883. Use
-    // ws:// for Websockets, wss:// for secure Websockets and ssl:// for TLS
-    // encrypted TCP connections.");
     private static final Logger LOGGER = Logger.getLogger("Homedaemon");
 
     private String clientId;

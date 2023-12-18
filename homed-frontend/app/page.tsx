@@ -1,50 +1,38 @@
 "use client";
 
-import { useCallback, useContext, useEffect, useState } from "react";
+import { useCallback, useContext } from "react";
 import MainLoader from "./components/MainLoader";
+import { DeviceContext } from "./context/deviceContext";
+import { useLocalStorage } from "./hooks/useLocalStorage";
 import { Places } from "./sections/Places";
 import { Devices } from "./sections/devices/Devices";
-import { AppContext } from "./store";
-import { DeviceInfo } from "./reducers/devicesReducer";
 
 export default function Home() {
-  const { state } = useContext(AppContext);
-  const [place, setPlace] = useState("");
-  const [devices, setDevices] = useState<[string, DeviceInfo][]>();
-  
-  const handlePlaceChange = useCallback((placeName: string) => {
-    console.log(placeName);
-    setPlace(placeName);
-    setDevices(
-      Object.entries(state.devices).filter(([sid, dev]) => {
-        if (dev.place === place) {
-          return true;
-        }
-        return false;
-      }),
-    );
-  }, [place, state.devices]);
+  const state = useContext(DeviceContext);
+  const [place, setPlace] = useLocalStorage("place", "");
 
-  useEffect(() => {
-    handlePlaceChange(
-      localStorage.getItem("placeSelected") ?? state.places.places[0] ?? "",
-    );
-  }, [handlePlaceChange, state.places.places]);
-  
+  const handlePlaceChange = useCallback(
+    (placeName: string) => {
+      setPlace(placeName);
+    },
+    [setPlace],
+  );
 
-  if (state.main.loading) {
+  if (
+    Object.keys(state?.devices ?? {}).length === 0 ||
+    state?.places.length === 0
+  )
     return <MainLoader />;
-  }
 
-
+  console.log("state: ", state);
   return (
     <main className="grid content-baseline h-[100dvh]">
       <Places
         onChange={handlePlaceChange}
-        items={state.places.places || []}
+        items={state?.places ?? []}
         selected={place}
       />
-      <Devices deviceList={devices ?? []} />
+      <Devices devices={state?.devices ?? {}} selectedPlace={place} />
     </main>
   );
 }

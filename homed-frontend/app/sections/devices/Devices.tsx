@@ -1,20 +1,27 @@
-import React from "react";
-import { DeviceInfo } from "../../reducers/devicesReducer";
+import React, { useEffect, useState } from "react";
+import { IDevices } from "../../context/deviceContext";
 import { Device } from "./Device";
 
 interface IDevicesProps {
-  deviceList: [string, DeviceInfo][];
+  devices: IDevices;
+  selectedPlace: string;
 }
 
 const Devices: React.FC<IDevicesProps> = (props: IDevicesProps) => {
-  
-  const _devices = props.deviceList.map(([sid, dev]) => {
-    return <Device key={sid} info={dev} />;
-  });
+  const [devices, setDevices] = useState<React.ReactNode>();
+
+  useEffect(() => {
+    setDevices(
+      Object.entries(props.devices).map(([sid, dev]) => {
+        if (dev.place === props.selectedPlace)
+          return <Device key={sid} info={dev} />;
+      }),
+    );
+  }, [props.selectedPlace, props.devices]);
 
   return (
     <div className="p-1 grid md:justify-around md:grid-cols-devices gap-05 overflow-y-auto overflow-x-hidden">
-      {_devices}
+      {devices}
     </div>
   );
 };

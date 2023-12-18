@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
 import { Roboto } from "next/font/google";
-import "./globals.css";
+import { DeviceProvider } from "./context/deviceContext";
 import "./globalicons.css";
-import { Provider } from "./store";
-import { EventsWrapper } from "./sections/EventsWrapper";
+import "./globals.css";
 
 const roboto = Roboto({
   weight: ["100", "300", "400", "500", "700", "900"],
@@ -17,16 +16,15 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: {
+}: Readonly<{
   children: React.ReactNode;
-}) {
+}>) {
   return (
     <html lang="pl" className={roboto.className}>
       <body className="relative p-0 m-0 grid text-base overflow-hidden bg-background text-onBackground">
-        <Provider>
-          <EventsWrapper />
+        <DeviceProvider>
           {children}
-        </Provider>
+        </DeviceProvider>
       </body>
     </html>
   );

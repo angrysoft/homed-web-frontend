@@ -7,17 +7,12 @@ interface IPlacesProps {
 }
 
 const Places: React.FC<IPlacesProps> = (props: IPlacesProps) => {
-  const handleChange = (placeName: string) => {
-    localStorage.setItem("placeSelected", placeName);
-    props.onChange(placeName);
-  };
-
   const placeElements = props.items.map((name) => (
     <Place
       key={name}
       name={name}
       onClick={() => {
-        handleChange(name);
+        props.onChange(name);
       }}
       selected={name === props.selected}
     />
