@@ -4,11 +4,12 @@ import { useEffect, useState } from "react";
 
 export function GoogleSignIn() {
   const [lib, setLib] = useState(<></>);
-  
-  useEffect(() => {
-    setLib(<script src="https://accounts.google.com/gsi/client" async></script>);
-  }, []);
 
+  useEffect(() => {
+    setLib(
+      <script src="https://accounts.google.com/gsi/client" async></script>,
+    );
+  }, []);
 
   return (
     <>
@@ -18,7 +19,8 @@ export function GoogleSignIn() {
         data-context="signin"
         data-ux_mode="popup"
         data-login_uri="http://localhost:8080/gsi"
-        data-auto_prompt="false"
+        data-auto_select="true"
+        data-itp_support="true"
       ></div>
 
       <div
