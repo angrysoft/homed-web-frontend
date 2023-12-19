@@ -1,15 +1,15 @@
 import React from "react";
-import { DeviceInfo } from "../../reducers/devicesReducer";
+import { DeviceInfo } from "../../context/DeviceInfo";
+import { ColorTemperature } from "./Traits/ColorTemperature";
 import { Contact } from "./Traits/Contact";
+import { Dimmer } from "./Traits/Dimmer";
 import { DoubleSwitch } from "./Traits/DoubleSwitch";
 import { HumidityStatus } from "./Traits/HumidityStatus";
 import { IlluminanceStatus } from "./Traits/Illuminance";
 import { MotionStatus } from "./Traits/MotionStatus";
-import { TemperatureStatus } from "./Traits/TemperatureStatus";
 import { OnOff } from "./Traits/OnOff";
-import { Dimmer } from "./Traits/Dimmer";
-import { ColorTemperature } from "./Traits/ColorTemperature";
 import { RgbColor } from "./Traits/RgbColor";
+import { TemperatureStatus } from "./Traits/TemperatureStatus";
 
 interface ITraitsFactoryProps {
   trait: string;
@@ -97,7 +97,6 @@ const TraitsFactory: React.FC<ITraitsFactoryProps> = (
       let pc = props.info.ct;
       if (props.info.minCt && props.info.maxCt) {
         pc = Math.ceil((Number(props.info.ct) - Number(props.info.minCt)) / (Number(props.info.maxCt) - Number(props.info.minCt)) * 100);
-        console.log("PC", pc);
       }
       trait = <ColorTemperature sid={props.info.sid} ct={pc} />;
       break;

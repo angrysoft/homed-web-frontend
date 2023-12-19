@@ -11,7 +11,7 @@ export function useLocalStorage<T>(
     try {
       if (itemString) setData(JSON.parse(itemString));
     } catch (error) {
-      console.log("error", error, itemString);
+      console.error("error: ", error, itemString);
     }
   }, [key]);
 

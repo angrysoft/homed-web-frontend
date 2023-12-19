@@ -1,10 +1,10 @@
 'use client'
-import React from "react";
-import { DeviceInfo } from "../../reducers/devicesReducer";
-import { MaterialSymbols } from "../../components/MaterialSymbols";
-import { TraitsFactory } from "./TraitsFactory";
-import WidgetWrapper from "./Traits/elements/WidgetWrapper";
 import Link from "next/link";
+import React from "react";
+import { MaterialSymbols } from "../../components/MaterialSymbols";
+import { DeviceInfo } from "../../context/DeviceInfo";
+import WidgetWrapper from "./Traits/elements/WidgetWrapper";
+import { TraitsFactory } from "./TraitsFactory";
 
 interface IDeviceProps {
   info: DeviceInfo;
@@ -23,7 +23,7 @@ const Device: React.FC<IDeviceProps> = (props: IDeviceProps) => {
         <div className="col-span-2 text-onSurface">{props.info.name}</div>
       </Link>
       <div className="grid col-span-2">
-        {props.info.traits.map((traitName) => (
+        {props.info.traits.map((traitName:string) => (
           <WidgetWrapper key={traitName}>
             <TraitsFactory trait={traitName} info={props.info} main />
           </WidgetWrapper>

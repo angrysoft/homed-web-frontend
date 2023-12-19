@@ -24,7 +24,6 @@ export default function Home() {
   )
     return <MainLoader />;
 
-  console.log("state: ", state);
   return (
     <main className="grid content-baseline h-[100dvh]">
       <Places
