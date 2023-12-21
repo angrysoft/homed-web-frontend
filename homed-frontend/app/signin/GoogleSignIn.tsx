@@ -18,7 +18,7 @@ export function GoogleSignIn() {
         data-client_id="877412399754-shou706hpt8q4llqenm6p93vthr4q28o.apps.googleusercontent.com"
         data-context="signin"
         data-ux_mode="popup"
-        data-login_uri="http://localhost:8080/gsi"
+        data-login_uri="/api/v1/gsi"
         data-auto_select="true"
         data-itp_support="true"
       ></div>
