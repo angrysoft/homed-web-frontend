@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @RestController
-@RequestMapping("/devices")
+@RequestMapping("/api/v1/devices")
 public class DevicesController {
     private final MqttV5Connection mqttConn;
     private SseEmitter sseEmitter;
@@ -36,6 +36,7 @@ public class DevicesController {
         this.mqttConn.setUri(mqttUri);
         this.mqttConn.setUser(mqttUser);
         this.mqttConn.setPassword(mqttPassword);
+        this.mqttConn.setAutomaticReconnect(true);
         this.mqttConn.start();
     }
 
