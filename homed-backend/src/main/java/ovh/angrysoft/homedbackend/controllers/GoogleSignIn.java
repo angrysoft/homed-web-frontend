@@ -3,6 +3,7 @@ package ovh.angrysoft.homedbackend.controllers;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.Collections;
+import java.util.Optional;
 
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,10 +23,11 @@ public class GoogleSignIn {
         if (!gToken.equals(token.g_csrf_token())) {
             return result.withStatus("wrong g_csrf_token");
         }
+        Optional<String> clientId = Optional.ofNullable(System.getenv("GOOGLE_CLIENT_ID"));
 
         GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(new NetHttpTransport(), new GsonFactory())
                 .setAudience(Collections
-                        .singletonList(""))
+                        .singletonList(clientId.isPresent() ? clientId.get() : ""))
                 .build();
 
         // (Receive idTokenString by HTTPS POST)
