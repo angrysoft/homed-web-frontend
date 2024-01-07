@@ -9,7 +9,7 @@ interface IOnOffProps {
 
 const OnOff: React.FC<IOnOffProps> = (props: IOnOffProps) => {
   const send = useSendCmd();
-  const status = props.power.toLowerCase();
+  const status = props?.power?.toLowerCase();
 
   return (
       <div className="grid grid-cols-2 text-secondary">

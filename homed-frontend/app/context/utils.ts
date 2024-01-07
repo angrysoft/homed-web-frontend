@@ -10,6 +10,7 @@ const getLangCode = (langCode: string): string => {
 };
 
 const parseDeviceEvent = (data: any[]) => {
+  console.log(data);
   const places: Set<string> = new Set();
   const lang = getLangCode(navigator.language);
   const devices: { [key: string]: any } = {};

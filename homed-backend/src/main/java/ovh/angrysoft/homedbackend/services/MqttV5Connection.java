@@ -39,7 +39,6 @@ public class MqttV5Connection extends Thread implements MqttCallback {
     final Thread mainThread = Thread.currentThread();
     static volatile boolean keepRunning = true;
     private List<String> topics;
-    private BiConsumer<String, String> onMsgHandler;
     private SseEmitter sseEmitter;
 
     public void setUri(String uri) {
@@ -66,7 +65,7 @@ public class MqttV5Connection extends Thread implements MqttCallback {
         ConsoleHandler logHandler = new ConsoleHandler();
         LOGGER.addHandler(logHandler);
         this.connOpts = new MqttConnectionOptions();
-        this.topics = new ArrayList<String>();
+        this.topics = new ArrayList<>();
         this.setDaemon(true);
     }
 
@@ -187,7 +186,7 @@ public class MqttV5Connection extends Thread implements MqttCallback {
     }
 
     public void publishMessage(byte[] payload, int qos, boolean retain, String topic)
-            throws MqttPersistenceException, MqttException {
+            throws MqttException {
         if (!isConnected()) {
             LOGGER.warning("Not Connected");
             return;
@@ -197,10 +196,6 @@ public class MqttV5Connection extends Thread implements MqttCallback {
         message.setRetained(retain);
         IMqttToken deliveryToken = client.publish(topic, message);
         deliveryToken.waitForCompletion(this.timeout);
-    }
-
-    public void setOnMsgHandler(BiConsumer<String, String> onMsgHandler) {
-        this.onMsgHandler = onMsgHandler;
     }
 
     public void addSseEmiter(SseEmitter emitter) {
@@ -254,10 +249,6 @@ public class MqttV5Connection extends Thread implements MqttCallback {
     @Override
     public void messageArrived(String topic, MqttMessage message) throws Exception {
         String messageContent = new String(message.getPayload());
-        // if (this.onMsgHandler != null) {
-        // this.onMsgHandler.accept(topic, messageContent);
-        // return;
-        // }
         System.err.println(String.format("MSG: %s", messageContent));
         if (sseEmitter != null) {
             try {
