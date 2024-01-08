@@ -49,6 +49,17 @@ const TraitsFactory: React.FC<ITraitsFactoryProps> = (
       break;
     }
 
+    case "DoubleOutlet": {
+      trait = (
+        <DoubleSwitch
+          sid={props.info.sid}
+          left={props.info.outlet0}
+          right={props.info.outlet1}
+        />
+      );
+      break;
+    }
+
     case "Temperature": {
       trait = (
         <TemperatureStatus
