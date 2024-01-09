@@ -42,19 +42,8 @@ const TraitsFactory: React.FC<ITraitsFactoryProps> = (
       trait = (
         <DoubleSwitch
           sid={props.info.sid}
-          left={props.info.state_left}
-          right={props.info.state_right}
-        />
-      );
-      break;
-    }
-
-    case "DoubleOutlet": {
-      trait = (
-        <DoubleSwitch
-          sid={props.info.sid}
-          left={props.info.outlet0}
-          right={props.info.outlet1}
+          one={props.info.one}
+          two={props.info.two}
         />
       );
       break;
@@ -107,7 +96,11 @@ const TraitsFactory: React.FC<ITraitsFactoryProps> = (
     case "ColorTemperature": {
       let pc = props.info.ct;
       if (props.info.minCt && props.info.maxCt) {
-        pc = Math.ceil((Number(props.info.ct) - Number(props.info.minCt)) / (Number(props.info.maxCt) - Number(props.info.minCt)) * 100);
+        pc = Math.ceil(
+          ((Number(props.info.ct) - Number(props.info.minCt)) /
+            (Number(props.info.maxCt) - Number(props.info.minCt))) *
+            100,
+        );
       }
       trait = <ColorTemperature sid={props.info.sid} ct={pc} />;
       break;
