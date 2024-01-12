@@ -16,6 +16,7 @@ const useSendEvent = () => {
       headers: {
         'Content-Type': 'text/plain'
       },
+      credentials: 'include'
     };
     
     fetch("/api/v1/devices", fetchOptions).then((response) => {

@@ -3,7 +3,7 @@ import { MaterialSymbols } from '../../../../components/MaterialSymbols';
 
 
 interface IPowerButtonProps {
-  handleClick: React.MouseEventHandler<HTMLDivElement>;
+  handleClick: ()=>void;
   status: boolean;
 }
 
@@ -13,11 +13,11 @@ const PowerButton:React.FC<IPowerButtonProps> = (props:IPowerButtonProps) => {
   props.status ? classes+=" text-primary border-primary" : classes+=" text-onSurface border-onSurface";
 
   return (
-    <div
+    <button
       className={classes}
       onClick={props.handleClick}>
       <MaterialSymbols name='power_rounded' />
-    </div>
+    </button>
   );
 };
 

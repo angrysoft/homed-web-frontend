@@ -6,10 +6,12 @@ import { Dimmer } from "./Traits/Dimmer";
 import { DoubleSwitch } from "./Traits/DoubleSwitch";
 import { HumidityStatus } from "./Traits/HumidityStatus";
 import { IlluminanceStatus } from "./Traits/Illuminance";
-import { MotionStatus } from "./Traits/MotionStatus";
+import { OccupancySensing } from "./Traits/OccupancySensing";
 import { OnOff } from "./Traits/OnOff";
 import { RgbColor } from "./Traits/RgbColor";
 import { TemperatureStatus } from "./Traits/TemperatureStatus";
+import { SingleSwitch } from "./Traits/SingleSwitch";
+import { AmbientLight } from "./Traits/AmbientLight";
 
 interface ITraitsFactoryProps {
   trait: string;
@@ -20,10 +22,12 @@ interface ITraitsFactoryProps {
 
 const mainTraits = [
   "OnOff",
+  "SingleSwitch",
   "DoubleSwitch",
-  "Temperature",
+  "TripleSwitch",
+  "TemperatureReport",
   "Contact",
-  "Motion",
+  "OccupancySensing",
 ];
 
 const TraitsFactory: React.FC<ITraitsFactoryProps> = (
@@ -38,18 +42,23 @@ const TraitsFactory: React.FC<ITraitsFactoryProps> = (
       break;
     }
 
+    case "SingleSwitch": {
+      trait = <SingleSwitch sid={props.info.sid} outlet={props.info.outlet} />;
+      break;
+    }
+
     case "DoubleSwitch": {
       trait = (
         <DoubleSwitch
           sid={props.info.sid}
-          one={props.info.one}
-          two={props.info.two}
+          outlet0={props.info.outlet0}
+          outlet1={props.info.outlet1}
         />
       );
       break;
     }
 
-    case "Temperature": {
+    case "TemperatureReport": {
       trait = (
         <TemperatureStatus
           sid={props.info.sid}
@@ -59,7 +68,7 @@ const TraitsFactory: React.FC<ITraitsFactoryProps> = (
       break;
     }
 
-    case "Humidity": {
+    case "HumidityReport": {
       trait = (
         <HumidityStatus sid={props.info.sid} humidity={props.info.humidity} />
       );
@@ -71,9 +80,9 @@ const TraitsFactory: React.FC<ITraitsFactoryProps> = (
       break;
     }
 
-    case "Motion": {
+    case "OccupancySensing": {
       trait = (
-        <MotionStatus sid={props.info.sid} occupancy={props.info.occupancy} />
+        <OccupancySensing sid={props.info.sid} occupancy={props.info.occupancy} />
       );
       break;
     }
@@ -88,7 +97,7 @@ const TraitsFactory: React.FC<ITraitsFactoryProps> = (
       break;
     }
 
-    case "Dimmer": {
+    case "Brightness": {
       trait = <Dimmer sid={props.info.sid} bright={props.info.bright} />;
       break;
     }
@@ -110,6 +119,14 @@ const TraitsFactory: React.FC<ITraitsFactoryProps> = (
       trait = <RgbColor sid={props.info.sid} rgb={props.info.rgb} />;
       break;
     }
+
+    case "AmbientLight": {
+      trait = (
+        <AmbientLight sid={props.info.sid} power={props.info.ambientLight} />
+      );
+      break;
+    }
+
     default:
       return trait;
   }

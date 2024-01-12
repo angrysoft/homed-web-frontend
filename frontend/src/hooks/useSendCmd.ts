@@ -17,6 +17,7 @@ const useSendCmd = () => {
       headers: {
         'Content-Type': 'text/plain'
       },
+      credentials: 'include'
     };
     console.log(sid, cmd,value)
     

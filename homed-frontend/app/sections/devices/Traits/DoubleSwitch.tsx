@@ -1,11 +1,13 @@
 import React from "react";
 import { useSendCmd } from "../../../hooks/useSendCmd";
 import { PowerButton } from "./elements/PowerButton";
+import { SectionTitle } from "./elements/SectionTitle";
 
 interface IDoubleSwitchProps {
   sid: string;
-  one: string;
-  two: string;
+  outlet0: string;
+  outlet1: string;
+  showTitle?: boolean;
 }
 
 const DoubleSwitch: React.FC<IDoubleSwitchProps> = (
@@ -15,18 +17,19 @@ const DoubleSwitch: React.FC<IDoubleSwitchProps> = (
 
   return (
     <div className="grid grid-flow-col gap-1 items-center text-secondary">
+      <SectionTitle show={props.showTitle} title="Switches" />
       <PowerButton
         handleClick={() =>
-          send(props.sid, "left", props.one.toLowerCase() !== "on")
+          send(props.sid, "outlet0", props.outlet0.toLowerCase() !== "on")
         }
-        status={props?.one?.toLowerCase() === "on"}
+        status={props?.outlet0?.toLowerCase() === "on"}
       />
 
       <PowerButton
         handleClick={() =>
-          send(props.sid, "right", props.two.toLowerCase() !== "on")
+          send(props.sid, "outlet1", props.outlet1.toLowerCase() !== "on")
         }
-        status={props?.two?.toLowerCase() === "on"}
+        status={props?.outlet1?.toLowerCase() === "on"}
       />
     </div>
   );

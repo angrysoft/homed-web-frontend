@@ -2,13 +2,13 @@ import React from 'react';
 import { TraitIcon } from './TraitIcon';
 
 
-interface IMotionStatusProps {
+interface IOccupancySensingProps {
   sid: string;
   occupancy: boolean;
 }
 
 
-const MotionStatus:React.FC<IMotionStatusProps> = (props:IMotionStatusProps) => {
+const OccupancySensing:React.FC<IOccupancySensingProps> = (props:IOccupancySensingProps) => {
 
   return (
       <div className='text-secondary justify-self-center'>
@@ -17,4 +17,4 @@ const MotionStatus:React.FC<IMotionStatusProps> = (props:IMotionStatusProps) => 
   );
 };
 
-export {MotionStatus};
+export {OccupancySensing};
