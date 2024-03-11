@@ -5,11 +5,11 @@ async function fetchState() {
     cache: "no-store",
   });
   if (res.ok) {
-    console.log("is ok")
+    console.log("is ok");
     return res.json();
   }
   const date = new Date();
-  console.log('oh noooo', date.toUTCString() );
+  console.log("oh noooo", date.toUTCString());
 }
 
 interface User {
@@ -21,8 +21,6 @@ interface User {
 }
 
 export async function middleware(request: NextRequest) {
-  const data = await (await fetch("http://localhost:8080/api/v1/status")).json()
-  console.log(data)
   let user: User | undefined;
   try {
     user = await fetchState();
