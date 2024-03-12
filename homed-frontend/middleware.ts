@@ -3,7 +3,10 @@ import { NextRequest, NextResponse } from "next/server";
 async function fetchState() {
   const res = await fetch("http://localhost:8080/api/v1/status", {
     cache: "no-store",
+    mode: "cors",
+    credentials: "include",
   });
+  console.log(res.status, res.ok);
   if (res.ok) {
     console.log("is ok");
     return res.json();
