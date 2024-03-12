@@ -4,7 +4,15 @@ export function useLocalStorage<T>(
   key: string,
   initialState: T,
 ): [T, Dispatch<SetStateAction<T>>] {
-  const [data, setData] = useState<T>(initialState);
+  let localInitialState = initialState;
+  const savedState = localStorage.getItem(key);
+  console.log("savedState", savedState, initialState);
+
+  if (savedState) {
+    localInitialState = JSON.parse(savedState);
+  }
+  
+  const [data, setData] = useState<T>(localInitialState);
 
   useEffect(() => {
     const itemString = localStorage.getItem(key);

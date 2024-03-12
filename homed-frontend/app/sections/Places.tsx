@@ -7,6 +7,10 @@ interface IPlacesProps {
 }
 
 const Places: React.FC<IPlacesProps> = (props: IPlacesProps) => {
+  let localSelected = props.selected;
+  if (props.selected === "") {
+    localSelected = props.items[0]
+  }
   const placeElements = props.items.map((name) => (
     <Place
       key={name}
@@ -14,7 +18,7 @@ const Places: React.FC<IPlacesProps> = (props: IPlacesProps) => {
       onClick={() => {
         props.onChange(name);
       }}
-      selected={name === props.selected}
+      selected={name === localSelected}
     />
   ));
 
