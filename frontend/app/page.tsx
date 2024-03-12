@@ -45,7 +45,6 @@ export default function Home() {
     state?.places.length === 0
   )
     return <MainLoader />;
-  console.log("page ", place.placeName);
   return (
     <main className="grid content-baseline h-[100dvh]">
       <Places

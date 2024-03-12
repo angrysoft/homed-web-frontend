@@ -1,18 +1,11 @@
+"use client";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 
 export function useLocalStorage<T>(
   key: string,
   initialState: T,
 ): [T, Dispatch<SetStateAction<T>>] {
-  let localInitialState = initialState;
-  const savedState = localStorage.getItem(key);
-  console.log("savedState", savedState, initialState);
-
-  if (savedState) {
-    localInitialState = JSON.parse(savedState);
-  }
-  
-  const [data, setData] = useState<T>(localInitialState);
+  const [data, setData] = useState<T>(initialState);
 
   useEffect(() => {
     const itemString = localStorage.getItem(key);

@@ -16,7 +16,7 @@ const Place: React.FC<IPlaceProps> = (props: IPlaceProps) => {
   }
 
   return (
-    <div id={props.name} className={classes} onClick={() => props.onClick()}>
+    <div id={props.name} className={classes} onClick={() => props.onClick()} role="none">
       {props.name}
     </div>
   );
