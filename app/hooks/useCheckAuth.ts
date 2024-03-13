@@ -13,7 +13,7 @@ export function useCheckAuth() {
   const [loading, setLoading] = useState<boolean>(true);
 
   const fetchState = useCallback(async () => {
-    const res = await fetch("http://localhost:8080/api/v1/status", {
+    const res = await fetch("/api/v1/status", {
       cache: "no-store",
       mode: "cors",
       credentials: "include",

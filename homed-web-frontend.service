@@ -1,0 +1,22 @@
+[Unit]
+Description=homedaemon frontend docker service
+After=docker.service
+Requires=docker.service
+After=homed-web-backend.service
+Requires=homed-web-backend.service
+
+[Service]
+TimeoutStartSec=0
+Restart=always
+ExecStop=/usr/bin/docker stop %N
+ExecStartPre=-/usr/bin/docker stop %N
+ExecStartPre=-/usr/bin/docker rm %N
+ExecStartPre=/usr/bin/docker pull angrysoft/homed-web-frontend:latest
+ExecStart=/usr/bin/docker run \
+    --rm \
+    --name %N \
+    -p 3002:3000 \
+    angrysoft/homed-web-frontend:latest
+
+[Install]
+WantedBy=default.target
