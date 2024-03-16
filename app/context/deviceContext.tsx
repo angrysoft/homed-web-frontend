@@ -28,7 +28,7 @@ const DeviceProvider = (props: IProviderProps) => {
 
   useEffect(() => {
     const evSource = new EventSource(
-      "http://localhost:8080/api/v1/devices/events",
+      "/api/v1/devices/events",
       { withCredentials: true },
     );
     evSource.onmessage = async (event) => {
