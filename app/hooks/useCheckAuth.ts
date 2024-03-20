@@ -18,9 +18,8 @@ export function useCheckAuth() {
       mode: "cors",
       credentials: "include",
     });
-    console.log(res.status, res.ok);
+    console.log(res)
     if (res.ok) {
-      console.log("is ok");
       const data = await res.json();
       setUser(data);
     }
@@ -28,7 +27,10 @@ export function useCheckAuth() {
   }, []);
 
   useEffect(() => {
-    fetchState();
+    // fetchState();
+    // TODO : REMOVE THIS
+    setUser({name:"seba", email: "seba@bla", picture: "fsdfsf", emailVerified: true, isAuthenticated: true});
+    setLoading(false);
   }, [fetchState]);
 
   return [loading, user];

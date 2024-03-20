@@ -8,6 +8,7 @@ import { Places } from "./sections/Places";
 import { Devices } from "./sections/devices/Devices";
 import { useCheckAuth } from "./hooks/useCheckAuth";
 import { useRouter } from "next/navigation";
+import { Container } from "@mui/material";
 
 export default function Home() {
   const [loading, user] = useCheckAuth();
@@ -46,13 +47,22 @@ export default function Home() {
   )
     return <MainLoader />;
   return (
-    <main className="grid content-baseline h-[100dvh]">
+    <Container 
+      component={"main"}
+      maxWidth={false}
+      disableGutters
+      sx={{
+        display: "grid",
+        placeContent: "baseline",
+        height: "100dvh",
+      }}
+    >
       <Places
         onChange={handlePlaceChange}
         items={state?.places ?? []}
         selected={place.placeName}
       />
       <Devices devices={state?.devices ?? {}} selectedPlace={place.placeName} />
-    </main>
+    </Container>
   );
 }
