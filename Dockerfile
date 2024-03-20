@@ -16,18 +16,18 @@ RUN npm run build
 FROM base AS runner
 WORKDIR /app
 ENV NODE_ENV production
-RUN adduser --system --group http
+# RUN adduser --system --group www-data --uid 33
 RUN mkdir .next
-RUN chown -R http:http .next
+RUN chown -R www-data:www-data .next
 RUN npm i sharp
 
-COPY --from=builder --chown=http:http /app/public ./public
-COPY --from=builder --chown=http:http /app/next.config.js ./
-COPY --from=builder --chown=http:http /app/.next/standalone ./
-COPY --from=builder --chown=http:http /app/.next/static ./.next/static
-RUN chown -R http:http .
+COPY --from=builder --chown=www-data:www-data /app/public ./public
+COPY --from=builder --chown=www-data:www-data /app/next.config.js ./
+COPY --from=builder --chown=www-data:www-data /app/.next/standalone ./
+COPY --from=builder --chown=www-data:www-data /app/.next/static ./.next/static
+RUN chown -R www-data:www-data .
 
-USER http
+USER www-data
 EXPOSE 3000
 ENV PORT 3000
 ENV HOSTNAME "0.0.0.0"
