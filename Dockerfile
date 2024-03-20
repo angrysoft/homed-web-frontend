@@ -18,16 +18,16 @@ WORKDIR /app
 ENV NODE_ENV production
 # RUN adduser --system --group www-data --uid 33
 RUN mkdir .next
-RUN chown -R www-data:www-data .next
+RUN chown -R homed-web:homed-web .next
 RUN npm i sharp
 
-COPY --from=builder --chown=www-data:www-data /app/public ./public
-COPY --from=builder --chown=www-data:www-data /app/next.config.js ./
-COPY --from=builder --chown=www-data:www-data /app/.next/standalone ./
-COPY --from=builder --chown=www-data:www-data /app/.next/static ./.next/static
-RUN chown -R www-data:www-data .
+COPY --from=builder --chown=homed-web:homed-web /app/public ./public
+COPY --from=builder --chown=homed-web:homed-web /app/next.config.js ./
+COPY --from=builder --chown=homed-web:homed-web /app/.next/standalone ./
+COPY --from=builder --chown=homed-web:homed-web /app/.next/static ./.next/static
+RUN chown -R homed-web:homed-web .
 
-USER www-data
+USER homed-web
 EXPOSE 3000
 ENV PORT 3000
 ENV HOSTNAME "0.0.0.0"
