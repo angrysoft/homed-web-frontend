@@ -16,7 +16,8 @@ RUN npm run build
 FROM base AS runner
 WORKDIR /app
 ENV NODE_ENV production
-RUN adduser --system --group www-data --uid 106 --gid 112
+RUN addgroup --system --gid 666 homed-web
+RUN adduser --system --group --uid 666 homed-web
 RUN mkdir .next
 RUN chown -R homed-web:homed-web .next
 RUN npm i sharp
