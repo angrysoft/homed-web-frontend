@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 export interface User {
   name: string;
@@ -10,7 +10,9 @@ export interface User {
 
 export function useCheckAuth() {
   const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+
+  const authState = useMemo(()=>({ isLoading, user}), [isLoading, user]);
 
   const fetchState = useCallback(async () => {
     const res = await fetch("/api/v1/status", {
@@ -23,15 +25,13 @@ export function useCheckAuth() {
       const data = await res.json();
       setUser(data);
     }
-    setLoading(false);
+    setIsLoading(false);
   }, []);
 
+
   useEffect(() => {
-    // fetchState();
-    // TODO : REMOVE THIS
-    setUser({name:"seba", email: "seba@bla", picture: "fsdfsf", emailVerified: true, isAuthenticated: true});
-    setLoading(false);
+    fetchState();
   }, [fetchState]);
 
-  return [loading, user];
+  return authState;
 }

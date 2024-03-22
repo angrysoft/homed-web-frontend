@@ -1,5 +1,6 @@
+import { SensorOccupied } from '@mui/icons-material';
+import { Paper, Typography } from '@mui/material';
 import React from 'react';
-import { TraitIcon } from './TraitIcon';
 
 
 interface IOccupancySensingProps {
@@ -11,10 +12,17 @@ interface IOccupancySensingProps {
 const OccupancySensing:React.FC<IOccupancySensingProps> = (props:IOccupancySensingProps) => {
 
   return (
-      <div className='text-secondary justify-self-center'>
-          <TraitIcon name={props.occupancy ? 'sensor_occupied': 'motion_sensor_active'} status={props.occupancy}/>
-      </div>
+    <Paper sx={{
+      display:"flex",
+      gap: "1rem",
+      justifyContent: "space-between",
+      padding: "2rem"
+    }}>
+      <Typography>Obecność</Typography>
+      <SensorOccupied color={props.occupancy ? 'secondary': 'primary'}/>
+    </Paper>
   );
 };
 
-export {OccupancySensing};
+export { OccupancySensing };
+

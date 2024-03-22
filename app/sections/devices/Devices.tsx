@@ -1,28 +1,30 @@
-import React, { useEffect, useState } from "react";
-import { IDevices } from "../../context/deviceContext";
+import { Box } from "@mui/material";
+import React from "react";
+import { DeviceInfo } from "../../context/DeviceInfo";
 import { Device } from "./Device";
 
 interface IDevicesProps {
-  devices: IDevices;
-  selectedPlace: string;
+  items: DeviceInfo[];
 }
 
 const Devices: React.FC<IDevicesProps> = (props: IDevicesProps) => {
-  const [devices, setDevices] = useState<React.ReactNode>();
-
-  useEffect(() => {
-    setDevices(
-      Object.entries(props.devices).map(([sid, dev]) => {
-        if (dev.place === props.selectedPlace)
-          return <Device key={sid} info={dev} />;
-      }),
-    );
-  }, [props.selectedPlace, props.devices]);
-
   return (
-    <div className="p-1 grid md:justify-around md:grid-cols-devices gap-05 overflow-y-auto overflow-x-hidden">
-      {devices}
-    </div>
+    <Box
+      component="section"
+      display="flex"
+      gap="1rem"
+      sx={{
+        flexDirection: {
+          xs: "column",
+          md: "row",
+        },
+        flexWrap: { md: "wrap" },
+      }}
+    >
+      {props.items.map((dev) => {
+        return <Device key={dev.sid} info={dev} />;
+      })}
+    </Box>
   );
 };
 

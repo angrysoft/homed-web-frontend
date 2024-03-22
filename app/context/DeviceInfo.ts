@@ -1,14 +1,10 @@
 interface DeviceInfo {
   traits: Array<string>;
-  name: string;
-  place: string;
+  name: {[key:string]: string};
+  place: {[key:string]: string};
   model: string;
   sid: string;
   [key: string]: any;
-}
-
-interface IDevices {
-  [key: string]: DeviceInfo[];
 }
 
 interface IEventData {
@@ -18,10 +14,9 @@ interface IEventData {
   };
 }
 
+
 interface IDevicesContext {
-  devices: IDevices;
-  places: string[];
+  [placeName: string]: DeviceInfo[];
 }
 
-
-export type { DeviceInfo, IDevices, IEventData, IDevicesContext }
+export type { DeviceInfo, IEventData, IDevicesContext };

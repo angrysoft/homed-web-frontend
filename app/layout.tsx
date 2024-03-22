@@ -19,6 +19,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pl">
+      <head>
+      <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      />
+      </head>
       <body>
         <AppRouterCacheProvider>
           <ThemeProvider theme={theme}>

@@ -1,24 +1,20 @@
-import React from 'react';
-import { MaterialSymbols } from '../../../../components/MaterialSymbols';
-
+import { PowerSettingsNewOutlined } from "@mui/icons-material";
+import { IconButton } from "@mui/material";
+import React from "react";
 
 interface IPowerButtonProps {
-  handleClick: ()=>void;
+  handleClick: () => void;
   status: boolean;
 }
 
-
-const PowerButton:React.FC<IPowerButtonProps> = (props:IPowerButtonProps) => {
-  let classes = "col-span-2 grid items-center p-05 justify-center border-2 rounded-xl";
-  props.status ? classes+=" text-primary border-primary" : classes+=" text-onSurface border-onSurface";
-
+const PowerButton: React.FC<IPowerButtonProps> = (props: IPowerButtonProps) => {
   return (
-    <button
-      className={classes}
-      onClick={props.handleClick}>
-      <MaterialSymbols name='power_rounded' />
-    </button>
+    <IconButton onClick={props.handleClick}>
+      <PowerSettingsNewOutlined
+        color={props.status ? "primary" : "secondary"}
+      />
+    </IconButton>
   );
 };
 
-export {PowerButton};
+export { PowerButton };
