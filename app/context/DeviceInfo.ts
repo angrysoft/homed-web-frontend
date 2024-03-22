@@ -8,7 +8,7 @@ interface DeviceInfo {
 }
 
 interface IDevices {
-  [key: string]: DeviceInfo;
+  [key: string]: DeviceInfo[];
 }
 
 interface IEventData {

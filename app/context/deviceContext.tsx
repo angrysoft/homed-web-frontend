@@ -33,16 +33,16 @@ const DeviceProvider = (props: IProviderProps) => {
     );
     
     evSource.onmessage = async (event) => {
-      console.log("msg", event.data);
       if (!event.data.startsWith("{")) return;
       const eventData: IEventData = JSON.parse(event.data) || {};
       const sid = eventData.sid;
       if (!sid) return;
-
+      
       if (sid === "deviceManager") {
+        
         const deviceData = parseDeviceEvent(eventData.payload.deviceList);
-        setPlaceStorage(deviceData?.places ?? []);
-        dispatch({ type: "DEVICES_LOADED", payload: deviceData?.devices });
+        // setPlaceStorage(deviceData?.places ?? []);
+        dispatch({ type: "DEVICES_LOADED", payload: deviceData });
         return;
       }
       dispatch({ type: "UPDATE_DEVICE", payload: eventData });

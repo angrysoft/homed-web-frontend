@@ -19,7 +19,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pl">
-      <body className="relative p-0 m-0 grid text-base overflow-hidden bg-background text-onBackground">
+      <body>
         <AppRouterCacheProvider>
           <ThemeProvider theme={theme}>
           <CssBaseline />

@@ -1,14 +1,15 @@
-import Link from "next/link";
+import { Box, Button } from "@mui/material";
 
 export default function Login() {
   return (
-    <div className="grid p-4 place-content-center">
-      <Link
-        href="/oauth2/authorization/google"
-        className="text-onSurface bg-surface p-1 rounded-lg border border-secondary"
-      >
+    <Box
+      p={4}
+      display={"flex"}
+      justifyContent={"center"}
+    >
+      <Button href="/oauth2/authorization/google" variant="outlined">
         Login With Google
-      </Link>
-    </div>
+      </Button>
+    </Box>
   );
 }
