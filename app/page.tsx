@@ -24,7 +24,6 @@ export default function Home() {
       disableGutters
       sx={{
         height: "100dvh",
-        padding: "1rem"
       }}
     >
       <Places />

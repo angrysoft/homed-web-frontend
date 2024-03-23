@@ -12,12 +12,12 @@ import { RgbColor } from "./Traits/RgbColor";
 import { TemperatureStatus } from "./Traits/TemperatureStatus";
 import { SingleSwitch } from "./Traits/SingleSwitch";
 import { AmbientLight } from "./Traits/AmbientLight";
+import { Paper } from "@mui/material";
 
 interface ITraitsFactoryProps {
   trait: string;
   info: DeviceInfo;
-  main: boolean;
-  wrapped?: boolean;
+  main?: boolean;
 }
 
 const mainTraits = [
@@ -38,12 +38,24 @@ const TraitsFactory: React.FC<ITraitsFactoryProps> = (
 
   switch (props.trait) {
     case "OnOff": {
-      trait = <OnOff sid={props.info.sid} power={props.info.state} />;
+      trait = (
+        <OnOff
+          sid={props.info.sid}
+          power={props.info.state}
+          showTitle={!props.main}
+        />
+      );
       break;
     }
 
     case "SingleSwitch": {
-      trait = <SingleSwitch sid={props.info.sid} outlet={props.info.outlet} />;
+      trait = (
+        <SingleSwitch
+          sid={props.info.sid}
+          outlet={props.info.outlet}
+          showTitle={!props.main}
+        />
+      );
       break;
     }
 
@@ -53,6 +65,7 @@ const TraitsFactory: React.FC<ITraitsFactoryProps> = (
           sid={props.info.sid}
           outlet0={props.info.outlet0}
           outlet1={props.info.outlet1}
+          showTitle={!props.main}
         />
       );
       break;
@@ -63,6 +76,7 @@ const TraitsFactory: React.FC<ITraitsFactoryProps> = (
         <TemperatureStatus
           sid={props.info.sid}
           temperature={props.info.temperature}
+          showTitle={!props.main}
         />
       );
       break;
@@ -70,19 +84,33 @@ const TraitsFactory: React.FC<ITraitsFactoryProps> = (
 
     case "HumidityReport": {
       trait = (
-        <HumidityStatus sid={props.info.sid} humidity={props.info.humidity} />
+        <HumidityStatus
+          sid={props.info.sid}
+          humidity={props.info.humidity}
+          showTitle={!props.main}
+        />
       );
       break;
     }
 
     case "Contact": {
-      trait = <Contact sid={props.info.sid} contact={props.info.contact} />;
+      trait = (
+        <Contact
+          sid={props.info.sid}
+          contact={props.info.contact}
+          showTitle={!props.main}
+        />
+      );
       break;
     }
 
     case "OccupancySensing": {
       trait = (
-        <OccupancySensing sid={props.info.sid} occupancy={props.info.occupancy} />
+        <OccupancySensing
+          sid={props.info.sid}
+          occupancy={props.info.occupancy}
+          showTitle={!props.main}
+        />
       );
       break;
     }
@@ -92,6 +120,7 @@ const TraitsFactory: React.FC<ITraitsFactoryProps> = (
         <IlluminanceStatus
           sid={props.info.sid}
           lux={props.info.illuminance_lux}
+          showTitle={!props.main}
         />
       );
       break;
@@ -122,7 +151,11 @@ const TraitsFactory: React.FC<ITraitsFactoryProps> = (
 
     case "AmbientLight": {
       trait = (
-        <AmbientLight sid={props.info.sid} power={props.info.ambientLight} />
+        <AmbientLight
+          sid={props.info.sid}
+          power={props.info.ambientLight}
+          showTitle={!props.main}
+        />
       );
       break;
     }
@@ -131,14 +164,9 @@ const TraitsFactory: React.FC<ITraitsFactoryProps> = (
       return trait;
   }
 
-  if (props.wrapped)
-    return (
-      <div className="p-1 bg-surface rounded grid grid-flow-col items-center">
-        {trait}
-      </div>
-    );
+  if (props.main) return trait;
 
-  return trait;
+  return <Paper>{trait}</Paper>;
 };
 
 export { TraitsFactory };

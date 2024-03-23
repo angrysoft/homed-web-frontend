@@ -1,5 +1,5 @@
 "use client";
-import { createContext, useEffect, useMemo, useState } from "react";
+import { createContext, useCallback, useEffect, useMemo, useState } from "react";
 import { useSendEvent } from "../hooks/useSendEvent";
 import { IDevicesContext, IEventData } from "./DeviceInfo";
 import { parseDeviceEvent } from "./utils";
@@ -12,7 +12,7 @@ const DeviceProvider = (props: IProviderProps) => {
   const send = useSendEvent();
   const [deviceState, setDeviceState] = useState<IDevicesContext>({});
 
-  useEffect(() => {
+  const sse = useCallback(() => {
     const evSource = new EventSource(
       "http://localhost:8080/api/v1/devices/events",
       { withCredentials: true },
@@ -21,15 +21,17 @@ const DeviceProvider = (props: IProviderProps) => {
     evSource.onmessage = async (event) => {
       if (!event.data.startsWith("{")) return;
       const eventData: IEventData = JSON.parse(event.data) || {};
-      const sid = eventData.sid;
+      const {sid, payload} = eventData;
       if (!sid) return;
-
       if (sid === "deviceManager") {
         console.log("devicesLoaded", parseDeviceEvent(eventData.payload.deviceList));
-        setDeviceState(parseDeviceEvent(eventData.payload.deviceList) ?? {});
+        setDeviceState(parseDeviceEvent(payload.deviceList) ?? {});
       } else {
         // dispatch({ type: "UPDATE_DEVICE", payload: eventData });
-        console.log("update: ", eventData);
+        console.log("update: ",sid,  payload);
+        // setDeviceState(deviceState=> {
+        //   return {...deviceState, ...deviceState[payload.place["pl"]]}
+        // })
       }
     };
 
@@ -51,6 +53,8 @@ const DeviceProvider = (props: IProviderProps) => {
       evSource.close();
     };
   }, [send]);
+
+  useEffect(()=> sse(), []);
 
   const deviceContextValue = useMemo(() => deviceState, [deviceState]);
 

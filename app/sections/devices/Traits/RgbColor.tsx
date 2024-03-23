@@ -1,6 +1,8 @@
 import React, { useCallback, useEffect, useRef } from "react";
 import { MaterialSymbols } from "../../../components/MaterialSymbols";
 import { useSendCmd } from "../../../hooks/useSendCmd";
+import { Palette } from "@mui/icons-material";
+import { Box } from "@mui/material";
 
 interface IRgbColorProps {
   sid: string;
@@ -39,14 +41,29 @@ const RgbColor: React.FC<IRgbColorProps> = (props: IRgbColorProps) => {
   }, [props.rgb]);
 
   return (
-    <div className="grid grid-cols-5 items-center text-secondary">
-      <MaterialSymbols name="palette" />
+    <Box
+      sx={{
+        display: "flex",
+        gap: "1rem",
+        alignItems: "center",
+        padding: "1rem",
+      }}
+    >
+      <Palette color="primary" />
       <input
         type="color"
+        style={{
+          height: "3rem",
+          width: "100%",
+          outline: "none",
+          border: "none",
+          padding: 0,
+          background: "transparent",
+        }}
         className="col-span-4 w-full h-4 rounded-xl cursor-pointer border-primary border-2"
         ref={inColor}
       />
-    </div>
+    </Box>
   );
 };
 

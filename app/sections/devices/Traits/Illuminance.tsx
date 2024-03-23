@@ -1,20 +1,30 @@
+import { LightMode } from "@mui/icons-material";
+import { Box, Typography } from "@mui/material";
 import React from "react";
-import { TraitIcon } from "./TraitIcon";
+import { SectionTitle } from "./elements/SectionTitle";
 
 interface IIlluminanceStatusProps {
   sid: string;
   lux: number;
+  showTitle?: boolean;
 }
 
 const IlluminanceStatus: React.FC<IIlluminanceStatusProps> = (
   props: IIlluminanceStatusProps,
 ) => {
   return (
-    <div className="grid gap-01 grid-flow-col items-center text-secondary grid-cols-3 justify-items-center">
-      <TraitIcon name="light_mode" />
-      <span>{Math.round(props.lux)}</span>
-      <span>Lux</span>
-    </div>
+    <Box
+      sx={{
+        display: "flex",
+        gap: "1rem",
+        justifyContent: "space-between",
+        padding: "1rem",
+      }}
+    >
+      <LightMode color="primary" />
+      <SectionTitle title="Natężenie oświetlenia" show={props.showTitle} />
+      <Typography color="primary">{Math.round(props.lux)} Lux</Typography>
+    </Box>
   );
 };
 

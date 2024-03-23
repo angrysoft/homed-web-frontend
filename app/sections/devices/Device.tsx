@@ -21,7 +21,7 @@ const Device: React.FC<IDeviceProps> = (props: IDeviceProps) => {
       }}
       elevation={2}
     >
-      <Button
+      <Button size="small"
         href={`/device/${props.info.place[lang]}/${props.info.sid}`}
         startIcon={<Icon>{props.info.icon ?? "sensors"}</Icon>}
       >

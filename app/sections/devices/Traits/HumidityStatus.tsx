@@ -1,20 +1,30 @@
+import { Box, Icon, Typography } from "@mui/material";
 import React from "react";
-import { TraitIcon } from "./TraitIcon";
+import { SectionTitle } from "./elements/SectionTitle";
+import { Opacity } from "@mui/icons-material";
 
 interface IHumidityStatusProps {
   sid: string;
   humidity: number;
+  showTitle: boolean;
 }
 
 const HumidityStatus: React.FC<IHumidityStatusProps> = (
   props: IHumidityStatusProps,
 ) => {
   return (
-    <div className="grid gap-01 grid-flow-col items-center text-secondary grid-cols-3 justify-items-center">
-      <TraitIcon name="humidity_percentage" />
-      <span>{Math.round(props.humidity)}</span>
-      <span>%</span>
-    </div>
+    <Box
+      sx={{
+        display: "flex",
+        gap: "1rem",
+        justifyContent: "space-between",
+        padding: "1rem",
+      }}
+    >
+      <Opacity color="primary"/>
+      <SectionTitle title="Wilgotność" show={props.showTitle} />
+      <Typography color="primary">{Math.round(props.humidity)} %</Typography>
+    </Box>
   );
 };
 

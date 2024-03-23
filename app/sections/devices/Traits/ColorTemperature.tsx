@@ -1,42 +1,75 @@
-import React, { useCallback, useEffect, useRef } from "react";
-import { MaterialSymbols } from "../../../components/MaterialSymbols";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useSendCmd } from "../../../hooks/useSendCmd";
+import { WbIridescent } from "@mui/icons-material";
+import { Box, Paper, Slider, SliderProps, Stack, styled } from "@mui/material";
 
 interface IColorTemperatureProps {
   sid: string;
   ct: number;
 }
 
+const ColorTempSlider = styled(Slider)<SliderProps>(({ theme }) => ({
+  height: "1.5rem",
+  ".MuiSlider-track": {
+    background: "transparent",
+    border: "none",
+  },
+  ".MuiSlider-rail": {
+    opacity: "1",
+    background:
+      "linear-gradient(90deg, rgba(255,119,0,1) 0%, rgba(240,241,8,1) 50%, rgba(255,255,255,1) 100%)",
+    borderWidth: "2px",
+    borderStyle: "solid",
+  },
+  ".MuiSlider-thumb": {
+    height: "2rem",
+    width: "2rem",
+  },
+}));
+
 const ColorTemperature: React.FC<IColorTemperatureProps> = (
   props: IColorTemperatureProps,
 ) => {
   const send = useSendCmd();
-  const inCt = useRef<HTMLInputElement>(null);
+  const [ctPc, setCtPc] = useState(props.ct);
 
-  const handleChange = useCallback(() => {
-    send(props.sid, "setCtPc", Number(inCt.current?.value));
-  }, [inCt, props.sid, send]);
+  const handleChange = useCallback(
+    (event: React.SyntheticEvent | Event, value: number | number[]) => {
+      if (typeof value === "number") {
+        setCtPc(value);
+      }
+    },
+    [],
+  );
 
-  useEffect(() => {
-    inCt.current?.addEventListener("change", handleChange);
-  }, [inCt, handleChange]);
-
-  useEffect(() => {
-    if (inCt.current) inCt.current.value = props.ct.toString();
-  }, [props.ct]);
+  const sendCommand = useCallback(
+    (event: React.SyntheticEvent | Event, value: number | number[]) => {
+      if (typeof value === "number") {
+        send(props.sid, "setCtPc", value);
+      }
+    },
+    [props.sid, send],
+  );
 
   return (
-    <div className="grid grid-cols-5 items-center text-secondary">
-      <MaterialSymbols name="wb_iridescent" />
-      <input
-        type="range"
-        className="col-span-4 w-full p-0 rounded-xl appearance-none cursor-pointer bg-gradient-to-r from-orange-500 via-yellow-500 to-yellow-50 border-primary border-2"
-        step="1"
-        min="1"
-        max="100"
-        ref={inCt}
+    <Box
+      sx={{
+        display: "flex",
+        gap: "1rem",
+        alignItems: "center",
+        padding: "1rem",
+      }}
+    >
+      <WbIridescent color="primary" fontSize="large" />
+      <ColorTempSlider
+        step={1}
+        min={1}
+        max={100}
+        value={ctPc}
+        onChange={handleChange}
+        onChangeCommitted={sendCommand}
       />
-    </div>
+    </Box>
   );
 };
 

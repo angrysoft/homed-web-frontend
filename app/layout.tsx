@@ -5,8 +5,6 @@ import { DeviceProvider } from "./context/deviceContext";
 import { ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 
-
-
 export const metadata: Metadata = {
   title: "Homedaemon web",
   description: "Homedaemon web app",
@@ -20,15 +18,15 @@ export default function RootLayout({
   return (
     <html lang="pl">
       <head>
-      <link
-        rel="stylesheet"
-        href="https://fonts.googleapis.com/icon?family=Material+Icons"
-      />
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/icon?family=Material+Icons"
+        />
       </head>
       <body>
         <AppRouterCacheProvider>
           <ThemeProvider theme={theme}>
-          <CssBaseline />
+            <CssBaseline />
             <DeviceProvider>{children}</DeviceProvider>
           </ThemeProvider>
         </AppRouterCacheProvider>

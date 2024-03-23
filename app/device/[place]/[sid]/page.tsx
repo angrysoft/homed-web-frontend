@@ -57,8 +57,6 @@ const DeviceDetails = ({
             key={traitName}
             trait={traitName}
             info={devInfo}
-            main={false}
-            wrapped
           />
         ))}
       </Stack>

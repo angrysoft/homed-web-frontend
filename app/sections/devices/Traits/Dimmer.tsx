@@ -1,5 +1,6 @@
-import React, { useCallback, useEffect, useRef } from "react";
-import { MaterialSymbols } from "../../../components/MaterialSymbols";
+import { LightMode } from "@mui/icons-material";
+import { Box, Slider, SliderProps, styled } from "@mui/material";
+import React, { useCallback, useState } from "react";
 import { useSendCmd } from "../../../hooks/useSendCmd";
 
 interface IDimmerProps {
@@ -7,34 +8,66 @@ interface IDimmerProps {
   bright: number;
 }
 
+const DimmerSlider = styled(Slider)<SliderProps>(({ theme }) => ({
+  height: "1.5rem",
+  ".MuiSlider-track": {
+    background: "transparent",
+    border: "none",
+  },
+  ".MuiSlider-rail": {
+    opacity: "1",
+    background:
+      "linear-gradient(90deg, rgba(0,0,0,1) 0%, rgba(255,255,255,1) 100%)",
+    borderWidth: "2px",
+    borderStyle: "solid",
+  },
+  ".MuiSlider-thumb": {
+    height: "2rem",
+    width: "2rem",
+  },
+}));
+
 const Dimmer: React.FC<IDimmerProps> = (props: IDimmerProps) => {
   const send = useSendCmd();
-  const inBright = useRef<HTMLInputElement>(null);
+  const [bright, setBright] = useState(props.bright);
 
-  const handleChange = useCallback(() => {
-    send(props.sid, "setBright", Number(inBright.current?.value));
-  }, [props.sid, send]);
+  const handleChange = useCallback(
+    (event: React.SyntheticEvent | Event, value: number | number[]) => {
+      if (typeof value === "number") {
+        setBright(value);
+      }
+    },
+    [],
+  );
 
-  useEffect(() => {
-    inBright.current?.addEventListener("change", handleChange);
-  }, [inBright, handleChange]);
-
-  useEffect(() => {
-    if (inBright.current) inBright.current.value = props.bright.toString();
-  }, [props.bright]);
+  const sendCommand = useCallback(
+    (event: React.SyntheticEvent | Event, value: number | number[]) => {
+      if (typeof value === "number") {
+        send(props.sid, "setBright", value);
+      }
+    },
+    [props.sid, send],
+  );
 
   return (
-    <div className="grid grid-cols-5 items-center text-secondary">
-      <MaterialSymbols name="light_mode" />
-      <input
-        type="range"
-        className="col-span-4 w-full p-0 rounded-xl appearance-none cursor-pointer bg-gradient-to-r from-black to-white border-primary border-2"
-        step="1"
-        min="1"
-        max="100"
-        ref={inBright}
+    <Box
+      sx={{
+        display: "flex",
+        gap: "1rem",
+        alignItems: "center",
+        padding: "1rem",
+      }}
+    >
+      <LightMode color="primary" fontSize="large" />
+      <DimmerSlider
+        step={1}
+        min={1}
+        max={100}
+        value={bright}
+        onChange={handleChange}
+        onChangeCommitted={sendCommand}
       />
-    </div>
+    </Box>
   );
 };
 

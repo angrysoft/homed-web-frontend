@@ -2,6 +2,7 @@ import React from "react";
 import { useSendCmd } from "../../../hooks/useSendCmd";
 import { PowerButton } from "./elements/PowerButton";
 import { SectionTitle } from "./elements/SectionTitle";
+import { Box } from "@mui/material";
 
 interface IDoubleSwitchProps {
   sid: string;
@@ -16,8 +17,15 @@ const DoubleSwitch: React.FC<IDoubleSwitchProps> = (
   const send = useSendCmd();
 
   return (
-    <div className="grid grid-flow-col gap-1 items-center text-secondary">
-      <SectionTitle show={props.showTitle} title="Switches" />
+  <Box
+    sx={{
+      display: "flex",
+      gap: "1rem",
+      alignItems: "center",
+      padding: "1rem",
+    }}
+  >
+      <SectionTitle show={props.showTitle} title="Włączniki" />
       <PowerButton
         handleClick={() =>
           send(props.sid, "outlet0", props.outlet0.toLowerCase() !== "on")
@@ -31,7 +39,7 @@ const DoubleSwitch: React.FC<IDoubleSwitchProps> = (
         }
         status={props?.outlet1?.toLowerCase() === "on"}
       />
-    </div>
+    </Box>
   );
 };
 

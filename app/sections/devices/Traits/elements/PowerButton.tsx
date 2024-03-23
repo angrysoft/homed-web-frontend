@@ -1,5 +1,5 @@
 import { PowerSettingsNewOutlined } from "@mui/icons-material";
-import { IconButton } from "@mui/material";
+import { Button } from "@mui/material";
 import React from "react";
 
 interface IPowerButtonProps {
@@ -8,12 +8,14 @@ interface IPowerButtonProps {
 }
 
 const PowerButton: React.FC<IPowerButtonProps> = (props: IPowerButtonProps) => {
+  const color = props.status ? "secondary" : "primary";
+
   return (
-    <IconButton onClick={props.handleClick}>
+    <Button onClick={props.handleClick} variant="outlined" color={color}>
       <PowerSettingsNewOutlined
-        color={props.status ? "primary" : "secondary"}
+        color={color}
       />
-    </IconButton>
+    </Button>
   );
 };
 
