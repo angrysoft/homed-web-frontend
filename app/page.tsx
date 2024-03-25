@@ -1,27 +1,21 @@
 "use client";
 
 import { Favorite, Settings } from "@mui/icons-material";
-import {
-  Avatar,
-  Container,
-  Paper
-} from "@mui/material";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { Avatar, Container, Paper } from "@mui/material";
+import Link from "next/link";
+import { useEffect } from "react";
 import { useCheckAuth } from "./hooks/useCheckAuth";
 import { Places } from "./sections/Places/Places";
-import Link from "next/link";
 
 export default function Home() {
-  const { isLoading, user } = useCheckAuth();
-  const [value, setValue] = useState();
-  const router = useRouter();
+  const { user } = useCheckAuth();
+  // const router = useRouter();
 
-  useEffect(() => {
-    if (!isLoading) {
-      if (!user) router.replace("/login");
-    }
-  }, [isLoading, router, user]);
+  // useEffect(() => {
+  //   if (!isLoading) {
+  //     if (!user) router.replace("/login");
+  //   }
+  // }, [isLoading, router, user]);
 
   useEffect(() => {
     navigator.serviceWorker
@@ -32,7 +26,9 @@ export default function Home() {
           registration.scope,
         ),
       )
-      .catch((err) => console.log("Service Worker registration failed: ", err));
+      .catch((err) =>
+        console.error("Service Worker registration failed: ", err),
+      );
   }, []);
 
   return (
@@ -60,8 +56,8 @@ export default function Home() {
         }}
         elevation={3}
       >
-        <Link href="/favorite" >
-          <Favorite color="primary"/>
+        <Link href="/favorites">
+          <Favorite color="primary" />
         </Link>
         <Link href="/user">
           <Avatar

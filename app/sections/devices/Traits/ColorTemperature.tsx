@@ -33,6 +33,10 @@ const ColorTemperature: React.FC<IColorTemperatureProps> = (
   const send = useSendCmd();
   const [ctPc, setCtPc] = useState(props.ct);
 
+  useEffect(() => {
+    setCtPc(props.ct);
+  }, [props.ct]);
+
   const handleChange = useCallback(
     (event: React.SyntheticEvent | Event, value: number | number[]) => {
       if (typeof value === "number") {

@@ -4,20 +4,15 @@ import { useEffect, useState } from "react";
 export function useFavorites() {
   const [favorites, setFavorites] = useState<string[]>([]);
 
-  const addFavorite = (deviceSid: string) => {
-    const newValue = Array.from(new Set([...favorites, deviceSid]));
+  const toggleFavorite = (deviceSid: string) => {
+    let newValue = [];
+    if (favorites.includes(deviceSid)) {
+      newValue = favorites.filter((el) => el !== deviceSid);
+    } else {
+      newValue = Array.from(new Set([...favorites, deviceSid]));
+    }
     setFavorites(newValue);
-    savePersistence(newValue);
-  };
-
-  const removeFavorite = (deviceSid: string) => {
-    const newValue = favorites.filter((el) => el !== deviceSid);
-    setFavorites(newValue);
-    savePersistence(newValue);
-  };
-
-  const savePersistence = (value: string[]) => {
-    localStorage.setItem("favorites", value.join(","));
+    localStorage.setItem("favorites", newValue.join(","));
   };
 
   useEffect(() => {
@@ -31,7 +26,6 @@ export function useFavorites() {
 
   return {
     favorites: favorites,
-    addFavorite: addFavorite,
-    removeFavorite: removeFavorite,
+    toggleFavorite: toggleFavorite,
   };
 }

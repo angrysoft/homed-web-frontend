@@ -1,14 +1,15 @@
 "use client";
 import { Favorite } from "@mui/icons-material";
-import { Grid, Stack, Typography } from "@mui/material";
-import { BackButton } from "../components/BackButton";
-import { useFavorites } from "../hooks/useFavorites";
-import { Devices } from "../sections/devices/Devices";
-import { DeviceContext } from "../context/deviceContext";
+import { Stack, Typography } from "@mui/material";
+import Grid from "@mui/material/Unstable_Grid2";
 import { use } from "react";
+import { BackButton } from "../components/BackButton";
 import { DeviceInfo } from "../context/DeviceInfo";
+import { DeviceContext } from "../context/deviceContext";
+import { useFavorites } from "../hooks/useFavorites";
+import { Device } from "../sections/devices/Device";
 
-export default function FavoriteSection() {
+export default function FavoritesSection() {
   const deviceState = use(DeviceContext);
   const { favorites } = useFavorites();
   const devices: DeviceInfo[] = [];
@@ -20,7 +21,7 @@ export default function FavoriteSection() {
   }
 
   return (
-    <Stack spacing={2}>
+    <Stack spacing={2} useFlexGap>
       <Grid
         container
         component={"header"}
@@ -39,7 +40,11 @@ export default function FavoriteSection() {
           <Favorite color="primary" />
         </Grid>
       </Grid>
-      <Devices items={devices} />
+      <Stack spacing={2} p={2} useFlexGap>
+      {devices.map((dev) => {
+        return <Device key={dev.sid} info={dev} back="/favorites" />;
+      })}
+      </Stack>
     </Stack>
   );
 }

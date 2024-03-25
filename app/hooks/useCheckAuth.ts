@@ -1,3 +1,5 @@
+'use client'
+import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 export interface User {
@@ -9,6 +11,7 @@ export interface User {
 }
 
 export function useCheckAuth() {
+  const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
@@ -24,9 +27,11 @@ export function useCheckAuth() {
     if (res.ok) {
       const data = await res.json();
       setUser(data);
+    } else {
+      router.replace("/login");
     }
     setIsLoading(false);
-  }, []);
+  }, [router]);
 
 
   useEffect(() => {

@@ -1,17 +1,12 @@
 import { Box, Tab, Tabs } from "@mui/material";
-import {
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useState
-} from "react";
+import { use, useCallback, useEffect, useMemo, useState } from "react";
+import MainLoader from "../../components/MainLoader";
 import { DeviceContext, IDevicesContext } from "../../context/deviceContext";
 import { Devices } from "../devices/Devices";
 import { TabPanel } from "./TabPanel";
 
 export function Places() {
-  const deviceState = useContext(DeviceContext);
+  const deviceState = use(DeviceContext);
   const [place, setPlace] = useState<string | false>(false);
 
   useEffect(() => {
@@ -28,7 +23,9 @@ export function Places() {
   );
 
   const parseData = useCallback(
-    (state: IDevicesContext | null): [React.JSX.Element[], React.JSX.Element[]] => {
+    (
+      state: IDevicesContext | null,
+    ): [React.JSX.Element[], React.JSX.Element[]] => {
       if (!state) return [[], []];
       const _places: React.JSX.Element[] = [];
       const _devices: React.JSX.Element[] = [];
@@ -62,6 +59,7 @@ export function Places() {
     [deviceState, parseData],
   );
 
+  if (!deviceState) return <MainLoader />;
   return (
     <Box
       sx={{

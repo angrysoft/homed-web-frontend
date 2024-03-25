@@ -21,7 +21,7 @@ const Devices: React.FC<IDevicesProps> = (props: IDevicesProps) => {
         flexWrap: { md: "wrap" },
       }}
     >
-      {props.items.map((dev, index) => {
+      {props.items.map((dev) => {
         return <Device key={dev.sid} info={dev} />;
       })}
     </Box>

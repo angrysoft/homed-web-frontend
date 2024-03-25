@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 
 interface IDeviceProps {
   info: DeviceInfo;
+  back?: string
 }
 
 const Device: React.FC<IDeviceProps> = (props: IDeviceProps) => {
@@ -22,18 +23,10 @@ const Device: React.FC<IDeviceProps> = (props: IDeviceProps) => {
       }}
       elevation={2}
     >
-      {/* <Link href={`/device/${props.info.sid}`} passHref>
-        <Button
-          size="small"
-          startIcon={<MaterialSymbols name={props.info.icon ?? "sensors"} />}
-        >
-          {props.info.name}
-        </Button>
-      </Link> */}
       <Button
         size="small"
         startIcon={<MaterialSymbols name={props.info.icon ?? "sensors"} />}
-        onClick={() => router.push(`/device/${props.info.sid}`)}
+        onClick={() => router.push(`/device/${props.info.sid}` + (props.back ? `?back=${props.back}` : ""))}
       >
         {props.info.name}
       </Button>

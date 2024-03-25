@@ -1,6 +1,6 @@
 import { LightMode } from "@mui/icons-material";
 import { Box, Slider, SliderProps, styled } from "@mui/material";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useSendCmd } from "../../../hooks/useSendCmd";
 
 interface IDimmerProps {
@@ -30,6 +30,10 @@ const DimmerSlider = styled(Slider)<SliderProps>(({ theme }) => ({
 const Dimmer: React.FC<IDimmerProps> = (props: IDimmerProps) => {
   const send = useSendCmd();
   const [bright, setBright] = useState(props.bright);
+
+  useEffect(() => {
+    setBright(props.bright);
+  }, [props.bright]);
 
   const handleChange = useCallback(
     (event: React.SyntheticEvent | Event, value: number | number[]) => {

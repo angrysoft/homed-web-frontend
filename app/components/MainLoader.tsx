@@ -1,24 +1,19 @@
 import React from "react";
+import { CircularProgress, Box } from "@mui/material";
 
 const MainLoader = () => {
   return (
-    <div className="grid grid-flow-col justify-center content-center gap-1 bg-background h-screen text-onBackground">
-      <div
-        className="animate-[pulse_1s_0ms_ease-in-out_infinite] bg-primary
-                   w-2 h-2 rounded-full delay-500"
-        role="status"
-      ></div>
-      <div
-        className="animate-[pulse_1s_200ms_ease-in-out_infinite] bg-primary
-                   w-2 h-2 rounded-full duration-1500"
-        role="status"
-      ></div>
-      <div
-        className="animate-[pulse_1s_400ms_ease-in-out_infinite] bg-primary
-                   w-2 h-2 rounded-full duration-500"
-        role="status"
-      ></div>
-    </div>
+    <Box
+      sx={{
+        display: "flex",
+        height: "100dvh",
+        width: "100%",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
+      <CircularProgress size={"8rem"}/>
+    </Box>
   );
 };
 
