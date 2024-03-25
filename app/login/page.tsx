@@ -7,7 +7,7 @@ export default function Login() {
       display={"flex"}
       justifyContent={"center"}
     >
-      <Button href="http://localhost:8080/oauth2/authorization/google" variant="outlined">
+      <Button href="/oauth2/authorization/google" variant="outlined">
         Login With Google
       </Button>
     </Box>

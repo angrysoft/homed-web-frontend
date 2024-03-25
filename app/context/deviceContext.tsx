@@ -20,7 +20,7 @@ const DeviceProvider = (props: IProviderProps) => {
 
   const sse = useCallback(() => {
     const evSource = new EventSource(
-      "http://localhost:8080/api/v1/devices/events",
+      "/api/v1/devices/events",
       { withCredentials: true },
     );
 
