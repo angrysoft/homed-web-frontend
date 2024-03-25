@@ -38,9 +38,11 @@ export default function Home() {
       disableGutters
       sx={{
         height: "100dvh",
+        maxHeight: "100dvh",
         display: "flex",
         flexDirection: "column",
         justifyContent: "space-between",
+        position: "relative",
       }}
     >
       <Places />
@@ -49,10 +51,10 @@ export default function Home() {
           display: "flex",
           justifyContent: "space-around",
           padding: "1rem",
-          position: "fixed",
-          bottom: 0,
-          left: 0,
-          right: 0,
+          // position: "fixed",
+          // bottom: 0,
+          // left: 0,
+          // right: 0,
         }}
         elevation={3}
       >
