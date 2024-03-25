@@ -4,13 +4,13 @@ import { Favorite, Settings } from "@mui/icons-material";
 import {
   Avatar,
   Container,
-  Link,
   Paper
 } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useCheckAuth } from "./hooks/useCheckAuth";
 import { Places } from "./sections/Places/Places";
+import Link from "next/link";
 
 export default function Home() {
   const { isLoading, user } = useCheckAuth();
@@ -60,18 +60,18 @@ export default function Home() {
         }}
         elevation={3}
       >
-        <Link href="/favorite" underline="none">
-          <Favorite />
+        <Link href="/favorite" >
+          <Favorite color="primary"/>
         </Link>
-        <Link href="/user" underline="none">
+        <Link href="/user">
           <Avatar
             alt={user?.name}
             src={user?.picture}
             sx={{ width: 32, height: 32 }}
           />
         </Link>
-        <Link href="/settings" underline="none">
-          <Settings />
+        <Link href="/settings">
+          <Settings color="primary" />
         </Link>
       </Paper>
     </Container>

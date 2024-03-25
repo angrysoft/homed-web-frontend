@@ -1,17 +1,17 @@
 "use client";
-import { Box, Button, Icon, Paper, Stack } from "@mui/material";
+import { Box, Button, Paper, Stack } from "@mui/material";
 import React from "react";
-import { DeviceInfo } from "../../context/DeviceInfo";
-import { getLangCode } from "../../context/utils";
-import { TraitsFactory } from "./TraitsFactory";
 import { MaterialSymbols } from "../../components/MaterialSymbols";
+import { DeviceInfo } from "../../context/DeviceInfo";
+import { TraitsFactory } from "./TraitsFactory";
+import { useRouter } from "next/navigation";
 
 interface IDeviceProps {
   info: DeviceInfo;
 }
 
 const Device: React.FC<IDeviceProps> = (props: IDeviceProps) => {
-  const lang: string = getLangCode(navigator.language);
+  const router = useRouter();
 
   return (
     <Paper
@@ -22,11 +22,20 @@ const Device: React.FC<IDeviceProps> = (props: IDeviceProps) => {
       }}
       elevation={2}
     >
-      <Button size="small"
-        href={`/device/${props.info.place[lang]}/${props.info.sid}`}
+      {/* <Link href={`/device/${props.info.sid}`} passHref>
+        <Button
+          size="small"
+          startIcon={<MaterialSymbols name={props.info.icon ?? "sensors"} />}
+        >
+          {props.info.name}
+        </Button>
+      </Link> */}
+      <Button
+        size="small"
         startIcon={<MaterialSymbols name={props.info.icon ?? "sensors"} />}
+        onClick={() => router.push(`/device/${props.info.sid}`)}
       >
-        {props.info.name[lang]}
+        {props.info.name}
       </Button>
       <Stack direction={"column"}>
         {props.info.traits.map((traitName: string) => (

@@ -11,17 +11,19 @@ const getLangCode = (langCode: string): string => {
   return codes[langCode] || "en";
 };
 
-const parseDeviceEvent = (data: any[]) => {
-  const devices: { [place: string]: DeviceInfo[] } = {};
+const getMainState = (data: any[]) => {
+  const devices: { [sid: string]: DeviceInfo } = {};
   const lang = getLangCode(navigator.language);
+  const places = new Set<string>();
+  
+
   if (data.length == 0) return;
   data.forEach((dev) => {
     if (!dev.traits || dev.traits.length === 0) return;
-    const place = dev.place[lang];
-    if (!devices.hasOwnProperty(place)) devices[place] = [];
-    devices[place].push(dev);
+    places.add(dev.place[lang]);
+    devices[dev.sid] = { ...dev, name: dev.name[lang], place: dev.place[lang] };
   });
-  return devices;
+  return { places: Array.from(places), devices: devices };
 };
 
-export { parseDeviceEvent, getLangCode };
+export { getMainState, getLangCode };

@@ -1,8 +1,14 @@
 "use client";
-import { createContext, useCallback, useEffect, useMemo, useState } from "react";
+import {
+  createContext,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import { useSendEvent } from "../hooks/useSendEvent";
 import { IDevicesContext, IEventData } from "./DeviceInfo";
-import { parseDeviceEvent } from "./utils";
+import { getMainState } from "./utils";
 
 interface IProviderProps {
   children: React.ReactNode;
@@ -10,7 +16,7 @@ interface IProviderProps {
 
 const DeviceProvider = (props: IProviderProps) => {
   const send = useSendEvent();
-  const [deviceState, setDeviceState] = useState<IDevicesContext>({});
+  const [deviceState, setDeviceState] = useState<IDevicesContext | null>(null);
 
   const sse = useCallback(() => {
     const evSource = new EventSource(
@@ -21,17 +27,25 @@ const DeviceProvider = (props: IProviderProps) => {
     evSource.onmessage = async (event) => {
       if (!event.data.startsWith("{")) return;
       const eventData: IEventData = JSON.parse(event.data) || {};
-      const {sid, payload} = eventData;
+      const { sid, payload } = eventData;
       if (!sid) return;
       if (sid === "deviceManager") {
-        console.log("devicesLoaded", parseDeviceEvent(eventData.payload.deviceList));
-        setDeviceState(parseDeviceEvent(payload.deviceList) ?? {});
+        setDeviceState(getMainState(payload.deviceList) ?? null);
       } else {
-        // dispatch({ type: "UPDATE_DEVICE", payload: eventData });
-        console.log("update: ",sid,  payload);
-        // setDeviceState(deviceState=> {
-        //   return {...deviceState, ...deviceState[payload.place["pl"]]}
-        // })
+        console.log("update: ", sid, payload);
+
+        setDeviceState((deviceState: any) => {
+          return {
+            ...deviceState,
+            devices: {
+              ...deviceState?.devices,
+              [sid]: {
+                ...deviceState?.devices[sid],
+                ...payload,
+              },
+            },
+          };
+        });
       }
     };
 
@@ -54,7 +68,7 @@ const DeviceProvider = (props: IProviderProps) => {
     };
   }, [send]);
 
-  useEffect(()=> sse(), [sse]);
+  useEffect(() => sse(), [sse]);
 
   const deviceContextValue = useMemo(() => deviceState, [deviceState]);
 
