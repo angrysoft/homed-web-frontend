@@ -18,9 +18,10 @@ export default function RootLayout({
   return (
     <html lang="pl">
       <head>
+        <meta name="theme-color" content="#121212" />
         <link
           rel="stylesheet"
-          href="https://fonts.googleapis.com/icon?family=Material+Icons"
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0"
         />
       </head>
       <body>

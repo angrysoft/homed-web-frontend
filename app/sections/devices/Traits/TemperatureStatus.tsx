@@ -1,6 +1,6 @@
-import { Thermostat } from "@mui/icons-material";
 import { Box, Typography } from "@mui/material";
 import React from "react";
+import { MaterialSymbols } from "../../../components/MaterialSymbols";
 import { SectionTitle } from "./elements/SectionTitle";
 
 interface ITemperatureStatusProps {
@@ -21,7 +21,12 @@ const TemperatureStatus: React.FC<ITemperatureStatusProps> = (
         padding: "1rem",
       }}
     >
-      <Thermostat color="primary" />
+      <MaterialSymbols
+        name="thermometer"
+        sx={{
+          color: "primary.main",
+        }}
+      />
       <SectionTitle title="Temperatura" show={props.showTitle} />
       <Typography color="primary">
         {Math.round(props.temperature)} &#8451;

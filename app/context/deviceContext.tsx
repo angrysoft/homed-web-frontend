@@ -54,7 +54,7 @@ const DeviceProvider = (props: IProviderProps) => {
     };
   }, [send]);
 
-  useEffect(()=> sse(), []);
+  useEffect(()=> sse(), [sse]);
 
   const deviceContextValue = useMemo(() => deviceState, [deviceState]);
 

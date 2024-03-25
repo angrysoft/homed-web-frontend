@@ -1,14 +1,20 @@
 "use client";
 
-import { Container } from "@mui/material";
+import { Favorite, Settings } from "@mui/icons-material";
+import {
+  Avatar,
+  Container,
+  Link,
+  Paper
+} from "@mui/material";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useCheckAuth } from "./hooks/useCheckAuth";
 import { Places } from "./sections/Places/Places";
 
 export default function Home() {
   const { isLoading, user } = useCheckAuth();
-
+  const [value, setValue] = useState();
   const router = useRouter();
 
   useEffect(() => {
@@ -17,6 +23,18 @@ export default function Home() {
     }
   }, [isLoading, router, user]);
 
+  useEffect(() => {
+    navigator.serviceWorker
+      .register("/sw.js")
+      .then((registration) =>
+        console.log(
+          "Service Worker registration successful with scope: ",
+          registration.scope,
+        ),
+      )
+      .catch((err) => console.log("Service Worker registration failed: ", err));
+  }, []);
+
   return (
     <Container
       component={"main"}
@@ -24,9 +42,38 @@ export default function Home() {
       disableGutters
       sx={{
         height: "100dvh",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "space-between",
       }}
     >
       <Places />
+      <Paper
+        sx={{
+          display: "flex",
+          justifyContent: "space-around",
+          padding: "1rem",
+          position: "fixed",
+          bottom: 0,
+          left: 0,
+          right: 0,
+        }}
+        elevation={3}
+      >
+        <Link href="/favorite" underline="none">
+          <Favorite />
+        </Link>
+        <Link href="/user" underline="none">
+          <Avatar
+            alt={user?.name}
+            src={user?.picture}
+            sx={{ width: 32, height: 32 }}
+          />
+        </Link>
+        <Link href="/settings" underline="none">
+          <Settings />
+        </Link>
+      </Paper>
     </Container>
   );
 }

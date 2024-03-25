@@ -1,6 +1,6 @@
-import { SensorOccupied } from "@mui/icons-material";
-import { Box, Typography } from "@mui/material";
+import { Box } from "@mui/material";
 import React from "react";
+import { MaterialSymbols } from "../../../components/MaterialSymbols";
 import { SectionTitle } from "./elements/SectionTitle";
 
 interface IOccupancySensingProps {
@@ -12,6 +12,12 @@ interface IOccupancySensingProps {
 const OccupancySensing: React.FC<IOccupancySensingProps> = (
   props: IOccupancySensingProps,
 ) => {
+  let icon = "motion_sensor_active";
+  let color = "primary.main";
+  if (props.occupancy) {
+    icon = "sensor_occupied";
+    color = "secondary.main";
+  }
   return (
     <Box
       sx={{
@@ -21,8 +27,21 @@ const OccupancySensing: React.FC<IOccupancySensingProps> = (
         padding: "1rem",
       }}
     >
+      {props.showTitle && (
+        <MaterialSymbols
+          name={"motion_sensor_alert"}
+          sx={{
+            color: "primary.main",
+          }}
+        />
+      )}
       <SectionTitle title="Obecność" show={props.showTitle} />
-      <SensorOccupied color={props.occupancy ? "secondary" : "primary"} />
+      <MaterialSymbols
+        name={icon}
+        sx={{
+          color: color,
+        }}
+      />
     </Box>
   );
 };

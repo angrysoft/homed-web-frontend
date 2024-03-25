@@ -1,7 +1,7 @@
-import { Box, Icon, Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import React from "react";
+import { MaterialSymbols } from "../../../components/MaterialSymbols";
 import { SectionTitle } from "./elements/SectionTitle";
-import { Opacity } from "@mui/icons-material";
 
 interface IHumidityStatusProps {
   sid: string;
@@ -20,8 +20,11 @@ const HumidityStatus: React.FC<IHumidityStatusProps> = (
         justifyContent: "space-between",
         padding: "1rem",
       }}
+      color={"primary"}
     >
-      <Opacity color="primary"/>
+      <MaterialSymbols name="humidity_percentage" sx={{
+        color: "primary.main"
+      }} />
       <SectionTitle title="Wilgotność" show={props.showTitle} />
       <Typography color="primary">{Math.round(props.humidity)} %</Typography>
     </Box>

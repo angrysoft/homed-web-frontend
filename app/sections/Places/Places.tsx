@@ -51,6 +51,7 @@ export function Places() {
     <Box
       sx={{
         width: "100%",
+        overflow: "hidden"
       }}
     >
       <Box borderBottom={1} borderColor={"divider"}>

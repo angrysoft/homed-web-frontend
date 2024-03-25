@@ -1,6 +1,6 @@
-import { MeetingRoomOutlined, SensorDoorOutlined } from "@mui/icons-material";
 import { Box } from "@mui/material";
 import React from "react";
+import { MaterialSymbols } from "../../../components/MaterialSymbols";
 import { SectionTitle } from "./elements/SectionTitle";
 
 interface IContactProps {
@@ -10,6 +10,15 @@ interface IContactProps {
 }
 
 const Contact: React.FC<IContactProps> = (props: IContactProps) => {
+  let title = "Zamkniete";
+  let color = "primary.main";
+  let icon = "door_front";
+  if (!props.contact) {
+    title = "Otwarte";
+    color = "secondary.main";
+    icon = "door_open";
+  }
+  
   return (
     <Box
       sx={{
@@ -19,17 +28,13 @@ const Contact: React.FC<IContactProps> = (props: IContactProps) => {
         padding: "1rem",
       }}
     >
-      {props.contact ? (
-        <>
-          <SectionTitle title="Zamkniete" show={props.showTitle} />
-          <SensorDoorOutlined color="primary" />
-        </>
-      ) : (
-        <>
-          <SectionTitle title="Otwarte" show={props.showTitle} />
-          <MeetingRoomOutlined color="secondary" />
-        </>
-      )}
+      <SectionTitle title={title} show={props.showTitle} />
+      <MaterialSymbols
+        name={icon}
+        sx={{
+          color: color,
+        }}
+      />
     </Box>
   );
 };
