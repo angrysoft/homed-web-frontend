@@ -9,13 +9,6 @@ import { Places } from "./sections/Places/Places";
 
 export default function Home() {
   const { user } = useCheckAuth();
-  // const router = useRouter();
-
-  // useEffect(() => {
-  //   if (!isLoading) {
-  //     if (!user) router.replace("/login");
-  //   }
-  // }, [isLoading, router, user]);
 
   useEffect(() => {
     navigator.serviceWorker
@@ -51,10 +44,6 @@ export default function Home() {
           display: "flex",
           justifyContent: "space-around",
           padding: "1rem",
-          // position: "fixed",
-          // bottom: 0,
-          // left: 0,
-          // right: 0,
         }}
         elevation={3}
       >
